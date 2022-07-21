@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'package:tagged_todos_organizer/utils/unique_id.dart';
 
 class Tag {
@@ -18,7 +17,11 @@ class Tag {
         name = "",
         color = Colors.grey.value,
         group = "";
-
+  Tag.withName(String n)
+      : id = UniqueId(),
+        name = n,
+        color = Colors.grey.value,
+        group = "";
   Tag copyWith({
     UniqueId? id,
     String? name,
@@ -31,5 +34,21 @@ class Tag {
       color: color ?? this.color,
       group: group ?? this.group,
     );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is Tag &&
+        other.id == id &&
+        other.name == name &&
+        other.color == color &&
+        other.group == group;
+  }
+
+  @override
+  int get hashCode {
+    return id.hashCode ^ name.hashCode ^ color.hashCode ^ group.hashCode;
   }
 }
