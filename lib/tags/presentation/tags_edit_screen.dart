@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tagged_todos_organizer/tags/domain/filtered_tags_provider.dart';
 import 'package:tagged_todos_organizer/tags/domain/tag_editor_provider.dart';
 import 'package:tagged_todos_organizer/tags/domain/tags_provider.dart';
 import 'package:tagged_todos_organizer/tags/presentation/widgets/tag_edit_widget.dart';
@@ -9,16 +10,36 @@ class TagsEditScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final items = ref.watch(tagsProvider);
+    final items = ref.watch(filteredTagsProvider);
     final tagToEdit = ref.watch(tagEditorProvider);
     return Scaffold(
       appBar: AppBar(
         actions: [
+          DropdownButton<TagsSortOption>(
+              value: ref.watch(tagsSortOrder),
+              items: TagsSortOption.values
+                  .map((e) => DropdownMenuItem(
+                        value: e,
+                        child: Text(e.name),
+                      ))
+                  .toList(),
+              onChanged: (val) {
+                if (val != null) {
+                  ref.read(tagsSortOrder.notifier).update((state) => val);
+                }
+              }),
           IconButton(
             onPressed: () => ref.read(tagsProvider.notifier).addTag(),
             icon: const Icon(Icons.add),
-          )
+          ),
         ],
+        title: TextField(
+          onChanged: (String val) {
+            ref.read(tagsFilter.notifier).update((state) => val);
+          },
+          decoration: const InputDecoration(
+              labelText: 'Search', icon: Icon(Icons.filter_alt)),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -35,8 +56,7 @@ class TagsEditScreen extends ConsumerWidget {
                 duration: const Duration(milliseconds: 250)),
             SingleChildScrollView(
               child: Wrap(
-                spacing: 10,
-                runSpacing: 10,
+                spacing: 5,
                 children: items.map((e) {
                   return InputChip(
                     label: Text(e.name),
