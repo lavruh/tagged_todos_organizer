@@ -32,4 +32,7 @@ class UniqueId {
 
   @override
   int get hashCode => id.hashCode;
+
+  @override
+  String toString() => id;
 }
