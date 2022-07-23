@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:tagged_todos_organizer/tags/data/i_tags_db_service.dart';
 import 'package:tagged_todos_organizer/tags/domain/tag.dart';
 import 'package:tagged_todos_organizer/tags/domain/tags_db_provider.dart';
+import 'package:tagged_todos_organizer/utils/data/i_db_service.dart';
 import 'package:tagged_todos_organizer/utils/unique_id.dart';
 
 final tagsProvider = StateNotifierProvider<TagsNotifier, List<Tag>>((ref) {
@@ -14,14 +14,14 @@ final tagsProvider = StateNotifierProvider<TagsNotifier, List<Tag>>((ref) {
 });
 
 class TagsNotifier extends StateNotifier<List<Tag>> {
-  ITagsDbService? db;
+  IDbService? db;
   TagsNotifier() : super([]);
-  setDb(ITagsDbService service) {
+  setDb(IDbService service) {
     db = service;
   }
 
   getTags() async {
-    final tagsStream = db?.getTags();
+    final tagsStream = db?.getAll();
     if (tagsStream != null) {
       await for (final Map<String, dynamic> map in tagsStream) {
         state = [...state, Tag.fromMap(map)];
@@ -36,12 +36,12 @@ class TagsNotifier extends StateNotifier<List<Tag>> {
   }
 
   deleteTag(UniqueId id) {
-    db?.deleteTag(id: id.toString());
+    db?.delete(id: id.toString());
     state = [...state.where((tag) => tag.id != id)];
   }
 
   updateTag(Tag newTag) {
-    db?.updateTag(id: newTag.id.toString(), item: newTag.toMap());
+    db?.update(id: newTag.id.toString(), item: newTag.toMap());
     int index = state.indexWhere((e) => e.id == newTag.id);
     state.removeAt(index);
     state.insert(index, newTag);

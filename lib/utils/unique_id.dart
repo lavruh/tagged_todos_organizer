@@ -12,9 +12,9 @@ class UniqueId {
     };
   }
 
-  factory UniqueId.fromMap(Map<String, dynamic> map) {
+  factory UniqueId.fromMap(Map<String, dynamic>? map) {
     return UniqueId(
-      id: map['id'] ?? generate(),
+      id: map?['id'] ?? generate(),
     );
   }
 
