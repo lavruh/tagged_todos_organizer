@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:tagged_todos_organizer/tags/domain/filtered_tags_provider.dart';
 import 'package:tagged_todos_organizer/tags/domain/tag.dart';
 import 'package:tagged_todos_organizer/tags/domain/tag_editor_provider.dart';
 import 'package:tagged_todos_organizer/tags/domain/tags_provider.dart';
-import 'package:tagged_todos_organizer/tags/presentation/widgets/search_panel_widget.dart';
 import 'package:tagged_todos_organizer/tags/presentation/widgets/tag_edit_widget.dart';
+import 'package:tagged_todos_organizer/tags/presentation/widgets/tag_select_widget.dart';
 
 class TagsEditScreen extends ConsumerWidget {
   const TagsEditScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final items = ref.watch(filteredTagsProvider);
     return Scaffold(
       appBar: AppBar(
         actions: [
@@ -24,29 +22,11 @@ class TagsEditScreen extends ConsumerWidget {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              children: [
-                const TagEditWidget(),
-                SingleChildScrollView(
-                  child: Wrap(
-                    spacing: 3,
-                    children: items.map((e) {
-                      return InputChip(
-                        label: Text(e.name),
-                        backgroundColor: Color(e.color),
-                        onPressed: () => _setToEdit(ref, e),
-                        onDeleted: () =>
-                            ref.read(tagsProvider.notifier).deleteTag(e.id),
-                      );
-                    }).toList(),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SearchPanelWidget(),
+          const TagEditWidget(),
+          TagSelectWidget(
+              onPress: (tag) => _setToEdit(ref, tag),
+              onDelete: (tag) =>
+                  ref.read(tagsProvider.notifier).deleteTag(tag.id))
         ],
       ),
     );

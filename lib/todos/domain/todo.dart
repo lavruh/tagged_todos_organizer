@@ -9,7 +9,7 @@ class ToDo {
   final UniqueId? parentId;
   final List<UniqueId> children;
   final List<String> attacments;
-  final List tags;
+  final List<UniqueId> tags;
   ToDo({
     required this.id,
     required this.title,
@@ -39,7 +39,7 @@ class ToDo {
     UniqueId? parentId,
     List<UniqueId>? children,
     List<String>? attacments,
-    List? tags,
+    List<UniqueId>? tags,
   }) {
     return ToDo(
         id: id ?? this.id,

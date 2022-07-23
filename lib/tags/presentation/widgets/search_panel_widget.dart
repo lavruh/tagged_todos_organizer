@@ -9,12 +9,13 @@ class SearchPanelWidget extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return ListTile(
       title: TextField(
-        onChanged: (String val) {
-          ref.read(tagsFilter.notifier).update((state) => val);
-        },
-        decoration: const InputDecoration(
-            labelText: 'Search', icon: Icon(Icons.filter_alt)),
-      ),
+          onChanged: (String val) {
+            ref.read(tagsFilter.notifier).update((state) => val);
+          },
+          decoration: const InputDecoration(
+            labelText: 'Search',
+            icon: Icon(Icons.filter_alt),
+          )),
       trailing: DropdownButton<TagsSortOption>(
           value: ref.watch(tagsSortOrder),
           items: TagsSortOption.values

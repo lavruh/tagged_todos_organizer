@@ -4,12 +4,14 @@ import 'package:tagged_todos_organizer/tags/domain/filtered_tags_provider.dart';
 import 'package:tagged_todos_organizer/tags/domain/tag_editor_provider.dart';
 import 'package:tagged_todos_organizer/tags/presentation/tags_edit_screen.dart';
 import 'package:tagged_todos_organizer/todos/domain/todos_provider.dart';
+import 'package:tagged_todos_organizer/todos/presentation/widgets/todo_prev_widget.dart';
 
 class TodosScreen extends ConsumerWidget {
   const TodosScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final todos = ref.watch(todosProvider);
     return Scaffold(
       appBar: AppBar(
         actions: [
@@ -28,7 +30,12 @@ class TodosScreen extends ConsumerWidget {
           )
         ],
       ),
-      body: Text('${ref.watch(todosProvider)}'),
+      body: ListView.builder(
+        itemCount: todos.length,
+        itemBuilder: (context, i) {
+          return TodoPrevWidget(item: todos[i]);
+        },
+      ),
     );
   }
 }

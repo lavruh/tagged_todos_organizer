@@ -11,4 +11,11 @@ class TodosNotifier extends StateNotifier<List<ToDo>> {
   addTodo() {
     state = [...state, ToDo.empty()];
   }
+
+  updateTodo({required ToDo item}) {
+    final index = state.indexWhere((e) => e.id == item.id);
+    state.removeAt(index);
+    state.insert(index, item);
+    state = [...state];
+  }
 }
