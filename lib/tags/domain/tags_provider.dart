@@ -55,4 +55,6 @@ class TagsNotifier extends StateNotifier<List<Tag>> {
     }
     return null;
   }
+
+  bool isTagIdExists(UniqueId id) => !state.any((element) => element.id == id);
 }

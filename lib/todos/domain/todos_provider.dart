@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tagged_todos_organizer/tags/domain/tags_provider.dart';
 import 'package:tagged_todos_organizer/todos/domain/todo.dart';
 import 'package:tagged_todos_organizer/todos/domain/todos_db_provider.dart';
 import 'package:tagged_todos_organizer/utils/data/i_db_service.dart';
@@ -8,7 +9,7 @@ final todosProvider = StateNotifierProvider<TodosNotifier, List<ToDo>>((ref) {
   ref.watch(todosDbProvider).whenData(
         (value) => notifier.setDb(value),
       );
-  notifier.getTodos();
+  notifier.getTodos(ref);
   return notifier;
 });
 
@@ -20,11 +21,18 @@ class TodosNotifier extends StateNotifier<List<ToDo>> {
     db = instance;
   }
 
-  getTodos() async {
+  getTodos(StateNotifierProviderRef<TodosNotifier, List<ToDo>> ref) async {
     final data = db?.getAll();
     if (data != null) {
       await for (final map in data) {
-        state = [...state, ToDo.fromMap(map)];
+        ToDo todo = ToDo.fromMap(map);
+        final existingTags = todo.tags
+            .where((id) => ref.read(tagsProvider.notifier).isTagIdExists(id))
+            .toList();
+        state = [...state, todo.copyWith(tags: existingTags)];
+        if (existingTags != todo.tags) {
+          updateTodo(item: todo.copyWith(tags: existingTags));
+        }
       }
     }
   }

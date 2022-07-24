@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tagged_todos_organizer/tags/domain/selected_tags_provider.dart';
 import 'package:tagged_todos_organizer/tags/domain/tags_provider.dart';
 import 'package:tagged_todos_organizer/utils/unique_id.dart';
 
@@ -14,13 +15,12 @@ class TagsPreviewWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final availableTags = ref.watch(tagsProvider);
+    final selectedTags = ref.watch(selectedTagsProvider([...tags]));
     return ListTile(
       title: tags.isEmpty
           ? const Text('Tags:')
           : Wrap(
-              children: availableTags
-                  .where((element) => tags.contains(element.id))
+              children: selectedTags
                   .map((e) => InputChip(
                         label: Text(e.name),
                         backgroundColor: Color(e.color),

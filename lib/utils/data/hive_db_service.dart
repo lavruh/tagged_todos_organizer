@@ -5,7 +5,7 @@ class HiveDbService implements IDbService {
   Box<Map<dynamic, dynamic>>? box;
 
   @override
-  init(String table) async {
+  init({required String table, required String dbPath}) async {
     await Hive.initFlutter();
     box = await Hive.openBox(table);
   }
@@ -34,14 +34,12 @@ class HiveDbService implements IDbService {
           if (value.runtimeType == String ||
               value.runtimeType == int ||
               value.runtimeType == bool ||
-              value.runtimeType == Null ||
-              value.runtimeType == List ||
-              value.runtimeType == List<String>) {
+              value.runtimeType == Null) {
             return MapEntry(key, value);
-          } else if (value.runtimeType == Map<dynamic, dynamic>) {
+          } else if (value.runtimeType == Map) {
             return MapEntry(key, Map<String, dynamic>.from(value));
           } else {
-            return MapEntry(key, null);
+            return MapEntry(key, value);
           }
         });
         yield m;

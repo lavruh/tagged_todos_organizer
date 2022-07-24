@@ -61,7 +61,7 @@ class ToDo {
       'parentId': parentId?.toMap(),
       'children': children.map((x) => x.toMap()).toList(),
       'attacments': attacments,
-      'tags': tags,
+      'tags': tags.map((e) => e.toMap()).toList(),
     };
   }
 
@@ -76,7 +76,7 @@ class ToDo {
       children: List<UniqueId>.from(
           map['children']?.map((x) => UniqueId.fromMap(x)) ?? const []),
       attacments: List<String>.from(map['attacments'] ?? const []),
-      tags: List.from(map['tags'] ?? const []),
+      tags: List.from(map['tags'].map((e) => UniqueId(id: e)) ?? const []),
     );
   }
 

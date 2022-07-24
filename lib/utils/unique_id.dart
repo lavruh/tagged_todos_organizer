@@ -6,15 +6,13 @@ class UniqueId {
 
   static String generate() => DateTime.now().millisecondsSinceEpoch.toString();
 
-  Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-    };
+  String toMap() {
+    return id;
   }
 
-  factory UniqueId.fromMap(Map<String, dynamic>? map) {
+  factory UniqueId.fromMap(String? map) {
     return UniqueId(
-      id: map?['id'] ?? generate(),
+      id: map ?? generate(),
     );
   }
 
