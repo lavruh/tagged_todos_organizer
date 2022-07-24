@@ -5,34 +5,28 @@ import 'package:tagged_todos_organizer/todos/domain/todos_db_provider.dart';
 import 'package:tagged_todos_organizer/utils/data/i_db_service.dart';
 
 final todosProvider = StateNotifierProvider<TodosNotifier, List<ToDo>>((ref) {
-  final notifier = TodosNotifier();
+  final notifier = TodosNotifier(ref);
   ref.watch(todosDbProvider).whenData(
         (value) => notifier.setDb(value),
       );
-  notifier.getTodos(ref);
+  notifier.getTodos();
   return notifier;
 });
 
 class TodosNotifier extends StateNotifier<List<ToDo>> {
-  TodosNotifier() : super([]);
+  StateNotifierProviderRef<TodosNotifier, List<ToDo>> ref;
+  TodosNotifier(this.ref) : super([]);
   IDbService? db;
 
   setDb(IDbService instance) {
     db = instance;
   }
 
-  getTodos(StateNotifierProviderRef<TodosNotifier, List<ToDo>> ref) async {
+  getTodos() async {
     final data = db?.getAll();
     if (data != null) {
       await for (final map in data) {
-        ToDo todo = ToDo.fromMap(map);
-        final existingTags = todo.tags
-            .where((id) => ref.read(tagsProvider.notifier).isTagIdExists(id))
-            .toList();
-        state = [...state, todo.copyWith(tags: existingTags)];
-        if (existingTags != todo.tags) {
-          updateTodo(item: todo.copyWith(tags: existingTags));
-        }
+        state = [...state, ToDo.fromMap(map)];
       }
     }
   }
@@ -47,5 +41,20 @@ class TodosNotifier extends StateNotifier<List<ToDo>> {
     state.removeAt(index);
     state.insert(index, item);
     state = [...state];
+  }
+
+  checkAndCleanTodos() {
+    List<ToDo> cleanTodos = [];
+    for (final todo in state) {
+      final existingTags = todo.tags
+          .where((id) => ref.watch(tagsProvider.notifier).isTagIdExists(id))
+          .toList();
+      final updatedTag = todo.copyWith(tags: existingTags);
+      cleanTodos.add(updatedTag);
+      if (updatedTag != todo) {
+        updateTodo(item: updatedTag);
+      }
+    }
+    state = cleanTodos;
   }
 }

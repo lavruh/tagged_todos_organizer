@@ -14,6 +14,7 @@ dependencies:
   flutter_riverpod: ^1.0.4
   hive: ^2.2.3
   hive_flutter: ^1.1.0
+  mockito: ^5.2.0
   path_provider: ^2.0.11
   sembast: ^3.2.0+1
 
