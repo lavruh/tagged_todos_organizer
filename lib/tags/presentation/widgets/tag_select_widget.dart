@@ -19,11 +19,14 @@ class TagSelectWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final items = ref.watch(filteredTagsProvider);
-    return SingleChildScrollView(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          SingleChildScrollView(
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        ConstrainedBox(
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.of(context).size.height * 0.8,
+          ),
+          child: SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Wrap(
@@ -41,9 +44,9 @@ class TagSelectWidget extends ConsumerWidget {
               ),
             ),
           ),
-          const SearchPanelWidget(),
-        ],
-      ),
+        ),
+        const SearchPanelWidget(),
+      ],
     );
   }
 

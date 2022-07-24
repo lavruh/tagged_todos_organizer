@@ -19,15 +19,17 @@ class TagsEditScreen extends ConsumerWidget {
               icon: const Icon(Icons.add))
         ],
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          const TagEditWidget(),
-          TagSelectWidget(
-              onPress: (tag) => _setToEdit(ref, tag),
-              onDelete: (tag) =>
-                  ref.read(tagsProvider.notifier).deleteTag(tag.id))
-        ],
+      body: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const TagEditWidget(),
+            TagSelectWidget(
+                onPress: (tag) => _setToEdit(ref, tag),
+                onDelete: (tag) =>
+                    ref.read(tagsProvider.notifier).deleteTag(tag.id))
+          ],
+        ),
       ),
     );
   }
