@@ -20,30 +20,31 @@ class SearchPanelWidget extends ConsumerWidget {
     return Container(
       color: Colors.white70,
       child: Padding(
-        padding: const EdgeInsets.all(15.0),
-        child: ListTile(
-          title: TextFieldWithClearButton(onChanged: onSearch),
-          trailing: Wrap(
-            children: [
-              if (tagsSort)
-                DropdownButton<TagsSortOption>(
-                    value: ref.watch(tagsSortOrder),
-                    items: TagsSortOption.values.map((e) {
-                      final str = e.toString();
-                      final lable = str.substring(str.lastIndexOf('.') + 1);
-                      return DropdownMenuItem(value: e, child: Text(lable));
-                    }).toList(),
-                    onChanged: (val) {
-                      if (val != null) {
-                        ref.read(tagsSortOrder.notifier).update((state) => val);
-                      }
-                    }),
-              if (tagsFilter)
-                IconButton(
-                    onPressed: () => _showTagsFilter(context, ref),
-                    icon: const Icon(Icons.label))
-            ],
-          ),
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            const SizedBox(height: 20, width: 20),
+            Flexible(child: TextFieldWithClearButton(onChanged: onSearch)),
+            if (tagsSort)
+              DropdownButton<TagsSortOption>(
+                  value: ref.watch(tagsSortOrder),
+                  items: TagsSortOption.values.map((e) {
+                    final str = e.toString();
+                    final lable = str.substring(str.lastIndexOf('.') + 1);
+                    return DropdownMenuItem(value: e, child: Text(lable));
+                  }).toList(),
+                  onChanged: (val) {
+                    if (val != null) {
+                      ref.read(tagsSortOrder.notifier).update((state) => val);
+                    }
+                  }),
+            if (tagsFilter)
+              IconButton(
+                  onPressed: () => _showTagsFilter(context, ref),
+                  icon: const Icon(Icons.label))
+          ],
         ),
       ),
     );
