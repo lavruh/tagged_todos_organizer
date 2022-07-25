@@ -3,6 +3,7 @@ import 'package:tagged_todos_organizer/tags/domain/tags_provider.dart';
 import 'package:tagged_todos_organizer/todos/domain/todo.dart';
 import 'package:tagged_todos_organizer/todos/domain/todos_db_provider.dart';
 import 'package:tagged_todos_organizer/utils/data/i_db_service.dart';
+import 'package:tagged_todos_organizer/utils/unique_id.dart';
 
 final todosProvider = StateNotifierProvider<TodosNotifier, List<ToDo>>((ref) {
   final notifier = TodosNotifier(ref);
@@ -33,6 +34,10 @@ class TodosNotifier extends StateNotifier<List<ToDo>> {
 
   addTodo() {
     state = [...state, ToDo.empty()];
+  }
+
+  addSubTodo(UniqueId parent) {
+    state = [...state, ToDo.empty().copyWith(parentId: parent)];
   }
 
   updateTodo({required ToDo item}) {

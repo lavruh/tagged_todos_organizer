@@ -34,7 +34,7 @@ class TodoPrevWidget extends ConsumerWidget {
           ],
         ),
         onTap: () {
-          ref.read(todoEditorProvider.notifier).update((state) => item);
+          ref.read(todoEditorProvider.notifier).setTodo(item);
           Navigator.of(context).push(MaterialPageRoute(
             builder: (context) => const TodoEditScreen(),
           ));
