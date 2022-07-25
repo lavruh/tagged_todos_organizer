@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tagged_todos_organizer/tags/domain/filtered_tags_provider.dart';
 import 'package:tagged_todos_organizer/tags/domain/tag.dart';
 import 'package:tagged_todos_organizer/utils/presentation/widget/search_panel_widget.dart';
-import 'package:tagged_todos_organizer/utils/dropdownbutton_args.dart';
 import 'package:tagged_todos_organizer/utils/unique_id.dart';
 
 class TagSelectWidget extends ConsumerWidget {
@@ -21,7 +20,7 @@ class TagSelectWidget extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final items = ref.watch(filteredTagsProvider);
     return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         ConstrainedBox(
           constraints: BoxConstraints(
@@ -51,13 +50,7 @@ class TagSelectWidget extends ConsumerWidget {
             onSearch: (String val) {
               ref.read(tagsFilter.notifier).update((state) => val);
             },
-            buttonArgs: DropDownButtonArgs<TagsSortOption>(
-              value: ref.watch(tagsSortOrder),
-              items: TagsSortOption.values,
-              callback: (v) {
-                ref.read(tagsSortOrder.notifier).update((state) => v);
-              },
-            ),
+            tagsSort: true,
           ),
       ],
     );

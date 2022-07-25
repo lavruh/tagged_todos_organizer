@@ -6,7 +6,6 @@ import 'package:tagged_todos_organizer/tags/domain/tag_editor_provider.dart';
 import 'package:tagged_todos_organizer/tags/domain/tags_provider.dart';
 import 'package:tagged_todos_organizer/tags/presentation/widgets/tag_edit_widget.dart';
 import 'package:tagged_todos_organizer/tags/presentation/widgets/tag_select_widget.dart';
-import 'package:tagged_todos_organizer/utils/dropdownbutton_args.dart';
 import 'package:tagged_todos_organizer/utils/presentation/widget/search_panel_widget.dart';
 
 class TagsEditScreen extends ConsumerWidget {
@@ -38,13 +37,7 @@ class TagsEditScreen extends ConsumerWidget {
         onSearch: (String val) {
           ref.read(tagsFilter.notifier).update((state) => val);
         },
-        buttonArgs: DropDownButtonArgs<TagsSortOption>(
-          value: ref.watch(tagsSortOrder),
-          items: TagsSortOption.values,
-          callback: (v) {
-            ref.read(tagsSortOrder.notifier).update((state) => v);
-          },
-        ),
+        tagsSort: true,
       ),
     );
   }

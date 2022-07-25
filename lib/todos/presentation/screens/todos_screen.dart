@@ -38,9 +38,12 @@ class TodosScreen extends ConsumerWidget {
           return TodoPrevWidget(item: todos[i]);
         },
       ),
-      floatingActionButton: SearchPanelWidget(onSearch: (v) {
-        ref.read(todosFilter.notifier).update((state) => v);
-      }),
+      floatingActionButton: SearchPanelWidget(
+        onSearch: (v) {
+          ref.read(todosFilter.notifier).update((state) => v);
+        },
+        tagsFilter: true,
+      ),
     );
   }
 }
