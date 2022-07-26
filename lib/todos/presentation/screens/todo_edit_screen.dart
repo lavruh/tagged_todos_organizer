@@ -5,12 +5,20 @@ import 'package:tagged_todos_organizer/todos/domain/todo_editor_provider.dart';
 import 'package:tagged_todos_organizer/todos/domain/todos_provider.dart';
 import 'package:tagged_todos_organizer/todos/presentation/screens/todos_screen.dart';
 import 'package:tagged_todos_organizer/todos/presentation/widgets/sub_todos_overview_widget.dart';
+import 'package:tagged_todos_organizer/utils/snackbar_provider.dart';
 
 class TodoEditScreen extends ConsumerWidget {
   const TodoEditScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    ref.listen<SnackbarNotifier>(snackbarProvider, (p, val) {
+      if (val.msg != null) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(val.msg ?? '')));
+      }
+    });
+
     final item = ref.watch(todoEditorProvider);
     if (item == null) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
@@ -41,6 +49,7 @@ class TodoEditScreen extends ConsumerWidget {
               onPressed: () {
                 ref.read(todosProvider.notifier).updateTodo(item: item);
                 ref.read(todoEditorProvider.notifier).setTodo(item);
+                ref.read(snackbarProvider).show("Saved");
               },
               icon: const Icon(Icons.save),
             )

@@ -7,12 +7,20 @@ import 'package:tagged_todos_organizer/tags/domain/tags_provider.dart';
 import 'package:tagged_todos_organizer/tags/presentation/widgets/tag_edit_widget.dart';
 import 'package:tagged_todos_organizer/tags/presentation/widgets/tag_select_widget.dart';
 import 'package:tagged_todos_organizer/utils/presentation/widget/search_panel_widget.dart';
+import 'package:tagged_todos_organizer/utils/snackbar_provider.dart';
 
 class TagsEditScreen extends ConsumerWidget {
   const TagsEditScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    ref.listen<SnackbarNotifier>(snackbarProvider, (p, val) {
+      if (val.msg != null) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(val.msg ?? '')));
+      }
+    });
+
     return Scaffold(
       appBar: AppBar(
         actions: [
