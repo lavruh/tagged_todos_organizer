@@ -32,8 +32,9 @@ class TodosNotifier extends StateNotifier<List<ToDo>> {
     }
   }
 
-  addTodo() {
-    state = [...state, ToDo.empty()];
+  addTodo({ToDo? todo}) {
+    final newItem = todo ?? ToDo.empty();
+    state = [...state, newItem];
   }
 
   addSubTodo(UniqueId parent) {

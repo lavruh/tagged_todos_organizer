@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tagged_todos_organizer/tags/presentation/widgets/tags_widget.dart';
-import 'package:tagged_todos_organizer/todos/domain/todo.dart';
 import 'package:tagged_todos_organizer/todos/domain/todo_editor_provider.dart';
 import 'package:tagged_todos_organizer/todos/domain/todos_provider.dart';
 import 'package:tagged_todos_organizer/todos/presentation/screens/todos_screen.dart';
@@ -52,15 +51,29 @@ class TodoEditScreen extends ConsumerWidget {
           child: Form(
             child: ListView(
               children: [
-                TextFormField(
-                  controller: title,
-                  decoration: const InputDecoration(labelText: 'Title'),
-                  onFieldSubmitted: (value) {
-                    ref
-                        .read(todoEditorProvider.notifier)
-                        .setTodo(item.copyWith(title: value));
-                  },
-                ),
+                Row(children: [
+                  Checkbox(
+                    onChanged: (value) {
+                      if (value != null) {
+                        ref
+                            .read(todoEditorProvider.notifier)
+                            .setTodo(item.copyWith(done: value));
+                      }
+                    },
+                    value: item.done,
+                  ),
+                  Flexible(
+                    child: TextFormField(
+                      controller: title,
+                      decoration: const InputDecoration(labelText: 'Title'),
+                      onFieldSubmitted: (value) {
+                        ref
+                            .read(todoEditorProvider.notifier)
+                            .setTodo(item.copyWith(title: value));
+                      },
+                    ),
+                  ),
+                ]),
                 TextFormField(
                   controller: description,
                   maxLines: 3,
