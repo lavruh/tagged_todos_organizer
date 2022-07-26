@@ -4,11 +4,13 @@ import 'package:tagged_todos_organizer/tags/presentation/widgets/tags_preview_wi
 import 'package:tagged_todos_organizer/utils/unique_id.dart';
 
 class TagsWidget extends StatefulWidget {
-  const TagsWidget({
+  TagsWidget({
     Key? key,
     required this.tags,
     required this.updateTags,
-  }) : super(key: key);
+  }) : super(key: key) {
+    print(key);
+  }
   final List<UniqueId> tags;
   final Function(List<UniqueId>) updateTags;
   @override
@@ -27,6 +29,7 @@ class _TagsWidgetState extends State<TagsWidget> {
 
   @override
   Widget build(BuildContext context) {
+    tags = widget.tags;
     return AnimatedCrossFade(
       duration: const Duration(milliseconds: 200),
       crossFadeState:
