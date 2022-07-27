@@ -6,5 +6,7 @@ import 'package:tagged_todos_organizer/utils/unique_id.dart';
 final subTodosProvider =
     StateProvider.family<List<ToDo>, UniqueId>((ref, UniqueId parentId) {
   final allTodos = ref.watch(todosProvider);
-  return allTodos.where((element) => element.parentId == parentId).toList();
+  final subTodos =
+      allTodos.where((element) => element.parentId == parentId).toList();
+  return subTodos;
 });

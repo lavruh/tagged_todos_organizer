@@ -26,11 +26,7 @@ class TodoEditScreen extends ConsumerWidget {
     final title = TextEditingController(text: item.title);
     final description = TextEditingController(text: item.description);
     return WillPopScope(
-      onWillPop: () async {
-        Navigator.of(context)
-            .push(MaterialPageRoute(builder: (context) => const TodosScreen()));
-        return true;
-      },
+      onWillPop: () async => _goToTodosScreen(context),
       child: Scaffold(
         appBar: AppBar(
           actions: [
@@ -45,6 +41,12 @@ class TodoEditScreen extends ConsumerWidget {
                   },
                   child: const Text('Go parent',
                       style: TextStyle(color: Colors.white))),
+            IconButton(
+                onPressed: () {
+                  ref.read(todosProvider.notifier).deleteTodo(todo: item);
+                  _goToTodosScreen(context);
+                },
+                icon: const Icon(Icons.delete)),
             IconButton(
               onPressed: () {
                 ref.read(todosProvider.notifier).updateTodo(item: item);
@@ -108,5 +110,11 @@ class TodoEditScreen extends ConsumerWidget {
         ),
       ),
     );
+  }
+
+  bool _goToTodosScreen(BuildContext context) {
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (context) => const TodosScreen()));
+    return true;
   }
 }

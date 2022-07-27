@@ -24,7 +24,7 @@ class TagsNotifier extends StateNotifier<List<Tag>> {
   }
 
   getTags() async {
-    final tagsStream = db?.getAll();
+    final tagsStream = db?.getAll(table: 'tags');
     if (tagsStream != null) {
       await for (final Map<String, dynamic> map in tagsStream) {
         state = [...state, Tag.fromMap(map)];
@@ -43,13 +43,13 @@ class TagsNotifier extends StateNotifier<List<Tag>> {
   }
 
   deleteTag(UniqueId id) {
-    db?.delete(id: id.toString());
+    db?.delete(id: id.toString(), table: 'tags');
     state = [...state.where((tag) => tag.id != id)];
     ref.read(todosProvider.notifier).checkAndCleanTodos();
   }
 
   updateTag(Tag newTag) {
-    db?.update(id: newTag.id.toString(), item: newTag.toMap());
+    db?.update(id: newTag.id.toString(), item: newTag.toMap(), table: 'tags');
     int index = state.indexWhere((e) => e.id == newTag.id);
     if (index > -1) {
       state.removeAt(index);

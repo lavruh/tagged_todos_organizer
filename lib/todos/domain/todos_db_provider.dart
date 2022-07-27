@@ -7,12 +7,10 @@ import 'package:tagged_todos_organizer/utils/data/sembast_db_service.dart';
 final todosDbProvider = FutureProvider<IDbService>((ref) async {
   final db = SembastDbService();
   if (Platform.isAndroid) {
-    await db.init(
-        table: 'todos', dbPath: "/storage/emulated/0/TagsTodosOrganizer");
+    await db.init(dbPath: "/storage/emulated/0/TagsTodosOrganizer");
   }
   if (Platform.isLinux) {
-    await db.init(
-        table: 'todos', dbPath: "/home/lavruh/Documents/TaggedTodosOrganizer");
+    await db.init(dbPath: "/home/lavruh/Documents/TaggedTodosOrganizer");
   }
   return db;
 });

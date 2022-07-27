@@ -9,12 +9,10 @@ final tagsDbProvider = FutureProvider<IDbService>((ref) async {
   final db = SembastDbService();
   try {
     if (Platform.isAndroid) {
-      await db.init(
-          table: 'tags', dbPath: "/storage/emulated/0/TagsTodosOrganizer");
+      await db.init(dbPath: "/storage/emulated/0/TagsTodosOrganizer");
     }
     if (Platform.isLinux) {
-      await db.init(
-          table: 'tags', dbPath: "/home/lavruh/Documents/TaggedTodosOrganizer");
+      await db.init(dbPath: "/home/lavruh/Documents/TaggedTodosOrganizer");
     }
   } on Exception catch (e) {
     ref.read(snackbarProvider.notifier).show('Error: $e');
