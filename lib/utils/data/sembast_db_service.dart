@@ -36,9 +36,15 @@ class SembastDbService implements IDbService {
     required String table,
   }) async {
     final store = StoreRef(table);
+    final Map<String, String> children = await getChildrenIds(id);
     await _db?.transaction(
-      (transaction) async => await store.record(id).delete(transaction),
+      (transaction) async {
+        await store.record(id).delete(transaction);
+      },
     );
+    for (final e in children.entries) {
+      await deleteTable(table: e.value);
+    }
   }
 
   @override
@@ -76,5 +82,25 @@ class SembastDbService implements IDbService {
         await store.record(id).put(transaction, item);
       },
     );
+  }
+
+  Future<Map<String, String>> getChildrenIds(String id) async {
+    final Map<String, String> ids = {};
+    await for (final child in getAll(table: id)) {
+      final childId = child['id'];
+      if (childId != null) {
+        ids.putIfAbsent(childId, () => id);
+        ids.addAll(await getChildrenIds(childId));
+      }
+    }
+    return ids;
+  }
+
+  closeAndDeleteDb() async {
+    if (_db != null) {
+      await _db!.close();
+      await databaseFactoryIo.deleteDatabase(_db!.path);
+      _db = null;
+    }
   }
 }

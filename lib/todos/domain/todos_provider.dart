@@ -54,10 +54,9 @@ class TodosNotifier extends StateNotifier<List<ToDo>> {
   }
 
   deleteTodo({required ToDo todo}) async {
-    final String table = todo.id.id;
+    final String table = todo.parentId?.id ?? '/';
     state = [...state.where((element) => element.id != todo.id)];
     await db?.delete(id: todo.id.id, table: table);
-    await db?.deleteTable(table: table);
   }
 
   checkAndCleanTodos() {
