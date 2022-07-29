@@ -1,7 +1,7 @@
 name: tagged_todos_organizer
 description: A new Flutter project.
 publish_to: 'none' 
-version: 1.1.1+1
+version: 1.1.2+1
 
 environment:
   sdk: ">=2.17.5 <3.0.0"
@@ -12,6 +12,7 @@ dependencies:
     sdk: flutter
   flutter_colorpicker: ^1.0.3
   flutter_riverpod: ^1.0.4
+  image_picker: ^0.8.5+3
   mockito: ^5.2.0
   path: ^1.8.1
   path_provider: ^2.0.11

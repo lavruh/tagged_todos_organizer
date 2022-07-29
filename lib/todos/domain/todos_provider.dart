@@ -18,13 +18,14 @@ class TodosNotifier extends StateNotifier<List<ToDo>> {
   StateNotifierProviderRef<TodosNotifier, List<ToDo>> ref;
   TodosNotifier(this.ref) : super([]);
   IDbService? db;
+  final String tableName = 'todos';
 
   setDb(IDbService instance) {
     db = instance;
   }
 
   getTodos({String? parentId}) async {
-    final table = parentId ?? '/';
+    final table = parentId ?? tableName;
     final data = db?.getAll(table: table);
     if (data != null) {
       await for (final map in data) {
@@ -45,7 +46,7 @@ class TodosNotifier extends StateNotifier<List<ToDo>> {
   }
 
   updateTodo({required ToDo item}) {
-    final String table = item.parentId?.id ?? '/';
+    final String table = item.parentId?.id ?? tableName;
     db?.update(id: item.id.toString(), item: item.toMap(), table: table);
     final index = state.indexWhere((e) => e.id == item.id);
     state.removeAt(index);
@@ -54,7 +55,7 @@ class TodosNotifier extends StateNotifier<List<ToDo>> {
   }
 
   deleteTodo({required ToDo todo}) async {
-    final String table = todo.parentId?.id ?? '/';
+    final String table = todo.parentId?.id ?? tableName;
     state = [...state.where((element) => element.id != todo.id)];
     await db?.delete(id: todo.id.id, table: table);
   }
