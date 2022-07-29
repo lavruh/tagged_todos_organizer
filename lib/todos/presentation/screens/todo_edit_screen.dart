@@ -4,6 +4,7 @@ import 'package:tagged_todos_organizer/tags/presentation/widgets/tags_widget.dar
 import 'package:tagged_todos_organizer/todos/domain/todo_editor_provider.dart';
 import 'package:tagged_todos_organizer/todos/domain/todos_provider.dart';
 import 'package:tagged_todos_organizer/todos/presentation/screens/todos_screen.dart';
+import 'package:tagged_todos_organizer/todos/presentation/widgets/attachemets_preview_widget.dart';
 import 'package:tagged_todos_organizer/todos/presentation/widgets/sub_todos_overview_widget.dart';
 import 'package:tagged_todos_organizer/utils/snackbar_provider.dart';
 
@@ -103,6 +104,7 @@ class TodoEditScreen extends ConsumerWidget {
                         .setTodo(item.copyWith(tags: t));
                   },
                 ),
+                AttachementsPreviewWidget(items: item.attacments),
                 SubTodosOverviewWidget(parentId: item.id),
               ],
             ),

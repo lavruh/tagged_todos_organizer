@@ -34,10 +34,20 @@ class FsDbService implements IDbService {
     final dir = Directory(await findPath(path: table));
     await for (final item in dir.list(recursive: false)) {
       if (item is Directory) {
+        Map<String, dynamic>? data;
+        List<String> attachements = [];
         for (final file in item.listSync()) {
-          if (file is File && p.basename(file.path) == 'data.json') {
-            yield fromJson(await file.readAsString());
+          if (file is File) {
+            if (p.basename(file.path) == 'data.json') {
+              data = fromJson(await file.readAsString());
+            } else {
+              attachements.add(file.path);
+            }
           }
+        }
+        if (data != null) {
+          data['attacments'] = attachements;
+          yield data;
         }
       }
     }

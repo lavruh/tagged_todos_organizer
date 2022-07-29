@@ -59,8 +59,8 @@ void main() {
 
   test('add todo and sub todos', () async {
     final item = ToDo.empty();
-    final sub1 = ToDo.empty().copyWith(title: 'sub1');
-    final sub2 = ToDo.empty().copyWith(title: 'sub2');
+    final sub1 = ToDo.empty().copyWith(title: 'sub1', id: UniqueId(id: 's1'));
+    final sub2 = ToDo.empty().copyWith(title: 'sub2', id: UniqueId(id: 's2'));
     await sut.init(dbPath: dbPath);
     await sut.add(item: item.toMap(), table: '/');
     await sut.add(item: sub1.toMap(), table: item.id.id);
@@ -107,7 +107,7 @@ void main() {
     await sut.add(item: sub2.toMap(), table: sub1.id.id);
 
     final result = sut.getAll(table: '/');
-    expect(result, emitsInAnyOrder([item.toMap(), sub1.toMap(), sub2.toMap()]));
+    expect(result, emitsInAnyOrder([item.toMap()]));
   });
 
   test('delete item', () async {
@@ -124,5 +124,19 @@ void main() {
     expect(sut.getAll(table: '/'), emitsDone);
   });
 
-  // test('add tag to db', () async {});
+  test('add files in dir as attachements', () async {
+    final item = ToDo.empty();
+    final sub1 = ToDo.empty().copyWith(title: 'sub1');
+    await sut.init(dbPath: dbPath);
+    await sut.add(item: item.toMap(), table: '/');
+    await sut.add(item: sub1.toMap(), table: item.id.id);
+    File(p.join(dbPath, item.id.id, 'attch.txt')).createSync();
+    File(p.join(dbPath, item.id.id, 'attch.pdf')).createSync();
+
+    List<Map<String, dynamic>> data = [];
+    await for (final i in sut.getAll(table: '/')) {
+      data.add(i);
+    }
+    expect(data[0]['attacments'].length, 2);
+  });
 }
