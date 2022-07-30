@@ -8,6 +8,7 @@ environment:
 
 dependencies:
   csv: ^5.0.1
+  file_picker: ^4.6.1
   flutter:
     sdk: flutter
   flutter_colorpicker: ^1.0.3

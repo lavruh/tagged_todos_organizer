@@ -17,13 +17,19 @@ class AttachementsPreviewWidget extends ConsumerWidget {
         children: [
           Row(children: [
             const Text('Attachements:'),
-            IconButton(onPressed: () {}, icon: const Icon(Icons.attach_file)),
+            IconButton(
+                onPressed: () =>
+                    ref.read(attachementsProvider.notifier).attachFile(),
+                icon: const Icon(Icons.attach_file)),
             if (Platform.isAndroid)
               IconButton(
                   onPressed: () =>
                       ref.read(attachementsProvider.notifier).addPhoto(),
                   icon: const Icon(Icons.add_a_photo)),
-            IconButton(onPressed: () {}, icon: const Icon(Icons.folder_open)),
+            IconButton(
+                onPressed: () =>
+                    ref.read(attachementsProvider.notifier).openFolder(),
+                icon: const Icon(Icons.folder_open)),
           ]),
           Wrap(
               children: items

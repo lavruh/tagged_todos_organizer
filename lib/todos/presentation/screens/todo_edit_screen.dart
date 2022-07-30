@@ -15,8 +15,9 @@ class TodoEditScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     ref.listen<SnackbarNotifier>(snackbarProvider, (p, val) {
       if (val.msg != null) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(val.msg ?? '')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(val.msg ?? ''),
+            duration: const Duration(milliseconds: 200)));
       }
     });
 

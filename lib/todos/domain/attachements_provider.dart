@@ -1,5 +1,7 @@
 import 'dart:io';
+import 'package:file_picker/file_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:open_filex/open_filex.dart';
 import 'package:path/path.dart' as p;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
@@ -43,9 +45,23 @@ class AttachementsNotifier extends StateNotifier<List<String>> {
   }
 
   void attachFile() async {
-    if (Platform.isAndroid) {
-      final ImagePicker _picker = ImagePicker();
-      final XFile? photo = await _picker.pickImage(source: ImageSource.gallery);
+    if (path != null) {
+      final picker = await FilePicker.platform.pickFiles();
+      if (picker != null && picker.paths.first != null) {
+        final filePath = picker.paths.first!;
+        final name = p.basename(filePath);
+        final newPath = p.join(path!, name);
+        await File(filePath).copy(newPath);
+        _updateState(newPath);
+      }
+    } else {
+      showNotification();
+    }
+  }
+
+  void openFolder() {
+    if (path != null) {
+      OpenFilex.open(path);
     }
   }
 
