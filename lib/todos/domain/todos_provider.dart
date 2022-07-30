@@ -45,7 +45,7 @@ class TodosNotifier extends StateNotifier<List<ToDo>> {
     state = [...state, ToDo.empty().copyWith(parentId: parent)];
   }
 
-  updateTodo({required ToDo item}) {
+  updateTodo({required ToDo item}) async {
     final String table = item.parentId?.id ?? tableName;
     db?.update(id: item.id.toString(), item: item.toMap(), table: table);
     final index = state.indexWhere((e) => e.id == item.id);

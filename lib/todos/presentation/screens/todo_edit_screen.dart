@@ -49,11 +49,8 @@ class TodoEditScreen extends ConsumerWidget {
                 },
                 icon: const Icon(Icons.delete)),
             IconButton(
-              onPressed: () {
-                ref.read(todosProvider.notifier).updateTodo(item: item);
-                ref.read(todoEditorProvider.notifier).setTodo(item);
-                ref.read(snackbarProvider).show("Saved");
-              },
+              onPressed: () =>
+                  ref.read(todoEditorProvider.notifier).updateTodo(item),
               icon: const Icon(Icons.save),
             )
           ],
@@ -104,7 +101,7 @@ class TodoEditScreen extends ConsumerWidget {
                         .setTodo(item.copyWith(tags: t));
                   },
                 ),
-                AttachementsPreviewWidget(items: item.attacments),
+                const AttachementsPreviewWidget(),
                 SubTodosOverviewWidget(parentId: item.id),
               ],
             ),

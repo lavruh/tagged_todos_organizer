@@ -46,6 +46,7 @@ class FsDbService implements IDbService {
           }
         }
         if (data != null) {
+          data['attachDirPath'] = item.path;
           data['attacments'] = attachements;
           yield data;
         }

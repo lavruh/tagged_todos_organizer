@@ -8,6 +8,7 @@ class ToDo {
   final bool done;
   final UniqueId? parentId;
   final List<UniqueId> children;
+  final String attachDirPath;
   final List<String> attacments;
   final List<UniqueId> tags;
   ToDo({
@@ -17,6 +18,7 @@ class ToDo {
     required this.done,
     required this.parentId,
     required this.children,
+    required this.attachDirPath,
     required this.attacments,
     required this.tags,
   });
@@ -28,6 +30,7 @@ class ToDo {
         done = false,
         parentId = null,
         children = [],
+        attachDirPath = '',
         attacments = [],
         tags = [];
 
@@ -38,6 +41,7 @@ class ToDo {
     bool? done,
     UniqueId? parentId,
     List<UniqueId>? children,
+    String? attachDirPath,
     List<String>? attacments,
     List<UniqueId>? tags,
   }) {
@@ -48,6 +52,7 @@ class ToDo {
         done: done ?? this.done,
         parentId: parentId ?? this.parentId,
         children: children ?? this.children,
+        attachDirPath: attachDirPath ?? this.attachDirPath,
         attacments: attacments ?? this.attacments,
         tags: tags ?? this.tags);
   }
@@ -60,6 +65,7 @@ class ToDo {
       'done': done,
       'parentId': parentId?.toMap(),
       'children': children.map((x) => x.toMap()).toList(),
+      'attachDirPath': attachDirPath,
       'attacments': attacments,
       'tags': tags.map((e) => e.toMap()).toList(),
     };
@@ -75,6 +81,7 @@ class ToDo {
           map['parentId'] != null ? UniqueId.fromMap(map['parentId']) : null,
       children: List<UniqueId>.from(
           map['children']?.map((x) => UniqueId.fromMap(x)) ?? const []),
+      attachDirPath: map['attachDirPath'],
       attacments: List<String>.from(map['attacments'] ?? const []),
       tags: List.from(map['tags'].map((e) => UniqueId(id: e)) ?? const []),
     );
