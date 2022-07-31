@@ -11,7 +11,11 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const TodosScreen(),
+      // home: const TodosScreen(),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const TodosScreen(),
+      },
     );
   }
 }

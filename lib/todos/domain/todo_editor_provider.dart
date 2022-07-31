@@ -27,10 +27,10 @@ class TodoEditorNotifier extends StateNotifier<ToDo?> {
     state = t;
   }
 
-  updateTodo(ToDo t) async {
-    final String attachementsPath = p.join(
-        await getParentDirPath(parentId: t.parentId?.id.toString()), t.id.id);
-    await Directory(attachementsPath).create();
+  updateTodo(ToDo t) {
+    final String attachementsPath =
+        p.join(getParentDirPath(parentId: t.parentId?.id.toString()), t.id.id);
+    Directory(attachementsPath).createSync();
     final attachementsList = ref.read(attachementsProvider);
     final updatedItem = t.copyWith(
       attachDirPath: attachementsPath,
@@ -38,16 +38,16 @@ class TodoEditorNotifier extends StateNotifier<ToDo?> {
     );
     ref.read(todosProvider.notifier).updateTodo(item: updatedItem);
     _setAttchPatch(updatedItem);
-    state = updatedItem;
+    // state = updatedItem;
     ref.read(snackbarProvider).show("Saved");
   }
 
-  Future<String> getParentDirPath({String? parentId}) async {
+  String getParentDirPath({String? parentId}) {
     final root = Directory(ref.read(appPathProvider));
     if (parentId == null) {
       return p.join(root.path, 'todos');
     }
-    await for (final item in root.list(recursive: true)) {
+    for (final item in root.listSync(recursive: true)) {
       if (p.basename(item.path) == parentId) {
         return item.path;
       }

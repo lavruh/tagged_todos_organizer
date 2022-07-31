@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tagged_todos_organizer/tags/presentation/widgets/tags_widget.dart';
 import 'package:tagged_todos_organizer/todos/domain/todo_editor_provider.dart';
 import 'package:tagged_todos_organizer/todos/domain/todos_provider.dart';
-import 'package:tagged_todos_organizer/todos/presentation/screens/todos_screen.dart';
 import 'package:tagged_todos_organizer/todos/presentation/widgets/attachemets_preview_widget.dart';
 import 'package:tagged_todos_organizer/todos/presentation/widgets/sub_todos_overview_widget.dart';
 import 'package:tagged_todos_organizer/utils/snackbar_provider.dart';
@@ -23,7 +22,9 @@ class TodoEditScreen extends ConsumerWidget {
 
     final item = ref.watch(todoEditorProvider);
     if (item == null) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return Scaffold(
+          appBar: AppBar(),
+          body: const Center(child: CircularProgressIndicator()));
     }
     final title = TextEditingController(text: item.title);
     final description = TextEditingController(text: item.description);
@@ -50,8 +51,10 @@ class TodoEditScreen extends ConsumerWidget {
                 },
                 icon: const Icon(Icons.delete)),
             IconButton(
-              onPressed: () =>
-                  ref.read(todoEditorProvider.notifier).updateTodo(item),
+              onPressed: () {
+                assert(item != null);
+                ref.read(todoEditorProvider.notifier).updateTodo(item);
+              },
               icon: const Icon(Icons.save),
             )
           ],
@@ -113,8 +116,7 @@ class TodoEditScreen extends ConsumerWidget {
   }
 
   bool _goToTodosScreen(BuildContext context) {
-    Navigator.of(context)
-        .push(MaterialPageRoute(builder: (context) => const TodosScreen()));
+    Navigator.of(context).popUntil(ModalRoute.withName('/'));
     return true;
   }
 }
