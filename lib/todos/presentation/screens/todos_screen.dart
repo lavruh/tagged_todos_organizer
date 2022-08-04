@@ -18,6 +18,17 @@ class TodosScreen extends ConsumerWidget {
       appBar: AppBar(
         actions: [
           IconButton(
+              onPressed: () async {
+                final date = await showDialog(
+                    context: context,
+                    builder: (context) => DatePickerDialog(
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime(DateTime.now().year - 3),
+                        lastDate: DateTime(DateTime.now().year + 3)));
+                ref.read(todosFilterByDate.notifier).update((state) => date);
+              },
+              icon: const Icon(Icons.calendar_month)),
+          IconButton(
               onPressed: () {
                 ref.read(tagsFilter.notifier).update((state) => '');
                 ref.read(tagEditorProvider.notifier).update((state) => null);

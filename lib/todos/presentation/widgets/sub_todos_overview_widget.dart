@@ -13,22 +13,24 @@ class SubTodosOverviewWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final todos = ref.watch(subTodosProvider(parentId));
-    return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.6,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          TextButton(
-              onPressed: () {
-                ref.read(todosProvider.notifier).addSubTodo(parentId);
-              },
-              child: const Text('Add subtask')),
-          Flexible(
-            child: ListView(
-              children: todos.map((e) => SubTodoWudget(todo: e)).toList(),
+    return Card(
+      child: SizedBox(
+        height: MediaQuery.of(context).size.height * 0.6,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            TextButton(
+                onPressed: () {
+                  ref.read(todosProvider.notifier).addSubTodo(parentId);
+                },
+                child: const Text('Add subtask')),
+            Flexible(
+              child: ListView(
+                children: todos.map((e) => SubTodoWudget(todo: e)).toList(),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

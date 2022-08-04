@@ -11,6 +11,7 @@ class ToDo {
   final String attachDirPath;
   final List<String> attacments;
   final List<UniqueId> tags;
+  final DateTime? date;
   ToDo({
     required this.id,
     required this.title,
@@ -21,6 +22,7 @@ class ToDo {
     required this.attachDirPath,
     required this.attacments,
     required this.tags,
+    this.date,
   });
 
   ToDo.empty()
@@ -32,19 +34,20 @@ class ToDo {
         children = [],
         attachDirPath = '',
         attacments = [],
-        tags = [];
+        tags = [],
+        date = null;
 
-  ToDo copyWith({
-    UniqueId? id,
-    String? title,
-    String? description,
-    bool? done,
-    UniqueId? parentId,
-    List<UniqueId>? children,
-    String? attachDirPath,
-    List<String>? attacments,
-    List<UniqueId>? tags,
-  }) {
+  ToDo copyWith(
+      {UniqueId? id,
+      String? title,
+      String? description,
+      bool? done,
+      UniqueId? parentId,
+      List<UniqueId>? children,
+      String? attachDirPath,
+      List<String>? attacments,
+      List<UniqueId>? tags,
+      DateTime? date}) {
     return ToDo(
         id: id ?? this.id,
         title: title ?? this.title,
@@ -54,7 +57,8 @@ class ToDo {
         children: children ?? this.children,
         attachDirPath: attachDirPath ?? this.attachDirPath,
         attacments: attacments ?? this.attacments,
-        tags: tags ?? this.tags);
+        tags: tags ?? this.tags,
+        date: date ?? this.date);
   }
 
   Map<String, dynamic> toMap() {
@@ -68,6 +72,7 @@ class ToDo {
       'attachDirPath': attachDirPath,
       'attacments': attacments,
       'tags': tags.map((e) => e.toMap()).toList(),
+      'date': date?.millisecondsSinceEpoch
     };
   }
 
@@ -84,6 +89,9 @@ class ToDo {
       attachDirPath: map['attachDirPath'],
       attacments: List<String>.from(map['attacments'] ?? const []),
       tags: List.from(map['tags'].map((e) => UniqueId(id: e)) ?? const []),
+      date: map['date'] != null
+          ? DateTime.fromMillisecondsSinceEpoch(map['date'])
+          : null,
     );
   }
 

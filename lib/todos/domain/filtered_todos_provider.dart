@@ -7,7 +7,12 @@ final filteredTodosProvider = Provider<List<ToDo>>((ref) {
   final allTodos = ref.watch(todosProvider);
   final filter = ref.watch(todosFilter);
   final filterByTags = ref.watch(todosFilterByTags);
+  final filterByDate = ref.watch(todosFilterByDate);
   List<ToDo> filteredTodos = allTodos;
+  if (filterByDate != null) {
+    filteredTodos =
+        filteredTodos.where((todo) => todo.date == filterByDate).toList();
+  }
   if (filterByTags.isNotEmpty) {
     filteredTodos = filteredTodos.where((todo) {
       return filterByTags.every((element) => todo.tags.contains(element));
@@ -20,6 +25,7 @@ final todosFilter = StateProvider<String>((ref) => '');
 final todosFilterByTags =
     StateNotifierProvider<TodosFilterByTagsNotifier, List<UniqueId>>(
         (ref) => TodosFilterByTagsNotifier());
+final todosFilterByDate = StateProvider<DateTime?>((ref) => null);
 
 class TodosFilterByTagsNotifier extends StateNotifier<List<UniqueId>> {
   TodosFilterByTagsNotifier() : super([]);

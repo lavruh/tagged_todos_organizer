@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:tagged_todos_organizer/tags/presentation/widgets/tags_widget.dart';
 import 'package:tagged_todos_organizer/todos/domain/todo_editor_provider.dart';
 import 'package:tagged_todos_organizer/todos/domain/todos_provider.dart';
@@ -65,15 +66,19 @@ class TodoEditScreen extends ConsumerWidget {
             child: ListView(
               children: [
                 Row(children: [
-                  Checkbox(
-                    onChanged: (value) {
-                      if (value != null) {
-                        ref
-                            .read(todoEditorProvider.notifier)
-                            .setTodo(item.copyWith(done: value));
-                      }
-                    },
-                    value: item.done,
+                  SizedBox(
+                    height: 60,
+                    width: 60,
+                    child: Checkbox(
+                      onChanged: (value) {
+                        if (value != null) {
+                          ref
+                              .read(todoEditorProvider.notifier)
+                              .setTodo(item.copyWith(done: value));
+                        }
+                      },
+                      value: item.done,
+                    ),
                   ),
                   Flexible(
                     child: TextFormField(
@@ -87,15 +92,49 @@ class TodoEditScreen extends ConsumerWidget {
                     ),
                   ),
                 ]),
-                TextFormField(
-                  controller: description,
-                  maxLines: 3,
-                  decoration: const InputDecoration(labelText: 'Description'),
-                  onFieldSubmitted: (value) {
-                    ref
-                        .read(todoEditorProvider.notifier)
-                        .setTodo(item.copyWith(description: value));
-                  },
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      height: 60,
+                      width: 60,
+                      child: TextButton(
+                          onPressed: () async {
+                            final date = await showDialog<DateTime>(
+                                context: context,
+                                builder: (context) => DatePickerDialog(
+                                    initialDate: item.date ?? DateTime.now(),
+                                    firstDate:
+                                        DateTime(DateTime.now().year - 1),
+                                    lastDate:
+                                        DateTime(DateTime.now().year + 3)));
+                            if (date != null) {
+                              ref
+                                  .read(todoEditorProvider.notifier)
+                                  .setTodo(item.copyWith(date: date));
+                            }
+                          },
+                          child: item.date == null
+                              ? const Icon(Icons.calendar_month)
+                              : Text(
+                                  DateFormat('y\nMM-dd').format(item.date!),
+                                )),
+                    ),
+                    Flexible(
+                      child: TextFormField(
+                        controller: description,
+                        maxLines: 3,
+                        decoration:
+                            const InputDecoration(labelText: 'Description'),
+                        onFieldSubmitted: (value) {
+                          ref
+                              .read(todoEditorProvider.notifier)
+                              .setTodo(item.copyWith(description: value));
+                        },
+                      ),
+                    ),
+                  ],
                 ),
                 TagsWidget(
                   tags: item.tags,

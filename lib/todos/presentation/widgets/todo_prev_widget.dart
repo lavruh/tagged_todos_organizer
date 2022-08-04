@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:tagged_todos_organizer/tags/presentation/widgets/tags_preview_widget.dart';
 import 'package:tagged_todos_organizer/todos/domain/todo.dart';
 import 'package:tagged_todos_organizer/todos/domain/todo_editor_provider.dart';
@@ -25,7 +26,14 @@ class TodoPrevWidget extends ConsumerWidget {
           },
           value: item.done,
         ),
-        title: Text(item.title != '' ? item.title : 'Title'),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(item.title != '' ? item.title : 'Title'),
+            if (item.date != null)
+              Text(DateFormat('y-MM-dd').format(item.date!))
+          ],
+        ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
