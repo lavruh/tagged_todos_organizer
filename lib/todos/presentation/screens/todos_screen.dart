@@ -4,7 +4,9 @@ import 'package:tagged_todos_organizer/tags/domain/filtered_tags_provider.dart';
 import 'package:tagged_todos_organizer/tags/domain/tag_editor_provider.dart';
 import 'package:tagged_todos_organizer/tags/presentation/tags_edit_screen.dart';
 import 'package:tagged_todos_organizer/todos/domain/filtered_todos_provider.dart';
-import 'package:tagged_todos_organizer/todos/domain/todos_provider.dart';
+import 'package:tagged_todos_organizer/todos/domain/todo.dart';
+import 'package:tagged_todos_organizer/todos/domain/todo_editor_provider.dart';
+import 'package:tagged_todos_organizer/todos/presentation/screens/todo_edit_screen.dart';
 import 'package:tagged_todos_organizer/todos/presentation/widgets/todo_prev_widget.dart';
 import 'package:tagged_todos_organizer/utils/presentation/widget/search_panel_widget.dart';
 
@@ -38,7 +40,12 @@ class TodosScreen extends ConsumerWidget {
               },
               icon: const Icon(Icons.label)),
           IconButton(
-            onPressed: () => ref.read(todosProvider.notifier).addTodo(),
+            onPressed: () {
+              final item = ToDo.empty();
+              ref.read(todoEditorProvider.notifier).setTodo(item);
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => const TodoEditScreen()));
+            },
             icon: const Icon(Icons.add),
           )
         ],

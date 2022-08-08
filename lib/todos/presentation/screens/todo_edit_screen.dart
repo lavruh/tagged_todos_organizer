@@ -138,11 +138,9 @@ class TodoEditScreen extends ConsumerWidget {
                 ),
                 TagsWidget(
                   tags: item.tags,
-                  updateTags: (t) {
-                    ref
-                        .read(todoEditorProvider.notifier)
-                        .setTodo(item.copyWith(tags: t));
-                  },
+                  updateTags: (t) => ref
+                      .read(todoEditorProvider.notifier)
+                      .setTodo(item.copyWith(tags: t)),
                 ),
                 const AttachementsPreviewWidget(),
                 SubTodosOverviewWidget(parentId: item.id),

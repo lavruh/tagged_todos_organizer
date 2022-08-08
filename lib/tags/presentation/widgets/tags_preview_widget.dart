@@ -15,21 +15,30 @@ class TagsPreviewWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedTags = ref.watch(selectedTagsProvider([...tags]));
-    return ListTile(
-      title: tags.isEmpty
-          ? const Text('Tags:')
-          : Wrap(
-              children: selectedTags
-                  .map((e) => InputChip(
-                        label: Text(e.name),
-                        backgroundColor: Color(e.color),
-                        onPressed: () {},
-                      ))
-                  .toList(),
-            ),
+    return GestureDetector(
       onTap: () {
         if (onTap != null) onTap!();
       },
+      child: Container(
+        color: Colors.transparent,
+        width: MediaQuery.of(context).size.width * 0.9,
+        child: tags.isEmpty
+            ? const Text('Tags:')
+            : Wrap(
+                children: selectedTags
+                    .map((e) => Transform.scale(
+                          scale: 0.8,
+                          child: InputChip(
+                            label: Text(e.name),
+                            backgroundColor: Color(e.color),
+                            onPressed: () {
+                              if (onTap != null) onTap!();
+                            },
+                          ),
+                        ))
+                    .toList(),
+              ),
+      ),
     );
   }
 }

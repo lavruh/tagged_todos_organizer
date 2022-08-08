@@ -29,18 +29,18 @@ class TodoPrevWidget extends ConsumerWidget {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(item.title != '' ? item.title : 'Title'),
+            SizedBox(
+              width: MediaQuery.of(context).size.width * 0.5,
+              child: Text(
+                item.title != '' ? item.title : 'Title',
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
             if (item.date != null)
               Text(DateFormat('y-MM-dd').format(item.date!))
           ],
         ),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(item.description != '' ? item.description : 'Description'),
-            TagsPreviewWidget(tags: item.tags),
-          ],
-        ),
+        subtitle: TagsPreviewWidget(tags: item.tags),
         onTap: () {
           ref.read(todoEditorProvider.notifier).setTodo(item);
           Navigator.of(context).push(MaterialPageRoute(

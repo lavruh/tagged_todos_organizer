@@ -22,29 +22,6 @@ class TagSelectWidget extends ConsumerWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        ConstrainedBox(
-          constraints: BoxConstraints(
-            maxHeight: MediaQuery.of(context).size.height * 0.8,
-          ),
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Wrap(
-                spacing: 3,
-                children: items.map((e) {
-                  return InputChip(
-                    selected: _isSelected(e.id),
-                    label: Text(e.name),
-                    backgroundColor: Color(e.color),
-                    selectedColor: Color(e.color),
-                    onPressed: onPress != null ? () => onPress!(e) : null,
-                    onDeleted: onDelete != null ? () => onDelete!(e) : null,
-                  );
-                }).toList(),
-              ),
-            ),
-          ),
-        ),
         if (selectedTags != null)
           SearchPanelWidget(
             onSearch: (String val) {
@@ -52,6 +29,23 @@ class TagSelectWidget extends ConsumerWidget {
             },
             tagsSort: true,
           ),
+        SingleChildScrollView(
+          child: Wrap(
+            children: items.map((e) {
+              return Transform.scale(
+                scale: 0.8,
+                child: InputChip(
+                  selected: _isSelected(e.id),
+                  label: Text(e.name),
+                  backgroundColor: Color(e.color),
+                  selectedColor: Color(e.color),
+                  onPressed: onPress != null ? () => onPress!(e) : null,
+                  onDeleted: onDelete != null ? () => onDelete!(e) : null,
+                ),
+              );
+            }).toList(),
+          ),
+        ),
       ],
     );
   }
