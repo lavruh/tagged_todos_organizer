@@ -27,32 +27,34 @@ class _TagsWidgetState extends State<TagsWidget> {
 
   @override
   Widget build(BuildContext context) {
-    tags = widget.tags;
-    return Card(
-      child: AnimatedCrossFade(
-        duration: const Duration(milliseconds: 200),
-        crossFadeState:
-            editMode ? CrossFadeState.showSecond : CrossFadeState.showFirst,
-        firstChild: TagsPreviewWidget(
-          tags: tags,
-          onTap: _toggleMode,
-        ),
-        secondChild: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            TextButton(onPressed: _toggleMode, child: const Text('Confirm')),
-            TagSelectWidget(
-              selectedTags: tags,
-              onPress: (tag) {
-                if (!tags.contains(tag.id)) {
-                  tags.add(tag.id);
-                } else {
-                  tags.remove(tag.id);
-                }
-                setState(() {});
-              },
-            ),
-          ],
+    return ConstrainedBox(
+      constraints: const BoxConstraints(minHeight: 40),
+      child: Card(
+        child: AnimatedCrossFade(
+          duration: const Duration(milliseconds: 200),
+          crossFadeState:
+              editMode ? CrossFadeState.showSecond : CrossFadeState.showFirst,
+          firstChild: TagsPreviewWidget(
+            tags: tags,
+            onTap: _toggleMode,
+          ),
+          secondChild: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              TextButton(onPressed: _toggleMode, child: const Text('Confirm')),
+              TagSelectWidget(
+                selectedTags: tags,
+                onPress: (tag) {
+                  if (!tags.contains(tag.id)) {
+                    tags.add(tag.id);
+                  } else {
+                    tags.remove(tag.id);
+                  }
+                  setState(() {});
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );

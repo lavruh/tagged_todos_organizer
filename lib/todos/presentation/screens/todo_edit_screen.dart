@@ -6,6 +6,7 @@ import 'package:tagged_todos_organizer/todos/domain/todo_editor_provider.dart';
 import 'package:tagged_todos_organizer/todos/domain/todos_provider.dart';
 import 'package:tagged_todos_organizer/todos/presentation/widgets/attachemets_preview_widget.dart';
 import 'package:tagged_todos_organizer/todos/presentation/widgets/sub_todos_overview_widget.dart';
+import 'package:tagged_todos_organizer/utils/presentation/widget/text_field_with_confirm.dart';
 import 'package:tagged_todos_organizer/utils/snackbar_provider.dart';
 
 class TodoEditScreen extends ConsumerWidget {
@@ -27,8 +28,6 @@ class TodoEditScreen extends ConsumerWidget {
           appBar: AppBar(),
           body: const Center(child: CircularProgressIndicator()));
     }
-    final title = TextEditingController(text: item.title);
-    final description = TextEditingController(text: item.description);
     return WillPopScope(
       onWillPop: () async => _goToTodosScreen(context),
       child: Scaffold(
@@ -53,7 +52,6 @@ class TodoEditScreen extends ConsumerWidget {
                 icon: const Icon(Icons.delete)),
             IconButton(
               onPressed: () {
-                assert(item != null);
                 ref.read(todoEditorProvider.notifier).updateTodo(item);
               },
               icon: const Icon(Icons.save),
@@ -81,16 +79,12 @@ class TodoEditScreen extends ConsumerWidget {
                     ),
                   ),
                   Flexible(
-                    child: TextFormField(
-                      controller: title,
-                      decoration: const InputDecoration(labelText: 'Title'),
-                      onFieldSubmitted: (value) {
-                        ref
-                            .read(todoEditorProvider.notifier)
-                            .setTodo(item.copyWith(title: value));
-                      },
-                    ),
-                  ),
+                      child: TextFieldWithConfirm(
+                          key: Key(item.title),
+                          text: item.title,
+                          onConfirm: (value) => ref
+                              .read(todoEditorProvider.notifier)
+                              .setTodo(item.copyWith(title: value)))),
                 ]),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
@@ -122,21 +116,21 @@ class TodoEditScreen extends ConsumerWidget {
                                 )),
                     ),
                     Flexible(
-                      child: TextFormField(
-                        controller: description,
-                        maxLines: 3,
-                        decoration:
-                            const InputDecoration(labelText: 'Description'),
-                        onFieldSubmitted: (value) {
+                      child: TextFieldWithConfirm(
+                        key: Key(item.description),
+                        text: item.description,
+                        onConfirm: (value) {
                           ref
                               .read(todoEditorProvider.notifier)
                               .setTodo(item.copyWith(description: value));
                         },
+                        lable: 'Description',
                       ),
                     ),
                   ],
                 ),
                 TagsWidget(
+                  key: Key(item.tags.hashCode.toString()),
                   tags: item.tags,
                   updateTags: (t) => ref
                       .read(todoEditorProvider.notifier)
