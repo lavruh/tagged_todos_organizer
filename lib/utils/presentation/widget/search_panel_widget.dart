@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tagged_todos_organizer/tags/domain/filtered_tags_provider.dart';
+import 'package:tagged_todos_organizer/todos/domain/filtered_todos_provider.dart';
 import 'package:tagged_todos_organizer/utils/presentation/widget/tags_filter_dialog.dart';
 import 'package:tagged_todos_organizer/utils/presentation/widget/text_field_with_clear_button.dart';
 
@@ -43,7 +44,9 @@ class SearchPanelWidget extends ConsumerWidget {
             if (tagsFilter)
               IconButton(
                   onPressed: () => _showTagsFilter(context, ref),
-                  icon: const Icon(Icons.label))
+                  icon: ref.watch(todosFilterByTags).isNotEmpty
+                      ? const Icon(Icons.label_important)
+                      : const Icon(Icons.label_important_outline))
           ],
         ),
       ),

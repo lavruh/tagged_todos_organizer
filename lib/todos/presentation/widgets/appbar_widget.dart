@@ -17,6 +17,16 @@ class AppBarWidget extends ConsumerWidget implements PreferredSizeWidget {
       actions: [
         IconButton(
             onPressed: () async {
+              final flag = ref.read(todosFilterShowFutureDates);
+              ref
+                  .read(todosFilterShowFutureDates.notifier)
+                  .update((state) => !flag);
+            },
+            icon: ref.watch(todosFilterShowFutureDates)
+                ? const Icon(Icons.data_exploration)
+                : const Icon(Icons.data_exploration_outlined)),
+        IconButton(
+            onPressed: () async {
               final flag = ref.read(todosFilterShowUnDone);
               ref.read(todosFilterShowUnDone.notifier).update((state) => !flag);
             },

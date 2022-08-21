@@ -3,6 +3,7 @@ import 'package:tagged_todos_organizer/tags/domain/tags_provider.dart';
 import 'package:tagged_todos_organizer/todos/domain/todo.dart';
 import 'package:tagged_todos_organizer/todos/domain/todos_db_provider.dart';
 import 'package:tagged_todos_organizer/utils/data/i_db_service.dart';
+import 'package:tagged_todos_organizer/utils/snackbar_provider.dart';
 import 'package:tagged_todos_organizer/utils/unique_id.dart';
 
 final todosProvider = StateNotifierProvider<TodosNotifier, List<ToDo>>((ref) {
@@ -26,12 +27,14 @@ class TodosNotifier extends StateNotifier<List<ToDo>> {
 
   getTodos({String? parentId}) async {
     final table = parentId ?? tableName;
-    final data = db?.getAll(table: table);
-    if (data != null) {
+    if (db != null) {
+      final data = db!.getAll(table: table).handleError((e) {
+        ref.read(snackbarProvider.notifier).show(e);
+      });
       await for (final map in data) {
         final todo = ToDo.fromMap(map);
         state = [...state, todo];
-        getTodos(parentId: todo.id.id);
+        await getTodos(parentId: todo.id.id);
       }
     }
   }
@@ -49,9 +52,13 @@ class TodosNotifier extends StateNotifier<List<ToDo>> {
     final String table = item.parentId?.id ?? tableName;
     await db?.update(id: item.id.toString(), item: item.toMap(), table: table);
     final index = state.indexWhere((e) => e.id == item.id);
-    state.removeAt(index);
-    state.insert(index, item);
-    state = [...state];
+    if (index != -1) {
+      state.removeAt(index);
+      state.insert(index, item);
+      state = [...state];
+    } else {
+      addTodo(todo: item);
+    }
   }
 
   deleteTodo({required ToDo todo}) async {

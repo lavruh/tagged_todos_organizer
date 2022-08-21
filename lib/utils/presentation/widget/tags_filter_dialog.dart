@@ -8,16 +8,22 @@ class TagsFilterDialog extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final filter = ref.read(todosFilterByTags.notifier);
     return Dialog(
-      child: ConstrainedBox(
-        constraints: BoxConstraints(
-            maxHeight: MediaQuery.of(context).size.height * 0.65),
-        child: SingleChildScrollView(
-          child: TagSelectWidget(
-            selectedTags: ref.watch(todosFilterByTags),
-            onPress: (tag) =>
-                ref.read(todosFilterByTags.notifier).toggleFilter(tag.id),
-          ),
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            TextButton(
+                onPressed: () => filter.clearFilter(),
+                child: const Text('Clear')),
+            SingleChildScrollView(
+              child: TagSelectWidget(
+                selectedTags: ref.watch(todosFilterByTags),
+                onPress: (tag) => filter.toggleFilter(tag.id),
+              ),
+            ),
+          ],
         ),
       ),
     );

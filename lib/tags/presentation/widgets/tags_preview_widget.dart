@@ -29,7 +29,10 @@ class TagsPreviewWidget extends ConsumerWidget {
                     .map((e) => Transform.scale(
                           scale: 0.8,
                           child: InputChip(
-                            label: Text(e.name),
+                            label: Text(
+                              e.name,
+                              textScaleFactor: 1.2,
+                            ),
                             backgroundColor: Color(e.color),
                             onPressed: () {
                               if (onTap != null) onTap!();
