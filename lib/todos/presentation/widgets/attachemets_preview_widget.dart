@@ -1,9 +1,9 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:open_filex/open_filex.dart';
 import 'package:path/path.dart' as p;
-import 'package:process_run/shell.dart';
+import 'package:tagged_todos_organizer/images_view/domain/images_view_provider.dart';
+import 'package:tagged_todos_organizer/images_view/presentation/screens/image_view_screen.dart';
 import 'package:tagged_todos_organizer/todos/domain/attachements_provider.dart';
 
 class AttachementsPreviewWidget extends ConsumerWidget {
@@ -35,13 +35,20 @@ class AttachementsPreviewWidget extends ConsumerWidget {
               children: items
                   .map((e) => TextButton(
                         onPressed: () async {
-                          if (Platform.isLinux) {
-                            final shell = Shell();
-                            shell.run("xdg-open '$e'");
+                          final extension = p.extension(e);
+                          if (extension == '.jpg' || extension == '.jpeg') {
+                            ref.read(imagesViewProvider.notifier).openImage(e);
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const ImagesViewScreen()),
+                            );
+                          } else {
+                            ref
+                                .read(attachementsProvider.notifier)
+                                .openFile(file: e);
                           }
-                          if (Platform.isAndroid) {
-                            OpenFilex.open(e);
-                          }
+                          // should update attachements list
                         },
                         child: Text(p.basename(e)),
                       ))

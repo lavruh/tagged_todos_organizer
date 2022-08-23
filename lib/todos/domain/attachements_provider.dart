@@ -5,6 +5,7 @@ import 'package:open_filex/open_filex.dart';
 import 'package:path/path.dart' as p;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:process_run/shell.dart';
 import 'package:tagged_todos_organizer/utils/snackbar_provider.dart';
 
 final attachementsProvider =
@@ -73,5 +74,15 @@ class AttachementsNotifier extends StateNotifier<List<String>> {
     ref
         .read(snackbarProvider.notifier)
         .show('Can not add attachement. Save item first.');
+  }
+
+  void openFile({required String file}) {
+    if (Platform.isLinux) {
+      final shell = Shell();
+      shell.run("xdg-open '$file'");
+    }
+    if (Platform.isAndroid) {
+      OpenFilex.open(file);
+    }
   }
 }
