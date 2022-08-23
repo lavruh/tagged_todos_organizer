@@ -26,22 +26,24 @@ class TagSelectWidget extends ConsumerWidget {
           fit: BoxFit.cover,
           child: SizedBox(
             width: MediaQuery.of(context).size.width * 0.9,
-            height: MediaQuery.of(context).size.height * 0.4,
+            height: MediaQuery.of(context).size.height * 0.5,
             child: SingleChildScrollView(
               child: Wrap(
                 children: items.map((e) {
-                  return Transform.scale(
-                    scale: 0.8,
-                    child: InputChip(
-                      selected: _isSelected(e.id),
-                      label: Text(
-                        e.name,
-                        textScaleFactor: 1.2,
+                  return SizedBox(
+                    height: 40,
+                    child: FittedBox(
+                      child: InputChip(
+                        selected: _isSelected(e.id),
+                        label: Text(
+                          e.name,
+                          textScaleFactor: 1.2,
+                        ),
+                        backgroundColor: Color(e.color),
+                        selectedColor: Color(e.color),
+                        onPressed: onPress != null ? () => onPress!(e) : null,
+                        onDeleted: onDelete != null ? () => onDelete!(e) : null,
                       ),
-                      backgroundColor: Color(e.color),
-                      selectedColor: Color(e.color),
-                      onPressed: onPress != null ? () => onPress!(e) : null,
-                      onDeleted: onDelete != null ? () => onDelete!(e) : null,
                     ),
                   );
                 }).toList(),

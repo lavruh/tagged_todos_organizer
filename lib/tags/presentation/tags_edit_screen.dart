@@ -5,7 +5,6 @@ import 'package:tagged_todos_organizer/tags/domain/tag.dart';
 import 'package:tagged_todos_organizer/tags/domain/tag_editor_provider.dart';
 import 'package:tagged_todos_organizer/tags/domain/tags_provider.dart';
 import 'package:tagged_todos_organizer/tags/presentation/widgets/tag_edit_widget.dart';
-import 'package:tagged_todos_organizer/tags/presentation/widgets/tag_select_widget.dart';
 import 'package:tagged_todos_organizer/utils/presentation/widget/search_panel_widget.dart';
 import 'package:tagged_todos_organizer/utils/snackbar_provider.dart';
 
@@ -21,6 +20,8 @@ class TagsEditScreen extends ConsumerWidget {
       }
     });
 
+    final items = ref.watch(filteredTagsProvider);
+
     return Scaffold(
       appBar: AppBar(
         actions: [
@@ -34,10 +35,28 @@ class TagsEditScreen extends ConsumerWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             const TagEditWidget(),
-            TagSelectWidget(
-                onPress: (tag) => _setToEdit(ref, tag),
-                onDelete: (tag) =>
-                    ref.read(tagsProvider.notifier).deleteTag(tag.id))
+            SingleChildScrollView(
+              child: Wrap(
+                children: items.map((e) {
+                  return SizedBox(
+                    height: 35,
+                    child: FittedBox(
+                      child: InputChip(
+                        label: Text(
+                          e.name,
+                          textScaleFactor: 1.2,
+                        ),
+                        backgroundColor: Color(e.color),
+                        selectedColor: Color(e.color),
+                        onPressed: () => _setToEdit(ref, e),
+                        onDeleted: () =>
+                            ref.read(tagsProvider.notifier).deleteTag(e.id),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
           ],
         ),
       ),

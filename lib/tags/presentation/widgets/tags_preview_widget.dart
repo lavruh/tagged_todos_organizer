@@ -26,17 +26,19 @@ class TagsPreviewWidget extends ConsumerWidget {
             ? const Text('Tags:')
             : Wrap(
                 children: selectedTags
-                    .map((e) => Transform.scale(
-                          scale: 0.8,
-                          child: InputChip(
-                            label: Text(
-                              e.name,
-                              textScaleFactor: 1.2,
+                    .map((e) => SizedBox(
+                          height: 35,
+                          child: FittedBox(
+                            child: InputChip(
+                              label: Text(
+                                e.name,
+                                textScaleFactor: 1.1,
+                              ),
+                              backgroundColor: Color(e.color),
+                              onPressed: () {
+                                if (onTap != null) onTap!();
+                              },
                             ),
-                            backgroundColor: Color(e.color),
-                            onPressed: () {
-                              if (onTap != null) onTap!();
-                            },
                           ),
                         ))
                     .toList(),
