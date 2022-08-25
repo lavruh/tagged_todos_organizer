@@ -49,6 +49,9 @@ class AttachementsPreviewWidget extends ConsumerWidget {
                                 .openFile(file: e);
                           }
                           // should update attachements list
+                          ref
+                              .read(attachementsProvider.notifier)
+                              .updateAttachements();
                         },
                         child: Text(p.basename(e)),
                       ))

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:path/path.dart' as p;
+import 'package:tagged_todos_organizer/utils/app_path_provider.dart';
 
 import 'package:tagged_todos_organizer/utils/data/i_db_service.dart';
 
@@ -46,7 +47,9 @@ class FsDbService implements IDbService {
           }
         }
         if (data != null) {
-          data['attachDirPath'] = item.path;
+          final String relativePath =
+              p.relative(item.path, from: getAppFolderPath());
+          data['attachDirPath'] = relativePath;
           data['attacments'] = attachements;
           yield data;
         }

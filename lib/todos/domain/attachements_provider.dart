@@ -6,6 +6,7 @@ import 'package:path/path.dart' as p;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:process_run/shell.dart';
+import 'package:tagged_todos_organizer/utils/app_path_provider.dart';
 import 'package:tagged_todos_organizer/utils/snackbar_provider.dart';
 
 final attachementsProvider =
@@ -18,16 +19,29 @@ class AttachementsNotifier extends StateNotifier<List<String>> {
   late Directory root;
   StateNotifierProviderRef ref;
 
-  load({required List<String> attachs, required String attachementsFolder}) {
+  load({List<String>? attachs, required String attachementsFolder}) {
     if (attachementsFolder.isNotEmpty) {
-      final dir = Directory(p.normalize(attachementsFolder));
+      final dir = Directory(p.join(getAppFolderPath(), attachementsFolder));
       if (dir.existsSync()) {
         path = dir.path;
+        updateAttachements();
       }
     } else {
       path = null;
     }
-    state = attachs;
+  }
+
+  updateAttachements() {
+    if (path != null) {
+      final dir = Directory(path!);
+      List<String> files = [];
+      for (final file in dir.listSync()) {
+        if (file is File) {
+          files.add(file.path);
+        }
+      }
+      state = files;
+    }
   }
 
   void addPhoto() async {

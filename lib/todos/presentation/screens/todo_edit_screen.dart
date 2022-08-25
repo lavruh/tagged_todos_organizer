@@ -45,9 +45,26 @@ class TodoEditScreen extends ConsumerWidget {
                   child: const Text('Go parent',
                       style: TextStyle(color: Colors.white))),
             IconButton(
-                onPressed: () {
-                  ref.read(todosProvider.notifier).deleteTodo(todo: item);
-                  _goToTodosScreen(context);
+                onPressed: () async {
+                  final bool act = await showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                            title: const Text('Delete todo?'),
+                            actions: [
+                              IconButton(
+                                  onPressed: () =>
+                                      Navigator.of(context).pop(true),
+                                  icon: const Icon(Icons.check)),
+                              IconButton(
+                                  onPressed: () =>
+                                      Navigator.of(context).pop(false),
+                                  icon: const Icon(Icons.cancel)),
+                            ],
+                          ));
+                  if (act) {
+                    ref.read(todosProvider.notifier).deleteTodo(todo: item);
+                    _goToTodosScreen(context);
+                  }
                 },
                 icon: const Icon(Icons.delete)),
             IconButton(
