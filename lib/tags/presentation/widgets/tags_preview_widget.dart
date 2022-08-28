@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tagged_todos_organizer/tags/domain/selected_tags_provider.dart';
+import 'package:tagged_todos_organizer/tags/presentation/widgets/tag_widget.dart';
 import 'package:tagged_todos_organizer/utils/unique_id.dart';
 
 class TagsPreviewWidget extends ConsumerWidget {
@@ -25,23 +26,7 @@ class TagsPreviewWidget extends ConsumerWidget {
         child: tags.isEmpty
             ? const Text('Tags:')
             : Wrap(
-                children: selectedTags
-                    .map((e) => SizedBox(
-                          height: 35,
-                          child: FittedBox(
-                            child: InputChip(
-                              label: Text(
-                                e.name,
-                                textScaleFactor: 1.1,
-                              ),
-                              backgroundColor: Color(e.color),
-                              onPressed: () {
-                                if (onTap != null) onTap!();
-                              },
-                            ),
-                          ),
-                        ))
-                    .toList(),
+                children: selectedTags.map((e) => TagWidget(e: e)).toList(),
               ),
       ),
     );

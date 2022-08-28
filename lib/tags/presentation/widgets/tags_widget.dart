@@ -44,6 +44,7 @@ class _TagsWidgetState extends State<TagsWidget> {
               TextButton(onPressed: _toggleMode, child: const Text('Confirm')),
               TagSelectWidget(
                 selectedTags: tags,
+                height: 0.1,
                 onPress: (tag) {
                   if (!tags.contains(tag.id)) {
                     tags.add(tag.id);

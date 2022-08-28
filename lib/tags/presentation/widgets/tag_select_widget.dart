@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tagged_todos_organizer/tags/domain/filtered_tags_provider.dart';
 import 'package:tagged_todos_organizer/tags/domain/tag.dart';
+import 'package:tagged_todos_organizer/tags/presentation/widgets/tag_widget.dart';
 import 'package:tagged_todos_organizer/utils/presentation/widget/search_panel_widget.dart';
 import 'package:tagged_todos_organizer/utils/unique_id.dart';
 
@@ -10,11 +11,13 @@ class TagSelectWidget extends ConsumerWidget {
     this.onPress,
     this.onDelete,
     this.selectedTags,
+    this.height,
     Key? key,
   }) : super(key: key);
   final Function(Tag)? onPress;
   final Function(Tag)? onDelete;
   final List<UniqueId>? selectedTags;
+  final double? height;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -26,25 +29,15 @@ class TagSelectWidget extends ConsumerWidget {
           fit: BoxFit.cover,
           child: SizedBox(
             width: MediaQuery.of(context).size.width * 0.9,
-            height: MediaQuery.of(context).size.height * 0.5,
+            height: MediaQuery.of(context).size.height * (height ?? 1),
             child: SingleChildScrollView(
               child: Wrap(
                 children: items.map((e) {
-                  return SizedBox(
-                    height: 40,
-                    child: FittedBox(
-                      child: InputChip(
-                        selected: _isSelected(e.id),
-                        label: Text(
-                          e.name,
-                          textScaleFactor: 1.2,
-                        ),
-                        backgroundColor: Color(e.color),
-                        selectedColor: Color(e.color),
-                        onPressed: onPress != null ? () => onPress!(e) : null,
-                        onDeleted: onDelete != null ? () => onDelete!(e) : null,
-                      ),
-                    ),
+                  return TagWidget(
+                    e: e,
+                    selected: _isSelected(e.id),
+                    onPress: onPress != null ? (tag) => onPress!(tag) : null,
+                    onDelete: onDelete != null ? (tag) => onDelete!(tag) : null,
                   );
                 }).toList(),
               ),

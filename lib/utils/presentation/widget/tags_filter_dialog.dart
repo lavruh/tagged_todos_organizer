@@ -20,6 +20,7 @@ class TagsFilterDialog extends ConsumerWidget {
             SingleChildScrollView(
               child: TagSelectWidget(
                 selectedTags: ref.watch(todosFilterByTags),
+                height: 0.3,
                 onPress: (tag) => filter.toggleFilter(tag.id),
               ),
             ),
