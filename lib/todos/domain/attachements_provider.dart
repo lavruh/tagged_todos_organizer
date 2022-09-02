@@ -24,11 +24,11 @@ class AttachementsNotifier extends StateNotifier<List<String>> {
       final dir = Directory(p.join(getAppFolderPath(), attachementsFolder));
       if (dir.existsSync()) {
         path = dir.path;
-        updateAttachements();
       }
     } else {
       path = null;
     }
+    updateAttachements();
   }
 
   updateAttachements() {
@@ -41,6 +41,8 @@ class AttachementsNotifier extends StateNotifier<List<String>> {
         }
       }
       state = files;
+    } else {
+      state = [];
     }
   }
 
@@ -98,5 +100,18 @@ class AttachementsNotifier extends StateNotifier<List<String>> {
     if (Platform.isAndroid) {
       OpenFilex.open(file);
     }
+  }
+
+  String getParentDirPath({String? parentId}) {
+    final root = Directory(ref.read(appPathProvider));
+    if (parentId == null) {
+      return p.join(root.path, 'todos');
+    }
+    for (final item in root.listSync(recursive: true)) {
+      if (p.basename(item.path) == parentId) {
+        return item.path;
+      }
+    }
+    throw (Exception('No item with id $parentId found'));
   }
 }

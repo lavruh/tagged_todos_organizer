@@ -6,6 +6,7 @@ import 'package:tagged_todos_organizer/todos/domain/todo.dart';
 import 'package:tagged_todos_organizer/todos/domain/todo_editor_provider.dart';
 import 'package:tagged_todos_organizer/todos/domain/todos_provider.dart';
 import 'package:tagged_todos_organizer/todos/presentation/screens/todo_edit_screen.dart';
+import 'package:tagged_todos_organizer/todos/presentation/widgets/postpone_menu.dart';
 
 class TodoPrevWidget extends ConsumerWidget {
   const TodoPrevWidget({Key? key, required this.item}) : super(key: key);
@@ -30,14 +31,23 @@ class TodoPrevWidget extends ConsumerWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             SizedBox(
-              width: MediaQuery.of(context).size.width * 0.5,
+              width: MediaQuery.of(context).size.width * 0.4,
               child: Text(
                 item.title != '' ? item.title : 'Title',
                 overflow: TextOverflow.ellipsis,
               ),
             ),
             if (item.date != null)
-              Text(DateFormat('y-MM-dd').format(item.date!))
+              TextButton(
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) =>
+                        Dialog(child: PostponeMenuWidget(item: item)),
+                  );
+                },
+                child: Text(DateFormat('y-MM-dd').format(item.date!)),
+              ),
           ],
         ),
         subtitle: TagsPreviewWidget(tags: item.tags),

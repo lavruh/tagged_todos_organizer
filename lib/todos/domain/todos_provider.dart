@@ -1,10 +1,14 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tagged_todos_organizer/tags/domain/tags_provider.dart';
+import 'package:tagged_todos_organizer/todos/domain/attachements_provider.dart';
 import 'package:tagged_todos_organizer/todos/domain/todo.dart';
+import 'package:tagged_todos_organizer/todos/domain/todo_editor_provider.dart';
 import 'package:tagged_todos_organizer/todos/domain/todos_db_provider.dart';
 import 'package:tagged_todos_organizer/utils/data/i_db_service.dart';
 import 'package:tagged_todos_organizer/utils/snackbar_provider.dart';
 import 'package:tagged_todos_organizer/utils/unique_id.dart';
+import 'dart:io';
+import 'package:path/path.dart' as p;
 
 final todosProvider = StateNotifierProvider<TodosNotifier, List<ToDo>>((ref) {
   final notifier = TodosNotifier(ref);
@@ -40,8 +44,7 @@ class TodosNotifier extends StateNotifier<List<ToDo>> {
   }
 
   addTodo({ToDo? todo}) {
-    final newItem = todo ?? ToDo.empty();
-    state = [...state, newItem];
+    state = [...state, todo ?? ToDo.empty()];
   }
 
   addSubTodo(UniqueId parent) {
@@ -49,16 +52,30 @@ class TodosNotifier extends StateNotifier<List<ToDo>> {
   }
 
   updateTodo({required ToDo item}) async {
-    final String table = item.parentId?.id ?? tableName;
-    await db?.update(id: item.id.toString(), item: item.toMap(), table: table);
     final index = state.indexWhere((e) => e.id == item.id);
     if (index != -1) {
       state.removeAt(index);
       state.insert(index, item);
       state = [...state];
     } else {
+      final id = '${item.id.id}_${item.title}'.replaceAll(RegExp('/'), '');
+      item = item.copyWith(id: UniqueId(id: id));
       addTodo(todo: item);
     }
+    try {
+      item = _updateItemAttachements(item);
+    } on Exception catch (e) {
+      throw Exception(e);
+    }
+
+    ref.read(todoEditorProvider.notifier).setTodo(item);
+
+    final String table = item.parentId?.id ?? tableName;
+    await db
+        ?.update(id: item.id.toString(), item: item.toMap(), table: table)
+        .onError((error, stackTrace) {
+      return ref.read(snackbarProvider).show("$error");
+    });
   }
 
   deleteTodo({required ToDo todo}) async {
@@ -80,5 +97,23 @@ class TodosNotifier extends StateNotifier<List<ToDo>> {
       }
     }
     state = cleanTodos;
+  }
+
+  ToDo _updateItemAttachements(ToDo t) {
+    final attachementsState = ref.read(attachementsProvider.notifier);
+    final String attachementsPath = p.join(
+        attachementsState.getParentDirPath(parentId: t.parentId?.id.toString()),
+        t.id.id);
+    try {
+      Directory(attachementsPath).createSync();
+    } on FileSystemException catch (e) {
+      throw Exception(e);
+    }
+
+    final attachementsList = ref.read(attachementsProvider);
+    return t.copyWith(
+      attachDirPath: attachementsPath,
+      attacments: attachementsList,
+    );
   }
 }

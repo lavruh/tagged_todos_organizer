@@ -75,7 +75,9 @@ class FsDbService implements IDbService {
       required String table}) async {
     final folderName = id;
     final dirPath = p.join(await findPath(path: table), folderName);
-    await Directory(dirPath).create();
+    await Directory(dirPath)
+        .create()
+        .onError((error, stackTrace) => throw FsDbException('$error'));
     await File(p.join(dirPath, 'data.json')).writeAsString(toJson(item));
   }
 

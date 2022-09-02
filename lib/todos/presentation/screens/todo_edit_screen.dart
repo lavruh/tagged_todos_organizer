@@ -18,7 +18,7 @@ class TodoEditScreen extends ConsumerWidget {
       if (val.msg != null) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text(val.msg ?? ''),
-            duration: const Duration(milliseconds: 200)));
+            duration: const Duration(milliseconds: 3000)));
       }
     });
 

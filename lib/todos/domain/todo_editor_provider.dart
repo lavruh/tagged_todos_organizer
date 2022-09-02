@@ -1,10 +1,7 @@
-import 'dart:io';
-import 'package:path/path.dart' as p;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tagged_todos_organizer/todos/domain/attachements_provider.dart';
 import 'package:tagged_todos_organizer/todos/domain/todo.dart';
 import 'package:tagged_todos_organizer/todos/domain/todos_provider.dart';
-import 'package:tagged_todos_organizer/utils/app_path_provider.dart';
 import 'package:tagged_todos_organizer/utils/snackbar_provider.dart';
 import 'package:tagged_todos_organizer/utils/unique_id.dart';
 
@@ -27,32 +24,17 @@ class TodoEditorNotifier extends StateNotifier<ToDo?> {
     state = t;
   }
 
-  updateTodo(ToDo t) {
-    final String attachementsPath =
-        p.join(getParentDirPath(parentId: t.parentId?.id.toString()), t.id.id);
-    Directory(attachementsPath).createSync();
-    final attachementsList = ref.read(attachementsProvider);
-    final updatedItem = t.copyWith(
-      attachDirPath: attachementsPath,
-      attacments: attachementsList,
-    );
-    ref.read(todosProvider.notifier).updateTodo(item: updatedItem);
-    _setAttchPatch(updatedItem);
-    // state = updatedItem;
-    ref.read(snackbarProvider).show("Saved");
-  }
-
-  String getParentDirPath({String? parentId}) {
-    final root = Directory(ref.read(appPathProvider));
-    if (parentId == null) {
-      return p.join(root.path, 'todos');
+  updateTodo(ToDo t) async {
+    bool fl = true;
+    try {
+      await ref.read(todosProvider.notifier).updateTodo(item: t);
+    } on Exception catch (e) {
+      ref.read(snackbarProvider).show('$e');
+      fl = false;
     }
-    for (final item in root.listSync(recursive: true)) {
-      if (p.basename(item.path) == parentId) {
-        return item.path;
-      }
+    if (fl) {
+      ref.read(snackbarProvider).show("Saved");
     }
-    throw (Exception('No item with id $parentId found'));
   }
 
   _setAttchPatch(ToDo t) {
