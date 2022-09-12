@@ -25,6 +25,7 @@ dependencies:
   notes_on_image:
     path: /home/lavruh/AndroidStudioProjects/NotesOnImage
   get: ^4.6.5
+  flutter_slidable: ^2.0.0
 
 
 dev_dependencies:

@@ -21,16 +21,16 @@ void main() {
 
   test('add todo item to root dir', () async {
     final Map<String, dynamic> item = ToDo(
-            id: UniqueId(id: '1'),
-            title: 'title',
-            description: 'description',
-            done: false,
-            parentId: null,
-            children: [],
-            attacments: ['attacments'],
-            tags: [UniqueId(id: 't1'), UniqueId(id: 'tag2')],
-            attachDirPath: '')
-        .toMap();
+        id: UniqueId(id: '1'),
+        title: 'title',
+        description: 'description',
+        done: false,
+        parentId: null,
+        children: [],
+        attacments: ['attacments'],
+        tags: [UniqueId(id: 't1'), UniqueId(id: 'tag2')],
+        attachDirPath: '',
+        usedParts: []).toMap();
 
     await sut.init(dbPath: dbPath);
     await sut.add(item: item, table: '/');

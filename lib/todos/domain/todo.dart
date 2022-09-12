@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:tagged_todos_organizer/parts/domain/used_part.dart';
 import 'package:tagged_todos_organizer/utils/unique_id.dart';
 
 class ToDo {
@@ -12,6 +13,7 @@ class ToDo {
   final List<String> attacments;
   final List<UniqueId> tags;
   final DateTime? date;
+  final List<UsedPart> usedParts;
   ToDo({
     required this.id,
     required this.title,
@@ -23,6 +25,7 @@ class ToDo {
     required this.attacments,
     required this.tags,
     this.date,
+    required this.usedParts,
   });
 
   ToDo.empty()
@@ -35,7 +38,8 @@ class ToDo {
         attachDirPath = '',
         attacments = [],
         tags = [],
-        date = null;
+        date = null,
+        usedParts = [];
 
   ToDo copyWith(
       {UniqueId? id,
@@ -47,7 +51,8 @@ class ToDo {
       String? attachDirPath,
       List<String>? attacments,
       List<UniqueId>? tags,
-      DateTime? date}) {
+      DateTime? date,
+      List<UsedPart>? usedParts}) {
     return ToDo(
         id: id ?? this.id,
         title: title ?? this.title,
@@ -58,7 +63,8 @@ class ToDo {
         attachDirPath: attachDirPath ?? this.attachDirPath,
         attacments: attacments ?? this.attacments,
         tags: tags ?? this.tags,
-        date: date ?? this.date);
+        date: date ?? this.date,
+        usedParts: usedParts ?? this.usedParts);
   }
 
   Map<String, dynamic> toMap() {
@@ -72,7 +78,8 @@ class ToDo {
       'attachDirPath': attachDirPath,
       'attacments': attacments,
       'tags': tags.map((e) => e.toMap()).toList(),
-      'date': date?.millisecondsSinceEpoch
+      'date': date?.millisecondsSinceEpoch,
+      'usedParts': usedParts.map((e) => e.toMap()).toList(),
     };
   }
 
@@ -92,6 +99,9 @@ class ToDo {
       date: map['date'] != null
           ? DateTime.fromMillisecondsSinceEpoch(map['date'])
           : null,
+      usedParts: map['usedParts'] != null
+          ? List.from(map['usedParts'].map((e) => UsedPart.fromMap(e)))
+          : [],
     );
   }
 

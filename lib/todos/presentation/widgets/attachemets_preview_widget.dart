@@ -13,51 +13,42 @@ class AttachementsPreviewWidget extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final items = ref.watch(attachementsProvider);
     return Card(
-      child: Column(
-        children: [
-          Row(children: [
-            const Text('Attachements:'),
-            IconButton(
-                onPressed: () =>
-                    ref.read(attachementsProvider.notifier).attachFile(),
-                icon: const Icon(Icons.attach_file)),
-            if (Platform.isAndroid)
-              IconButton(
-                  onPressed: () =>
-                      ref.read(attachementsProvider.notifier).addPhoto(),
-                  icon: const Icon(Icons.add_a_photo)),
-            IconButton(
-                onPressed: () =>
-                    ref.read(attachementsProvider.notifier).openFolder(),
-                icon: const Icon(Icons.folder_open)),
-          ]),
-          Wrap(
-              children: items
-                  .map((e) => TextButton(
-                        onPressed: () async {
-                          final extension = p.extension(e);
-                          if (extension == '.jpg' || extension == '.jpeg') {
-                            ref.read(imagesViewProvider.notifier).openImage(e);
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      const ImagesViewScreen()),
-                            );
-                          } else {
-                            ref
-                                .read(attachementsProvider.notifier)
-                                .openFile(file: e);
-                          }
-                          // should update attachements list
-                          ref
-                              .read(attachementsProvider.notifier)
-                              .updateAttachements();
-                        },
-                        child: Text(p.basename(e)),
-                      ))
-                  .toList()),
-        ],
-      ),
-    );
+        child: ExpansionTile(
+      title: Row(children: [
+        Text('Attachements (${items.length}) :'),
+        IconButton(
+            onPressed: () =>
+                ref.read(attachementsProvider.notifier).attachFile(),
+            icon: const Icon(Icons.attach_file)),
+        if (Platform.isAndroid)
+          IconButton(
+              onPressed: () =>
+                  ref.read(attachementsProvider.notifier).addPhoto(),
+              icon: const Icon(Icons.add_a_photo)),
+        IconButton(
+            onPressed: () =>
+                ref.read(attachementsProvider.notifier).openFolder(),
+            icon: const Icon(Icons.folder_open)),
+      ]),
+      children: items
+          .map((e) => TextButton(
+                onPressed: () async {
+                  final extension = p.extension(e);
+                  if (extension == '.jpg' || extension == '.jpeg') {
+                    ref.read(imagesViewProvider.notifier).openImage(e);
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                          builder: (context) => const ImagesViewScreen()),
+                    );
+                  } else {
+                    ref.read(attachementsProvider.notifier).openFile(file: e);
+                  }
+                  // should update attachements list
+                  ref.read(attachementsProvider.notifier).updateAttachements();
+                },
+                child: Text(p.basename(e)),
+              ))
+          .toList(),
+    ));
   }
 }

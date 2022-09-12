@@ -7,11 +7,13 @@ class TextFieldWithConfirm extends StatefulWidget {
     required this.onConfirm,
     this.maxLines,
     this.lable,
+    this.keyboardType,
   });
   final String text;
   final Function(String) onConfirm;
   final int? maxLines;
   final String? lable;
+  final TextInputType? keyboardType;
 
   @override
   State<TextFieldWithConfirm> createState() => _TextFieldWithConfirmState();
@@ -31,6 +33,7 @@ class _TextFieldWithConfirmState extends State<TextFieldWithConfirm> {
     return TextField(
       controller: controller,
       maxLines: widget.maxLines,
+      keyboardType: widget.keyboardType,
       decoration: InputDecoration(
         labelText: widget.lable,
         suffix: controller.text != widget.text

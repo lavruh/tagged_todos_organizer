@@ -47,10 +47,6 @@ class TodosNotifier extends StateNotifier<List<ToDo>> {
     state = [...state, todo ?? ToDo.empty()];
   }
 
-  addSubTodo(UniqueId parent) {
-    state = [...state, ToDo.empty().copyWith(parentId: parent)];
-  }
-
   updateTodo({required ToDo item}) async {
     final index = state.indexWhere((e) => e.id == item.id);
     if (index != -1) {

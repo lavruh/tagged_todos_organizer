@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:tagged_todos_organizer/parts/presentation/used_parts_widget.dart';
 import 'package:tagged_todos_organizer/tags/presentation/widgets/tags_widget.dart';
 import 'package:tagged_todos_organizer/todos/domain/todo_editor_provider.dart';
 import 'package:tagged_todos_organizer/todos/domain/todos_provider.dart';
@@ -154,6 +155,13 @@ class TodoEditScreen extends ConsumerWidget {
                       .setTodo(item.copyWith(tags: t)),
                 ),
                 const AttachementsPreviewWidget(),
+                UsedPartsWidget(
+                  update: (usedParts) {
+                    ref
+                        .read(todoEditorProvider.notifier)
+                        .setTodo(item.copyWith(usedParts: usedParts));
+                  },
+                ),
                 SubTodosOverviewWidget(parentId: item.id),
               ],
             ),
