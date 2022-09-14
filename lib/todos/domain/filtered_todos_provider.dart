@@ -33,8 +33,10 @@ final filteredTodosProvider = Provider<List<ToDo>>((ref) {
   for (final item in filteredTodos) {
     if (item.date != null) {
       if (!ref.watch(todosFilterShowFutureDates)) {
+        final today = DateTime.now();
         if (item.date!.millisecondsSinceEpoch <=
-            DateTime.now().millisecondsSinceEpoch) {
+            DateTime(today.year, today.month, today.day + 1)
+                .millisecondsSinceEpoch) {
           withDates.add(item);
         }
       } else {
