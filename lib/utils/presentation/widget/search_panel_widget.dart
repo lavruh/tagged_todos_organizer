@@ -8,10 +8,12 @@ import 'package:tagged_todos_organizer/utils/presentation/widget/text_field_with
 class SearchPanelWidget extends ConsumerWidget {
   const SearchPanelWidget({
     Key? key,
+    this.initSearchText,
     required this.onSearch,
     this.tagsSort = false,
     this.tagsFilter = false,
   }) : super(key: key);
+  final String? initSearchText;
   final Function(String) onSearch;
   final bool tagsSort;
   final bool tagsFilter;
@@ -27,7 +29,11 @@ class SearchPanelWidget extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             const SizedBox(height: 20, width: 20),
-            Flexible(child: TextFieldWithClearButton(onChanged: onSearch)),
+            Flexible(
+                child: TextFieldWithClearButton(
+              initText: initSearchText,
+              onChanged: onSearch,
+            )),
             if (tagsSort)
               DropdownButton<TagsSortOption>(
                   value: ref.watch(tagsSortOrder),

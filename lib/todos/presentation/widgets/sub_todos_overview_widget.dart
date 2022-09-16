@@ -5,16 +5,15 @@ import 'package:tagged_todos_organizer/todos/domain/todo.dart';
 import 'package:tagged_todos_organizer/todos/domain/todo_editor_provider.dart';
 import 'package:tagged_todos_organizer/todos/presentation/screens/todo_edit_screen.dart';
 import 'package:tagged_todos_organizer/todos/presentation/widgets/todo_prev_widget.dart';
-import 'package:tagged_todos_organizer/utils/unique_id.dart';
 
 class SubTodosOverviewWidget extends ConsumerWidget {
-  const SubTodosOverviewWidget({Key? key, required this.parentId})
+  const SubTodosOverviewWidget({Key? key, required this.parent})
       : super(key: key);
-  final UniqueId parentId;
+  final ToDo parent;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final todos = ref.watch(subTodosProvider(parentId));
+    final todos = ref.watch(subTodosProvider(parent.id));
     return Card(
         child: ExpansionTile(
       title: Row(
@@ -23,7 +22,10 @@ class SubTodosOverviewWidget extends ConsumerWidget {
           Text('Sub tasks (${todos.length}) :'),
           IconButton(
               onPressed: () {
-                final item = ToDo.empty().copyWith(parentId: parentId);
+                final item = ToDo.empty().copyWith(
+                  parentId: parent.id,
+                  tags: parent.tags,
+                );
                 ref.read(todoEditorProvider.notifier).setTodo(item);
                 Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => const TodoEditScreen()));

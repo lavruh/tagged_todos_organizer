@@ -34,9 +34,12 @@ class _TagsWidgetState extends State<TagsWidget> {
           duration: const Duration(milliseconds: 200),
           crossFadeState:
               editMode ? CrossFadeState.showSecond : CrossFadeState.showFirst,
-          firstChild: TagsPreviewWidget(
-            tags: tags,
-            onTap: _toggleMode,
+          firstChild: Padding(
+            padding: const EdgeInsets.all(14.0),
+            child: TagsPreviewWidget(
+              tags: tags,
+              onTap: _toggleMode,
+            ),
           ),
           secondChild: Column(
             crossAxisAlignment: CrossAxisAlignment.end,

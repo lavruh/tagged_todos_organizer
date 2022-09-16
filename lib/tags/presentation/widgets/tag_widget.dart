@@ -22,7 +22,7 @@ class TagWidget extends ConsumerWidget {
       height: MediaQuery.of(context).size.height * ref.watch(tagHeightProvider),
       child: FittedBox(
         child: Padding(
-          padding: const EdgeInsets.all(4.0),
+          padding: const EdgeInsets.symmetric(horizontal: 2),
           child: InputChip(
             label: Text(
               e.name,

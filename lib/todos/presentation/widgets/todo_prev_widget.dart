@@ -18,63 +18,35 @@ class TodoPrevWidget extends ConsumerWidget {
     return Slidable(
       endActionPane: ActionPane(motion: const ScrollMotion(), children: [
         SlidableAction(
-          icon: Icons.delete,
-          backgroundColor: Colors.red,
-          onPressed: (_) async {
-            final bool act = await showDialog(
-                context: context,
-                builder: (context) => AlertDialog(
-                      title: const Text('Delete todo?'),
-                      actions: [
-                        IconButton(
-                            onPressed: () => Navigator.of(context).pop(true),
-                            icon: const Icon(Icons.check)),
-                        IconButton(
-                            onPressed: () => Navigator.of(context).pop(false),
-                            icon: const Icon(Icons.cancel)),
-                      ],
-                    ));
-            if (act) {
-              ref.read(todosProvider.notifier).deleteTodo(todo: item);
-            }
-          },
-        )
+            icon: Icons.delete,
+            backgroundColor: Colors.red,
+            onPressed: (_) => _deleteTodoProcess(_, ref))
       ]),
       child: Card(
         elevation: 3,
         child: ListTile(
           leading: Checkbox(
-            onChanged: (value) {
-              if (value != null) {
-                ref
-                    .read(todosProvider.notifier)
-                    .updateTodo(item: item.copyWith(done: value));
-              }
-            },
+            onChanged: (val) => _toggleDone(val, ref),
             value: item.done,
           ),
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.4,
-                child: Text(
-                  item.title != '' ? item.title : 'Title',
-                  overflow: TextOverflow.ellipsis,
+          title: ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 55),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Flexible(
+                  child: Text(
+                    item.title != '' ? item.title : 'Title',
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
-              ),
-              if (item.date != null)
-                TextButton(
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) =>
-                          Dialog(child: PostponeMenuWidget(item: item)),
-                    );
-                  },
-                  child: Text(DateFormat('y-MM-dd').format(item.date!)),
-                ),
-            ],
+                if (item.date != null)
+                  TextButton(
+                    onPressed: () => _postponeTodoDialog(context),
+                    child: Text(DateFormat('y-MM-dd').format(item.date!)),
+                  ),
+              ],
+            ),
           ),
           subtitle: TagsPreviewWidget(tags: item.tags),
           onTap: () {
@@ -85,6 +57,40 @@ class TodoPrevWidget extends ConsumerWidget {
           },
         ),
       ),
+    );
+  }
+
+  void _deleteTodoProcess(BuildContext context, WidgetRef ref) async {
+    final bool act = await showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+              title: const Text('Delete todo?'),
+              actions: [
+                IconButton(
+                    onPressed: () => Navigator.of(context).pop(true),
+                    icon: const Icon(Icons.check)),
+                IconButton(
+                    onPressed: () => Navigator.of(context).pop(false),
+                    icon: const Icon(Icons.cancel)),
+              ],
+            ));
+    if (act) {
+      ref.read(todosProvider.notifier).deleteTodo(todo: item);
+    }
+  }
+
+  void _toggleDone(bool? value, WidgetRef ref) {
+    if (value != null) {
+      ref
+          .read(todosProvider.notifier)
+          .updateTodo(item: item.copyWith(done: value));
+    }
+  }
+
+  void _postponeTodoDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(child: PostponeMenuWidget(item: item)),
     );
   }
 }

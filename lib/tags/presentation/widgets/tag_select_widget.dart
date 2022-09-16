@@ -46,6 +46,7 @@ class TagSelectWidget extends ConsumerWidget {
         ),
         if (selectedTags != null)
           SearchPanelWidget(
+            initSearchText: ref.watch(tagsFilter),
             onSearch: (String val) {
               ref.read(tagsFilter.notifier).update((state) => val);
             },

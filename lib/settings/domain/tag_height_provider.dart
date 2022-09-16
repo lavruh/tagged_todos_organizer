@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final tagHeightProvider = Provider<double>((ref) {
   if (Platform.isLinux) {
-    return 0.035;
+    return 0.03;
   }
-  return 0.06;
+  return 0.045;
 });

@@ -162,7 +162,7 @@ class TodoEditScreen extends ConsumerWidget {
                         .setTodo(item.copyWith(usedParts: usedParts));
                   },
                 ),
-                SubTodosOverviewWidget(parentId: item.id),
+                SubTodosOverviewWidget(parent: item),
               ],
             ),
           ),

@@ -13,17 +13,24 @@ class TodosScreen extends ConsumerWidget {
     final todos = ref.watch(filteredTodosProvider);
     return Scaffold(
       appBar: const AppBarWidget(),
-      body: ListView.builder(
-        itemCount: todos.length,
-        itemBuilder: (context, i) {
-          return TodoPrevWidget(item: todos[i]);
-        },
-      ),
-      floatingActionButton: SearchPanelWidget(
-        onSearch: (v) {
-          ref.read(todosFilter.notifier).update((state) => v);
-        },
-        tagsFilter: true,
+      body: Column(
+        children: [
+          Flexible(
+            child: ListView(
+              children: [
+                ...todos.map(
+                  (e) => TodoPrevWidget(item: e),
+                ),
+              ],
+            ),
+          ),
+          SearchPanelWidget(
+            onSearch: (v) {
+              ref.read(todosFilter.notifier).update((state) => v);
+            },
+            tagsFilter: true,
+          ),
+        ],
       ),
     );
   }

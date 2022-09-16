@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
 class TextFieldWithClearButton extends StatefulWidget {
-  const TextFieldWithClearButton({Key? key, required this.onChanged})
+  const TextFieldWithClearButton(
+      {Key? key, this.initText, required this.onChanged})
       : super(key: key);
+  final String? initText;
   final Function(String) onChanged;
 
   @override
@@ -13,6 +15,13 @@ class TextFieldWithClearButton extends StatefulWidget {
 class _TextFieldWithClearButtonState extends State<TextFieldWithClearButton> {
   bool isNotEmpty = false;
   final textController = TextEditingController();
+
+  @override
+  void initState() {
+    textController.text = widget.initText ?? "";
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return TextField(

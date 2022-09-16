@@ -20,20 +20,20 @@ class TagsPreviewWidget extends ConsumerWidget {
       onTap: () {
         if (onTap != null) onTap!();
       },
-      child: Padding(
-        padding: const EdgeInsets.all(14.0),
-        child: Container(
-          color: Colors.transparent,
-          width: MediaQuery.of(context).size.width * 0.9,
-          child: tags.isEmpty
-              ? Text(
+      child: Container(
+        color: Colors.transparent,
+        width: MediaQuery.of(context).size.width * 0.9,
+        child: tags.isEmpty
+            ? Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                child: Text(
                   'Tags:',
                   style: Theme.of(context).textTheme.bodyText1,
-                )
-              : Wrap(
-                  children: selectedTags.map((e) => TagWidget(e: e)).toList(),
                 ),
-        ),
+              )
+            : Wrap(
+                children: selectedTags.map((e) => TagWidget(e: e)).toList(),
+              ),
       ),
     );
   }
