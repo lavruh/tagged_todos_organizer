@@ -141,4 +141,27 @@ void main() {
     }
     expect(data[0]['attacments'].length, 2);
   });
+
+  test('get item by field value', () async {
+    await sut.init(dbPath: dbPath);
+    final testData = {
+      'id': '6.123.123',
+      'maximoNo': '6.123.123',
+      'name:': 'kasldkjalskd'
+    };
+    final testData2 = {
+      'id': '6.123.132',
+      'maximoNo': '6.123.132',
+      'name:': 'kasldkjalskd'
+    };
+    await sut.update(id: 'parts', item: {'id': 'parts'}, table: '/');
+    await sut.add(item: testData, table: 'parts');
+    await sut.add(item: testData2, table: 'parts');
+
+    final result = await sut.getItemByFieldValue(
+      request: {'maximoNo': '6.123.123'},
+      table: 'parts',
+    );
+    expect(result, testData);
+  });
 }

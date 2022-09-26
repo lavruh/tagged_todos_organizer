@@ -103,4 +103,24 @@ class SembastDbService implements IDbService {
       _db = null;
     }
   }
+
+  @override
+  Future<Map<String, dynamic>> getItemByFieldValue({
+    required Map<String, String> request,
+    required String table,
+  }) async {
+    if (_db != null) {
+      final store = StoreRef(table);
+      final finder = Finder(
+          filter: Filter.matches(
+        request.keys.first,
+        request.values.first,
+      ));
+      final res = await store.findFirst(_db!, finder: finder);
+      if (res != null) {
+        return res.value;
+      }
+    }
+    return {};
+  }
 }

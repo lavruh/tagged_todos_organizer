@@ -17,4 +17,9 @@ abstract class IDbService {
     required String table,
   });
   Future<void> deleteTable({required String table});
+
+  Future<Map<String, dynamic>> getItemByFieldValue({
+    required Map<String, String> request,
+    required String table,
+  });
 }

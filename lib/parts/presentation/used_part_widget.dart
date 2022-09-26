@@ -8,10 +8,12 @@ class UsedPartWidget extends StatelessWidget {
     Key? key,
     required this.item,
     required this.update,
+    required this.updateMaximoNo,
     this.delete,
   }) : super(key: key);
   final UsedPart item;
   final Function(UsedPart) update;
+  final Function(UsedPart) updateMaximoNo;
   final Function? delete;
 
   @override
@@ -42,7 +44,7 @@ class UsedPartWidget extends StatelessWidget {
                 maxLines: 1,
                 keyboardType: TextInputType.number,
                 onConfirm: (val) {
-                  update(item.copyWith(maximoNumber: val));
+                  updateMaximoNo(item.copyWith(maximoNumber: val));
                 }),
           ),
         ),

@@ -89,4 +89,19 @@ void main() {
     expect(sut.getAll(table: rootID), emitsDone);
     expect(sut.getAll(table: subID), emitsDone);
   });
+
+  test('get item by field value', () async {
+    final sut = SembastDbService();
+    await sut.init(dbPath: dbPath);
+    final testData = {'maximoNo': '6.123.123', 'name:': 'kasldkjalskd'};
+    final testData2 = {'maximoNo': '6.123.132', 'name:': 'kasldkjalskd'};
+    await sut.add(item: testData, table: 'parts');
+    await sut.add(item: testData2, table: 'parts');
+
+    final result = await sut.getItemByFieldValue(
+      request: {'maximoNo': '6.123.123'},
+      table: 'parts',
+    );
+    expect(result, testData);
+  });
 }

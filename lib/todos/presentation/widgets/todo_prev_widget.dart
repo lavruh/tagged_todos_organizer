@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
 import 'package:tagged_todos_organizer/tags/presentation/widgets/tags_preview_widget.dart';
+import 'package:tagged_todos_organizer/todos/domain/sub_todos_provider.dart';
 import 'package:tagged_todos_organizer/todos/domain/todo.dart';
 import 'package:tagged_todos_organizer/todos/domain/todo_editor_provider.dart';
 import 'package:tagged_todos_organizer/todos/domain/todos_provider.dart';
@@ -35,9 +36,12 @@ class TodoPrevWidget extends ConsumerWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Flexible(
-                  child: Text(
-                    item.title != '' ? item.title : 'Title',
-                    overflow: TextOverflow.ellipsis,
+                  child: GestureDetector(
+                    child: Text(
+                      item.title != '' ? item.title : 'Title',
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    onTap: () => _openInEditor(ref, context),
                   ),
                 ),
                 if (item.date != null)
@@ -49,12 +53,6 @@ class TodoPrevWidget extends ConsumerWidget {
             ),
           ),
           subtitle: TagsPreviewWidget(tags: item.tags),
-          onTap: () {
-            ref.read(todoEditorProvider.notifier).setTodo(item);
-            Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => const TodoEditScreen(),
-            ));
-          },
         ),
       ),
     );
@@ -81,9 +79,11 @@ class TodoPrevWidget extends ConsumerWidget {
 
   void _toggleDone(bool? value, WidgetRef ref) {
     if (value != null) {
-      ref
-          .read(todosProvider.notifier)
-          .updateTodo(item: item.copyWith(done: value));
+      final newItem = item.copyWith(done: value);
+      ref.read(todosProvider.notifier).updateTodo(item: newItem);
+      if (item.parentId != null) {
+        ref.read(subTodosProvider(item.parentId!));
+      }
     }
   }
 
@@ -92,5 +92,14 @@ class TodoPrevWidget extends ConsumerWidget {
       context: context,
       builder: (context) => Dialog(child: PostponeMenuWidget(item: item)),
     );
+  }
+
+  void _openInEditor(WidgetRef ref, BuildContext context) {
+    {
+      ref.read(todoEditorProvider.notifier).setTodo(item);
+      Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => const TodoEditScreen(),
+      ));
+    }
   }
 }

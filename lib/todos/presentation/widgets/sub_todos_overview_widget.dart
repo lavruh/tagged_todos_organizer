@@ -21,15 +21,7 @@ class SubTodosOverviewWidget extends ConsumerWidget {
         children: [
           Text('Sub tasks (${todos.length}) :'),
           IconButton(
-              onPressed: () {
-                final item = ToDo.empty().copyWith(
-                  parentId: parent.id,
-                  tags: parent.tags,
-                );
-                ref.read(todoEditorProvider.notifier).setTodo(item);
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => const TodoEditScreen()));
-              },
+              onPressed: () => _addSubTodo(ref, context),
               icon: const Icon(Icons.add)),
         ],
       ),
@@ -44,5 +36,15 @@ class SubTodosOverviewWidget extends ConsumerWidget {
         ),
       ],
     ));
+  }
+
+  void _addSubTodo(WidgetRef ref, BuildContext context) {
+    final item = ToDo.empty().copyWith(
+      parentId: parent.id,
+      tags: parent.tags,
+    );
+    ref.read(todoEditorProvider.notifier).setTodo(item);
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (context) => const TodoEditScreen()));
   }
 }

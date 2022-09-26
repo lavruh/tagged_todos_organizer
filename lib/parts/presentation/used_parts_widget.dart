@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tagged_todos_organizer/parts/domain/parts_info_repo.dart';
 import 'package:tagged_todos_organizer/parts/domain/used_part.dart';
 import 'package:tagged_todos_organizer/parts/presentation/used_part_widget.dart';
 import 'package:tagged_todos_organizer/todos/domain/todo_editor_provider.dart';
@@ -28,6 +29,19 @@ class UsedPartsWidget extends ConsumerWidget {
                     final index = items.indexOf(e);
                     items.removeAt(index);
                     items.insert(index, newVal);
+                    update(items);
+                  },
+                  updateMaximoNo: (part) async {
+                    final p = await ref
+                        .read(partsInfoProvider)
+                        .getPart(part.maximoNumber);
+                    UsedPart newPart = part;
+                    if (p.name != "") {
+                      newPart = part.copyWith(name: p.name, bin: p.bin);
+                    }
+                    final index = items.indexOf(e);
+                    items.removeAt(index);
+                    items.insert(index, newPart);
                     update(items);
                   },
                   delete: () {

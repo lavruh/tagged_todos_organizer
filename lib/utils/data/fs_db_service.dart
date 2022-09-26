@@ -108,6 +108,27 @@ class FsDbService implements IDbService {
     }
     throw (FsDbException('No item with id $path found'));
   }
+
+  @override
+  Future<Map<String, dynamic>> getItemByFieldValue({
+    required Map<String, String> request,
+    required String table,
+  }) async {
+    final path = await findPath(path: table);
+    final dir = Directory(path);
+    if (dir.existsSync()) {
+      await for (final item in dir.list(recursive: true)) {
+        if (item is File || p.basename(item.path) == 'data.json') {
+          final data = fromJson(await (item as File).readAsString());
+          if (data.keys.contains(request.keys.first) &&
+              data.values.contains(request.values.first)) {
+            return data;
+          }
+        }
+      }
+    }
+    return {};
+  }
 }
 
 class FsDbException implements Exception {
