@@ -69,6 +69,7 @@ class PartsEditorNotifier extends StateNotifier<List<UsedPart>> {
 }
 
 Future<String?> _getCameraReading(BuildContext context) async {
+  final navigator = Navigator.of(context);
   if (Platform.isAndroid) {
     final cams = await availableCameras();
     Get.put(Recognizer());
@@ -78,7 +79,7 @@ Future<String?> _getCameraReading(BuildContext context) async {
       tmpFile: File('/storage/emulated/0/TagsTodosOrganizer/maximoNo.jpg'),
     ));
 
-    return await Navigator.of(context).push(MaterialPageRoute(
+    return await navigator.push(MaterialPageRoute(
       builder: (context) => CameraScreen(),
     ));
   }

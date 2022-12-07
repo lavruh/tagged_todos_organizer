@@ -30,7 +30,7 @@ class TodoEditScreen extends ConsumerWidget {
           body: const Center(child: CircularProgressIndicator()));
     }
     return WillPopScope(
-      onWillPop: () async => _goToTodosScreen(context),
+      onWillPop: () async => _goToTodosScreen(Navigator.of(context)),
       child: Scaffold(
         appBar: AppBar(
           actions: [
@@ -47,6 +47,7 @@ class TodoEditScreen extends ConsumerWidget {
                       style: TextStyle(color: Colors.white))),
             IconButton(
                 onPressed: () async {
+                  final navigator = Navigator.of(context);
                   final bool act = await showDialog(
                       context: context,
                       builder: (context) => AlertDialog(
@@ -64,7 +65,7 @@ class TodoEditScreen extends ConsumerWidget {
                           ));
                   if (act) {
                     ref.read(todosProvider.notifier).deleteTodo(todo: item);
-                    _goToTodosScreen(context);
+                    _goToTodosScreen(navigator);
                   }
                 },
                 icon: const Icon(Icons.delete)),
@@ -171,8 +172,8 @@ class TodoEditScreen extends ConsumerWidget {
     );
   }
 
-  bool _goToTodosScreen(BuildContext context) {
-    Navigator.of(context).popUntil(ModalRoute.withName('/'));
+  bool _goToTodosScreen(NavigatorState navigator) {
+    navigator.popUntil(ModalRoute.withName('/'));
     return true;
   }
 }

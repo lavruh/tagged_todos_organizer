@@ -29,6 +29,7 @@ class MenuWidget extends ConsumerWidget {
             leading: const Icon(Icons.upload_file),
             title: const Text('Update parts db'),
             onTap: () async {
+              final navigator = Navigator.of(context);
               try {
                 await ref.read(partsInfoProvider).initUpdatePartsFromFile();
                 ref.read(snackbarProvider.notifier).show('Sucessfully updated');
@@ -37,7 +38,7 @@ class MenuWidget extends ConsumerWidget {
                     .read(snackbarProvider.notifier)
                     .show('Fail to update parts db : $e');
               }
-              Navigator.pop(context);
+              navigator.pop();
             },
           )
         ],
