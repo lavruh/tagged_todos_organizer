@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tagged_todos_organizer/tags/domain/tag.dart';
 import 'package:tagged_todos_organizer/todos/domain/todo.dart';
+import 'package:tagged_todos_organizer/utils/app_path_provider.dart';
 import 'package:tagged_todos_organizer/utils/data/fs_db_service.dart';
 import 'package:tagged_todos_organizer/utils/unique_id.dart';
 import 'package:path/path.dart' as p;
@@ -100,7 +101,13 @@ void main() {
   });
 
   test('get all items', () async {
-    final item = ToDo.empty();
+    final itemTmp = ToDo.empty();
+
+    final String relativePath = p.relative(
+        p.join(dbPath, itemTmp.id.toString()),
+        from: getAppFolderPath());
+    final item = itemTmp.copyWith(attachDirPath: relativePath);
+
     final sub1 = ToDo.empty().copyWith(title: 'sub1');
     final sub2 = ToDo.empty().copyWith(title: 'sub2');
     await sut.init(dbPath: dbPath);

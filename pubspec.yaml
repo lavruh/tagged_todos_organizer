@@ -8,6 +8,7 @@ environment:
 
 dependencies:
   csv: ^5.0.1
+  camera: ^0.10.0+1
   file_picker: ^4.6.1
   flutter:
     sdk: flutter
@@ -24,6 +25,8 @@ dependencies:
   url_launcher: ^6.1.5
   notes_on_image:
     path: /home/lavruh/AndroidStudioProjects/NotesOnImage
+  photo_data_picker:
+    path: /home/lavruh/AndroidStudioProjects/photo_data_picker
   get: ^4.6.5
   flutter_slidable: ^2.0.0
 

@@ -35,7 +35,7 @@ class PartsInfoRepo {
       final filePath = picker.paths.first!;
       try {
         await updatePartsFromFile(filePath: filePath);
-      } on PartsInfoRepoException catch (e) {
+      } on PartsInfoRepoException {
         rethrow;
       }
     }

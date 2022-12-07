@@ -56,4 +56,28 @@ class UsedPart {
       pieces: pieces ?? this.pieces,
     );
   }
+
+  @override
+  String toString() {
+    return 'UsedPart(maximoNumber: $maximoNumber, name: $name, bin: $bin, pieces: $pieces)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is UsedPart &&
+        other.maximoNumber == maximoNumber &&
+        other.name == name &&
+        other.bin == bin &&
+        other.pieces == pieces;
+  }
+
+  @override
+  int get hashCode {
+    return maximoNumber.hashCode ^
+        name.hashCode ^
+        bin.hashCode ^
+        pieces.hashCode;
+  }
 }

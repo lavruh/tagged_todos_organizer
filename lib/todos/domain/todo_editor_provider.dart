@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tagged_todos_organizer/parts/domain/used_part.dart';
 import 'package:tagged_todos_organizer/todos/domain/attachements_provider.dart';
 import 'package:tagged_todos_organizer/todos/domain/todo.dart';
 import 'package:tagged_todos_organizer/todos/domain/todos_provider.dart';
@@ -41,5 +42,32 @@ class TodoEditorNotifier extends StateNotifier<ToDo?> {
     ref
         .read(attachementsProvider.notifier)
         .load(attachs: t.attacments, attachementsFolder: t.attachDirPath);
+  }
+
+  updateTodoState(
+      {UniqueId? id,
+      String? title,
+      String? description,
+      bool? done,
+      UniqueId? parentId,
+      List<UniqueId>? children,
+      String? attachDirPath,
+      List<String>? attacments,
+      List<UniqueId>? tags,
+      DateTime? date,
+      List<UsedPart>? usedParts}) {
+    state = state?.copyWith(
+      id: id,
+      title: title,
+      description: description,
+      done: done,
+      parentId: parentId,
+      children: children,
+      attachDirPath: attachDirPath,
+      attacments: attacments,
+      tags: tags,
+      date: date,
+      usedParts: usedParts,
+    );
   }
 }
