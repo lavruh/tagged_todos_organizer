@@ -70,8 +70,8 @@ class TodoEditScreen extends ConsumerWidget {
                 },
                 icon: const Icon(Icons.delete)),
             IconButton(
-              onPressed: () {
-                ref.read(todoEditorProvider.notifier).updateTodo(item);
+              onPressed: () async {
+                await ref.read(todoEditorProvider.notifier).updateTodo(item);
               },
               icon: const Icon(Icons.save),
             )

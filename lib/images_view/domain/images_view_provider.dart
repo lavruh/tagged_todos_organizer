@@ -27,13 +27,7 @@ class ImagesViewNotifier extends StateNotifier<String?> {
   }
 
   openNextImage({required bool increaseIndex}) async {
-    bool canGoNext = false;
-    editor.hasToSavePromt(onConfirmCallback: () async {
-      await editor.saveImage();
-      canGoNext = true;
-    }, onNoCallback: () {
-      canGoNext = true;
-    });
+    bool canGoNext = await saveImageRequest();
     if (!canGoNext) {
       return;
     }
@@ -50,7 +44,17 @@ class ImagesViewNotifier extends StateNotifier<String?> {
         currentImageIndex = filesToPreview.length - 1;
       }
     }
-
     editor.loadImage(File(filesToPreview[currentImageIndex]));
+  }
+
+  Future<bool> saveImageRequest() async {
+    bool result = false;
+    await editor.hasToSavePromt(onConfirmCallback: () async {
+      await editor.saveImage();
+      result = true;
+    }, onNoCallback: () {
+      result = true;
+    });
+    return result;
   }
 }

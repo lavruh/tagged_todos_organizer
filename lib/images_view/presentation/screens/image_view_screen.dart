@@ -12,21 +12,26 @@ class ImagesViewScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final currentImage = ref.watch(imagesViewProvider);
     final state = ref.read(imagesViewProvider.notifier);
-    return Scaffold(
-        appBar: AppBar(
-          title: Text(currentImage ?? ''),
-        ),
-        body: RawGestureDetector(gestures: {
-          HorizontalSwipeGestureRecognizer:
-              GestureRecognizerFactoryWithHandlers<
-                  HorizontalSwipeGestureRecognizer>(
-            () => HorizontalSwipeGestureRecognizer(
-              screenWidth: MediaQuery.of(context).size.width,
-              onSwipeLeft: () => state.openNextImage(increaseIndex: true),
-              onSwipeRight: () => state.openNextImage(increaseIndex: false),
-            ),
-            (HorizontalSwipeGestureRecognizer instance) {},
-          )
-        }, child: const GetMaterialApp(home: NotesOnImageScreen())));
+    return WillPopScope(
+      onWillPop: () async {
+        return await state.saveImageRequest();
+      },
+      child: Scaffold(
+          appBar: AppBar(
+            title: Text(currentImage ?? ''),
+          ),
+          body: RawGestureDetector(gestures: {
+            HorizontalSwipeGestureRecognizer:
+                GestureRecognizerFactoryWithHandlers<
+                    HorizontalSwipeGestureRecognizer>(
+              () => HorizontalSwipeGestureRecognizer(
+                screenWidth: MediaQuery.of(context).size.width,
+                onSwipeLeft: () => state.openNextImage(increaseIndex: true),
+                onSwipeRight: () => state.openNextImage(increaseIndex: false),
+              ),
+              (HorizontalSwipeGestureRecognizer instance) {},
+            )
+          }, child: const GetMaterialApp(home: NotesOnImageScreen()))),
+    );
   }
 }
