@@ -22,8 +22,11 @@ class PostponeMenuWidget extends ConsumerWidget {
             style: Theme.of(context).textTheme.headline5,
           ),
           TextButton(
-              onPressed: () => _postponeTillTomorrow(ref, context),
+              onPressed: () => _postpone(ref, context, DateTime.now(), days: 1),
               child: const Text('Tomorrow')),
+          TextButton(
+              onPressed: () => _postpone(ref, context, DateTime.now(), days: 0),
+              child: const Text('Today')),
           TextButton(
               onPressed: () => _postponeDays(ref, context, 3),
               child: const Text('3 days')),
@@ -33,28 +36,36 @@ class PostponeMenuWidget extends ConsumerWidget {
           TextButton(
               onPressed: () => _postponeDays(ref, context, 42),
               child: const Text('6 weeks')),
+          TextButton(
+              onPressed: () => _clearDate(ref, context),
+              child: const Text('Clear Date')),
         ],
       ),
     );
   }
 
-  _postponeTillTomorrow(WidgetRef ref, BuildContext context) {
-    final now = DateTime.now();
-    ref.read(todosProvider.notifier).updateTodo(
-          item: item.copyWith(
-              date: DateTime.fromMillisecondsSinceEpoch(
-                  now.millisecondsSinceEpoch + 86400000)),
-        );
-    Navigator.of(context).pop();
-  }
-
   _postponeDays(WidgetRef ref, BuildContext context, int days) {
     final date = item.date ?? DateTime.now();
+    _postpone(ref, context, date, days: days);
+  }
+
+  _postpone(WidgetRef ref, BuildContext context, DateTime date,
+      {int days = 0}) {
     ref.read(todosProvider.notifier).updateTodo(
           item: item.copyWith(
               date: DateTime.fromMillisecondsSinceEpoch(
                   date.millisecondsSinceEpoch + 86400000 * days)),
         );
+    Navigator.of(context).pop();
+  }
+
+  _clearDate(
+    WidgetRef ref,
+    BuildContext context,
+  ) {
+    ref
+        .read(todosProvider.notifier)
+        .updateTodo(item: item.copyWith(clearDate: true));
     Navigator.of(context).pop();
   }
 }

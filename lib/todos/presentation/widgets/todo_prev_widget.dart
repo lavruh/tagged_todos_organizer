@@ -52,7 +52,14 @@ class TodoPrevWidget extends ConsumerWidget {
               ],
             ),
           ),
-          subtitle: TagsPreviewWidget(tags: item.tags),
+          subtitle: Wrap(
+            direction: Axis.vertical,
+            alignment: WrapAlignment.spaceBetween,
+            children: [
+              Text(item.description.split('\n').last),
+              TagsPreviewWidget(tags: item.tags),
+            ],
+          ),
         ),
       ),
     );

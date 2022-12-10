@@ -27,7 +27,7 @@ class SubTodosOverviewWidget extends ConsumerWidget {
       ),
       children: [
         SizedBox(
-          height: MediaQuery.of(context).size.height,
+          height: MediaQuery.of(context).size.height * 0.6,
           child: Flexible(
             child: ListView(
               children: todos.map((e) => TodoPrevWidget(item: e)).toList(),

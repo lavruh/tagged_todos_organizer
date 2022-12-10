@@ -41,18 +41,20 @@ class ToDo {
         date = null,
         usedParts = [];
 
-  ToDo copyWith(
-      {UniqueId? id,
-      String? title,
-      String? description,
-      bool? done,
-      UniqueId? parentId,
-      List<UniqueId>? children,
-      String? attachDirPath,
-      List<String>? attacments,
-      List<UniqueId>? tags,
-      DateTime? date,
-      List<UsedPart>? usedParts}) {
+  ToDo copyWith({
+    UniqueId? id,
+    String? title,
+    String? description,
+    bool? done,
+    UniqueId? parentId,
+    List<UniqueId>? children,
+    String? attachDirPath,
+    List<String>? attacments,
+    List<UniqueId>? tags,
+    DateTime? date,
+    List<UsedPart>? usedParts,
+    bool clearDate = false,
+  }) {
     return ToDo(
         id: id ?? this.id,
         title: title ?? this.title,
@@ -63,7 +65,7 @@ class ToDo {
         attachDirPath: attachDirPath ?? this.attachDirPath,
         attacments: attacments ?? this.attacments,
         tags: tags ?? this.tags,
-        date: date ?? this.date,
+        date: clearDate ? null : date ?? this.date,
         usedParts: usedParts ?? this.usedParts);
   }
 
