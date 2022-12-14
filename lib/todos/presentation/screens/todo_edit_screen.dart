@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:go_router/go_router.dart';
 import 'package:tagged_todos_organizer/parts/presentation/used_parts_widget.dart';
 import 'package:tagged_todos_organizer/tags/presentation/widgets/tags_widget.dart';
 import 'package:tagged_todos_organizer/todos/domain/todo_editor_provider.dart';
@@ -30,7 +31,7 @@ class TodoEditScreen extends ConsumerWidget {
           body: const Center(child: CircularProgressIndicator()));
     }
     return WillPopScope(
-      onWillPop: () async => _goToTodosScreen(Navigator.of(context)),
+      onWillPop: () async => _goToTodosScreen(GoRouter.of(context)),
       child: Scaffold(
         appBar: AppBar(
           actions: [
@@ -47,7 +48,7 @@ class TodoEditScreen extends ConsumerWidget {
                       style: TextStyle(color: Colors.white))),
             IconButton(
                 onPressed: () async {
-                  final navigator = Navigator.of(context);
+                  final navigator = GoRouter.of(context);
                   final bool act = await showDialog(
                       context: context,
                       builder: (context) => AlertDialog(
@@ -172,8 +173,7 @@ class TodoEditScreen extends ConsumerWidget {
     );
   }
 
-  bool _goToTodosScreen(NavigatorState navigator) {
-    navigator.popUntil(ModalRoute.withName('/'));
+  bool _goToTodosScreen(GoRouter router) {
     return true;
   }
 }

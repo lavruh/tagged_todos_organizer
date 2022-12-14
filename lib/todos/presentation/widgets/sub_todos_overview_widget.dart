@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tagged_todos_organizer/todos/domain/sub_todos_provider.dart';
 import 'package:tagged_todos_organizer/todos/domain/todo.dart';
 import 'package:tagged_todos_organizer/todos/domain/todo_editor_provider.dart';
-import 'package:tagged_todos_organizer/todos/presentation/screens/todo_edit_screen.dart';
 import 'package:tagged_todos_organizer/todos/presentation/widgets/todo_prev_widget.dart';
 
 class SubTodosOverviewWidget extends ConsumerWidget {
@@ -44,7 +43,5 @@ class SubTodosOverviewWidget extends ConsumerWidget {
       tags: parent.tags,
     );
     ref.read(todoEditorProvider.notifier).setTodo(item);
-    Navigator.of(context)
-        .push(MaterialPageRoute(builder: (context) => const TodoEditScreen()));
   }
 }

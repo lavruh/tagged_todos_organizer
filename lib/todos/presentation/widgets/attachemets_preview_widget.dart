@@ -1,9 +1,9 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:path/path.dart' as p;
 import 'package:tagged_todos_organizer/images_view/domain/images_view_provider.dart';
-import 'package:tagged_todos_organizer/images_view/presentation/screens/image_view_screen.dart';
 import 'package:tagged_todos_organizer/todos/domain/attachements_provider.dart';
 
 class AttachementsPreviewWidget extends ConsumerWidget {
@@ -12,22 +12,20 @@ class AttachementsPreviewWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final items = ref.watch(attachementsProvider);
+    final attachements = ref.read(attachementsProvider.notifier);
     return Card(
         child: ExpansionTile(
       title: Row(children: [
         Text('Attachements (${items.length}) :'),
         IconButton(
-            onPressed: () =>
-                ref.read(attachementsProvider.notifier).attachFile(),
+            onPressed: () => attachements.attachFile(),
             icon: const Icon(Icons.attach_file)),
         if (Platform.isAndroid)
           IconButton(
-              onPressed: () =>
-                  ref.read(attachementsProvider.notifier).addPhoto(),
+              onPressed: () => attachements.addPhoto(),
               icon: const Icon(Icons.add_a_photo)),
         IconButton(
-            onPressed: () =>
-                ref.read(attachementsProvider.notifier).openFolder(),
+            onPressed: () => attachements.openFolder(),
             icon: const Icon(Icons.folder_open)),
       ]),
       children: items
@@ -36,15 +34,11 @@ class AttachementsPreviewWidget extends ConsumerWidget {
                   final extension = p.extension(e);
                   if (extension == '.jpg' || extension == '.jpeg') {
                     ref.read(imagesViewProvider.notifier).openImage(e);
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                          builder: (context) => const ImagesViewScreen()),
-                    );
+                    context.go('/TodoEditorScreen/ImagesViewScreen');
                   } else {
-                    ref.read(attachementsProvider.notifier).openFile(file: e);
+                    attachements.openFile(file: e);
                   }
-                  // should update attachements list
-                  ref.read(attachementsProvider.notifier).updateAttachements();
+                  attachements.updateAttachements();
                 },
                 child: Text(p.basename(e)),
               ))

@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
+import 'package:go_router/go_router.dart';
 import 'package:tagged_todos_organizer/tags/presentation/widgets/tags_preview_widget.dart';
 import 'package:tagged_todos_organizer/todos/domain/sub_todos_provider.dart';
 import 'package:tagged_todos_organizer/todos/domain/todo.dart';
 import 'package:tagged_todos_organizer/todos/domain/todo_editor_provider.dart';
 import 'package:tagged_todos_organizer/todos/domain/todos_provider.dart';
-import 'package:tagged_todos_organizer/todos/presentation/screens/todo_edit_screen.dart';
 import 'package:tagged_todos_organizer/todos/presentation/widgets/postpone_menu.dart';
 
 class TodoPrevWidget extends ConsumerWidget {
@@ -104,9 +104,7 @@ class TodoPrevWidget extends ConsumerWidget {
   void _openInEditor(WidgetRef ref, BuildContext context) {
     {
       ref.read(todoEditorProvider.notifier).setTodo(item);
-      Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => const TodoEditScreen(),
-      ));
+      context.go('/TodoEditorScreen');
     }
   }
 }

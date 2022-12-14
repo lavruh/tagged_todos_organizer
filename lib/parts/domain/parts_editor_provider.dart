@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:tagged_todos_organizer/parts/domain/parts_info_repo.dart';
 import 'package:tagged_todos_organizer/parts/domain/used_part.dart';
 import 'package:tagged_todos_organizer/todos/domain/todo_editor_provider.dart';
@@ -10,7 +11,6 @@ import 'package:get/get.dart';
 import 'package:photo_data_picker/domain/camera_state.dart';
 import 'package:photo_data_picker/domain/camera_state_device.dart';
 import 'package:photo_data_picker/domain/recognizer.dart';
-import 'package:photo_data_picker/ui/screen/camera_screen.dart';
 
 final partsEditorProvider =
     StateNotifierProvider<PartsEditorNotifier, List<UsedPart>>(
@@ -69,7 +69,7 @@ class PartsEditorNotifier extends StateNotifier<List<UsedPart>> {
 }
 
 Future<String?> _getCameraReading(BuildContext context) async {
-  final navigator = Navigator.of(context);
+  final navigator = GoRouter.of(context);
   if (Platform.isAndroid) {
     final cams = await availableCameras();
     Get.put(Recognizer());
@@ -79,9 +79,7 @@ Future<String?> _getCameraReading(BuildContext context) async {
       tmpFile: File('/storage/emulated/0/TagsTodosOrganizer/maximoNo.jpg'),
     ));
 
-    return await navigator.push(MaterialPageRoute(
-      builder: (context) => CameraScreen(),
-    ));
+    navigator.go('/TodoEditorScreen/CameraScreen');
   }
   return null;
 }

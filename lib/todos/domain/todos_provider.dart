@@ -64,14 +64,14 @@ class TodosNotifier extends StateNotifier<List<ToDo>> {
       throw Exception(e);
     }
 
-    ref.read(todoEditorProvider.notifier).setTodo(item);
-
     final String table = item.parentId?.id ?? tableName;
     await db
         ?.update(id: item.id.toString(), item: item.toMap(), table: table)
         .onError((error, stackTrace) {
       return ref.read(snackbarProvider).show("$error");
     });
+
+    ref.read(todoEditorProvider.notifier).setTodo(item);
   }
 
   deleteTodo({required ToDo todo}) async {

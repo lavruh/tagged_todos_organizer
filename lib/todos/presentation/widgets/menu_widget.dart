@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:tagged_todos_organizer/parts/domain/parts_info_repo.dart';
 import 'package:tagged_todos_organizer/tags/domain/filtered_tags_provider.dart';
 import 'package:tagged_todos_organizer/tags/domain/tag_editor_provider.dart';
-import 'package:tagged_todos_organizer/tags/presentation/tags_edit_screen.dart';
 import 'package:tagged_todos_organizer/utils/snackbar_provider.dart';
 
 class MenuWidget extends ConsumerWidget {
@@ -20,9 +20,7 @@ class MenuWidget extends ConsumerWidget {
             onTap: (() {
               ref.read(tagsFilter.notifier).update((state) => '');
               ref.read(tagEditorProvider.notifier).update((state) => null);
-              Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => const TagsEditScreen(),
-              ));
+              context.go('/TagsEditScreen');
             }),
           ),
           ListTile(

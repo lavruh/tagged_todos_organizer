@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tagged_todos_organizer/tags/domain/filtered_tags_provider.dart';
 import 'package:tagged_todos_organizer/tags/domain/tag_editor_provider.dart';
-import 'package:tagged_todos_organizer/tags/presentation/tags_edit_screen.dart';
 import 'package:tagged_todos_organizer/todos/domain/filtered_todos_provider.dart';
 import 'package:tagged_todos_organizer/todos/domain/todo.dart';
 import 'package:tagged_todos_organizer/todos/domain/todo_editor_provider.dart';
-import 'package:tagged_todos_organizer/todos/presentation/screens/todo_edit_screen.dart';
 
 class AppBarWidget extends ConsumerWidget implements PreferredSizeWidget {
   const AppBarWidget({Key? key}) : super(key: key);
@@ -56,17 +55,14 @@ class AppBarWidget extends ConsumerWidget implements PreferredSizeWidget {
             onPressed: () {
               ref.read(tagsFilter.notifier).update((state) => '');
               ref.read(tagEditorProvider.notifier).update((state) => null);
-              Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => const TagsEditScreen(),
-              ));
+              context.go('/TagsEditScreen');
             },
             icon: const Icon(Icons.label)),
         IconButton(
           onPressed: () {
             final item = ToDo.empty();
             ref.read(todoEditorProvider.notifier).setTodo(item);
-            Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => const TodoEditScreen()));
+            context.go('/TodoEditorScreen');
           },
           icon: const Icon(Icons.add),
         )
