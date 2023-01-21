@@ -110,4 +110,9 @@ class ToDo {
   String toJson() => json.encode(toMap());
 
   factory ToDo.fromJson(String source) => ToDo.fromMap(json.decode(source));
+
+  @override
+  String toString() {
+    return 'ToDo{id: $id, title: $title, date: $date}';
+  }
 }

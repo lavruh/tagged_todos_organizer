@@ -66,7 +66,8 @@ class TodoEditScreen extends ConsumerWidget {
                           ));
                   if (act) {
                     ref.read(todosProvider.notifier).deleteTodo(todo: item);
-                    _goToTodosScreen(navigator);
+                    navigator.go('/');
+                    // _goToTodosScreen(navigator);
                   }
                 },
                 icon: const Icon(Icons.delete)),
@@ -102,6 +103,7 @@ class TodoEditScreen extends ConsumerWidget {
                       child: TextFieldWithConfirm(
                           key: Key(item.title),
                           text: item.title,
+                          lable: 'Title',
                           onConfirm: (value) => ref
                               .read(todoEditorProvider.notifier)
                               .setTodo(item.copyWith(title: value)))),
