@@ -283,4 +283,6 @@ Future<void> todoEditorTest(WidgetTester tester) async {
   await tester.pump(const Duration(seconds: 1));
   expect(find.text(maximoPartName), findsOneWidget);
 
+
+  await tester.pageBack();
 }

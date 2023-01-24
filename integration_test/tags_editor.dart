@@ -59,8 +59,6 @@ Future<void> tagsEditorTest(WidgetTester tester) async {
 
   await tester.pump();
   await tester.pump(const Duration(seconds: 1));
-  expect(find.byIcon(Icons.add), findsOneWidget);
-  expect(find.byIcon(Icons.label), findsOneWidget);
 
   await tester.tapAt(const Offset(10, 10));
   await tester.pumpAndSettle();

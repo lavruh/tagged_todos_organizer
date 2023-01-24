@@ -46,6 +46,7 @@ class TodoPrevWidget extends ConsumerWidget {
                 ),
                 if (item.date != null)
                   TextButton(
+                    key: const Key('todoPreviewDate'),
                     onPressed: () => _postponeTodoDialog(context),
                     child: Text(DateFormat('y-MM-dd').format(item.date!)),
                   ),

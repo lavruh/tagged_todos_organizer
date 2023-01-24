@@ -140,7 +140,6 @@ Future<void> todoFilterTest(WidgetTester tester) async {
   // Search test
   await tester.tapAt(const Offset(0, 100));
   await tester.pump(const Duration(seconds: 1));
-  await tester.pump(const Duration(seconds: 10));
   await tester.enterText(
       find.descendant(
         of: find.byKey(const Key('TodoSearchPanel')),
@@ -149,4 +148,5 @@ Future<void> todoFilterTest(WidgetTester tester) async {
       todoWithTags.title.substring(3, 6));
   await tester.pump(const Duration(seconds: 1));
   expect(find.byType(TodoPrevWidget), findsOneWidget);
+
 }
