@@ -13,7 +13,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_colorpicker: ^1.0.3
-  flutter_riverpod: ^1.0.4
+  flutter_riverpod: ^2.1.3
   image_picker: ^0.8.5+3
   intl: ^0.17.0
   mockito: ^5.2.0
@@ -29,7 +29,7 @@ dependencies:
     path: /home/lavruh/AndroidStudioProjects/photo_data_picker
   get: ^4.6.5
   flutter_slidable: ^2.0.0
-  go_router: ^5.2.4
+  go_router: ^6.0.1
 
 
 dev_dependencies:

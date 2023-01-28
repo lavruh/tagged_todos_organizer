@@ -24,6 +24,13 @@ class MenuWidget extends ConsumerWidget {
             }),
           ),
           ListTile(
+            leading: const Icon(Icons.checklist),
+            title: const Text('Log'),
+            onTap: () {
+              context.go('/LogOverviewScreen');
+            },
+          ),
+          ListTile(
             leading: const Icon(Icons.upload_file),
             title: const Text('Update parts db'),
             onTap: () async {

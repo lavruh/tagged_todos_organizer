@@ -4,7 +4,6 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tagged_todos_organizer/tags/presentation/widgets/tags_preview_widget.dart';
-import 'package:tagged_todos_organizer/todos/domain/sub_todos_provider.dart';
 import 'package:tagged_todos_organizer/todos/domain/todo.dart';
 import 'package:tagged_todos_organizer/todos/domain/todo_editor_provider.dart';
 import 'package:tagged_todos_organizer/todos/domain/todos_provider.dart';
@@ -87,11 +86,9 @@ class TodoPrevWidget extends ConsumerWidget {
 
   void _toggleDone(bool? value, WidgetRef ref) {
     if (value != null) {
-      final newItem = item.copyWith(done: value);
-      ref.read(todosProvider.notifier).updateTodo(item: newItem);
-      if (item.parentId != null) {
-        ref.read(subTodosProvider(item.parentId!));
-      }
+      ref
+          .read(todosProvider.notifier)
+          .setTodoDoneUndone(value: value, todo: item);
     }
   }
 

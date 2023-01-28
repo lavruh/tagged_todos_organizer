@@ -48,7 +48,7 @@ void main() {
     );
     String filePath =
         '/home/lavruh/Documents/TaggedTodosOrganizer/parts/bin_utf8.csv';
-    when(db.getItemByFieldValue());
+    when(db.getItemByFieldValue(request: anyNamed('request'), table: 'table'));
 
     await sut.updatePartsFromFile(filePath: filePath);
 

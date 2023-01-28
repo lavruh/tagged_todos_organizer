@@ -64,7 +64,7 @@ class SembastDbService implements IDbService {
       final data = await store.find(_db!);
       for (final item in data) {
         final Map<String, dynamic> m = {};
-        m.addAll(item.value);
+        m.addAll(item.value as Map<String, dynamic>);
         yield m;
       }
     }
@@ -118,7 +118,7 @@ class SembastDbService implements IDbService {
       ));
       final res = await store.findFirst(_db!, finder: finder);
       if (res != null) {
-        return res.value;
+        return res.value as Map<String, dynamic>;
       }
     }
     return {};

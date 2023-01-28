@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:intl/intl.dart';
-import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:tagged_todos_organizer/app.dart';
 import 'package:tagged_todos_organizer/tags/domain/tag.dart';
@@ -12,10 +11,9 @@ import 'package:tagged_todos_organizer/tags/presentation/widgets/tag_select_widg
 import 'package:tagged_todos_organizer/todos/domain/todo.dart';
 import 'package:tagged_todos_organizer/todos/domain/todos_db_provider.dart';
 import 'package:tagged_todos_organizer/todos/presentation/widgets/todo_prev_widget.dart';
-import 'package:tagged_todos_organizer/utils/data/i_db_service.dart';
 import 'package:tagged_todos_organizer/utils/unique_id.dart';
 
-import '../test/integration_test/todo_editor_test.mocks.dart';
+import 'todo_editor_test.mocks.dart';
 
 /*
 Load app only todos with date now and less are visible
@@ -27,7 +25,6 @@ filter by date
 search field
  */
 
-@GenerateMocks([IDbService])
 Future<void> todoFilterTest(WidgetTester tester) async {
   final db = MockIDbService();
   final now = DateTime.now();
@@ -66,8 +63,8 @@ Future<void> todoFilterTest(WidgetTester tester) async {
 
   await tester.pumpWidget(ProviderScope(
     overrides: [
-      tagsDbProvider.overrideWithProvider(FutureProvider((ref) => db)),
-      todosDbProvider.overrideWithProvider(FutureProvider((ref) => db)),
+      tagsDbProvider.overrideWith((ref) => db),
+      todosDbProvider.overrideWith((ref) => db),
     ],
     child: const MyApp(),
   ));

@@ -6,11 +6,12 @@ final appPathProvider = Provider<String>((ref) {
 });
 
 String getAppFolderPath() {
+  final appName = "TaggedTodosOrganizer";
   if (Platform.isAndroid) {
-    return "/storage/emulated/0/TagsTodosOrganizer";
+    return "/storage/emulated/0/$appName";
   }
   if (Platform.isLinux) {
-    return "/home/lavruh/Documents/TaggedTodosOrganizer";
+    return "/home/lavruh/Documents/$appName";
   }
   return '/';
 }

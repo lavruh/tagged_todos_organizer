@@ -1,6 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tagged_todos_organizer/log/domain/log_provider.dart';
 import 'package:tagged_todos_organizer/tags/domain/tags_provider.dart';
 import 'package:tagged_todos_organizer/todos/domain/attachements_provider.dart';
+import 'package:tagged_todos_organizer/todos/domain/sub_todos_provider.dart';
 import 'package:tagged_todos_organizer/todos/domain/todo.dart';
 import 'package:tagged_todos_organizer/todos/domain/todo_editor_provider.dart';
 import 'package:tagged_todos_organizer/todos/domain/todos_db_provider.dart';
@@ -50,13 +52,17 @@ class TodosNotifier extends StateNotifier<List<ToDo>> {
   updateTodo({required ToDo item}) async {
     final index = state.indexWhere((e) => e.id == item.id);
     if (index != -1) {
-      state.removeAt(index);
+      final oldTodo = state.removeAt(index);
+      if (oldTodo.done != item.done) {
+        ref.read(logProvider.notifier).logTodoDoneUndone(todo: item, done: item.done);
+      }
       state.insert(index, item);
       state = [...state];
     } else {
       final id = '${item.id.id}_${item.title}'.replaceAll(RegExp('/'), '');
       item = item.copyWith(id: UniqueId(id: id));
       addTodo(todo: item);
+      await ref.read(logProvider.notifier).logTodoCreated(todo: item);
     }
     try {
       item = _updateItemAttachements(item);
@@ -78,6 +84,15 @@ class TodosNotifier extends StateNotifier<List<ToDo>> {
     final String table = todo.parentId?.id ?? tableName;
     state = [...state.where((element) => element.id != todo.id)];
     await db?.delete(id: todo.id.id, table: table);
+    await ref.read(logProvider.notifier).logTodoDeleted(todo: todo);
+  }
+
+  setTodoDoneUndone({required bool value, required ToDo todo}) {
+    final newItem = todo.copyWith(done: value);
+    updateTodo(item: newItem);
+    if (todo.parentId != null) {
+      ref.read(subTodosProvider(todo.parentId!));
+    }
   }
 
   checkAndCleanTodos() {

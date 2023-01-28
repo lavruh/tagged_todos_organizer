@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -14,7 +13,7 @@ import 'package:tagged_todos_organizer/todos/domain/todo.dart';
 import 'package:tagged_todos_organizer/todos/domain/todos_db_provider.dart';
 import 'package:tagged_todos_organizer/utils/unique_id.dart';
 
-import '../test/integration_test/todo_editor_test.mocks.dart';
+import 'todo_editor_test.mocks.dart';
 
 /*
 Load app only todos with date now visiable
@@ -40,8 +39,8 @@ Future<void> postponeTodoTest(WidgetTester tester) async {
 
   await tester.pumpWidget(ProviderScope(
     overrides: [
-      tagsDbProvider.overrideWithProvider(FutureProvider((ref) => db)),
-      todosDbProvider.overrideWithProvider(FutureProvider((ref) => db))
+      tagsDbProvider.overrideWith((ref) => db),
+      todosDbProvider.overrideWith((ref) => db)
     ],
     child: const MyApp(),
   ));
