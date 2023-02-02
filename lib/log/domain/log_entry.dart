@@ -47,28 +47,48 @@ class LogEntry {
 
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
+      'id': id.toMap(),
       'title': title,
-      'date': date,
-      'tags': tags,
-      'relatedId': relatedId,
-      'action': action,
+      'date': date.millisecondsSinceEpoch,
+      'tags': tags.map((e) => e.toMap()).toList(),
+      'relatedId': relatedId?.toMap(),
+      'action': action.index,
     };
   }
 
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is LogEntry &&
+          runtimeType == other.runtimeType &&
+           id == other.id &&
+          title == other.title &&
+          date.millisecondsSinceEpoch == other.date.millisecondsSinceEpoch &&
+          relatedId == other.relatedId &&
+          action == other.action;
+
+  @override
+  int get hashCode =>
+      id.hashCode ^
+      title.hashCode ^
+      date.hashCode ^
+      tags.hashCode ^
+      relatedId.hashCode ^
+      action.hashCode;
+
   factory LogEntry.fromMap(Map<String, dynamic> map) {
     return LogEntry(
-      id: map['id'] as UniqueId,
+      id: UniqueId.fromMap(map['id']),
       title: map['title'] as String,
-      date: map['date'] as DateTime,
-      tags: map['tags'] as List<UniqueId>,
-      relatedId: map['relatedId'],
-      action: map['action'] as LoggableAction,
+      date: DateTime.fromMillisecondsSinceEpoch(map['date']) ,
+      tags: (map['tags'] as List).map((e) => UniqueId.fromMap(e)).toList(),
+      relatedId: map['relatedId'] != null ? UniqueId.fromMap(map['relatedId']) : null,
+      action: LoggableAction.values[map['action']],
     );
   }
 
   @override
   String toString() {
-    return 'LogEntry{title: $title, date: $date, action: $action}';
+    return 'LogEntry{id: $id, title: $title, date: $date, tags: $tags, relatedId: $relatedId, action: $action}';
   }
 }

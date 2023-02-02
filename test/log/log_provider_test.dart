@@ -29,6 +29,26 @@ void main() {
 
   tearDown(() => addTearDown(ref.dispose));
 
+  test('LogEntry mapping', () {
+    final entry = LogEntry(
+      id: UniqueId(),
+      title: 'title',
+      date: DateTime.now(),
+      tags: [UniqueId(id: 'id'), UniqueId(id: '2')],
+      action: LoggableAction.deleted,
+    );
+
+    final map = entry.toMap();
+    expect(map.values, contains(entry.title));
+    expect(map.values, contains(entry.id.toMap()));
+    expect(map.values, contains(entry.date.millisecondsSinceEpoch));
+    expect(map.values, contains(entry.action.index));
+    expect((map['tags'] as List), contains('id'));
+    expect((map['tags'] as List), contains('2'));
+
+    expect(LogEntry.fromMap(map), entry);
+  });
+
   test('add log entry from todo', () async {
     const action = LoggableAction.created;
     final todo = ToDo.empty().copyWith(title: 'test');

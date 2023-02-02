@@ -10,6 +10,7 @@ final logProvider = StateNotifierProvider<LogNotifier, List<LogEntry>>((ref) {
   ref.watch(logDbProvider).whenData(
         (value) => notifier.setDb(value),
       );
+  notifier.getAllEntries();
   return notifier;
 });
 
