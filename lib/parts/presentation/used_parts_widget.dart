@@ -47,6 +47,6 @@ class UsedPartsWidget extends ConsumerWidget {
   }
 
   _addPartFromPhotoNumber(WidgetRef ref, BuildContext context) async {
-    ref.read(partsEditorProvider.notifier).addPartFromPhotoNumber(context);
+    ref.read(partsEditorProvider.notifier).getCameraReading(context);
   }
 }

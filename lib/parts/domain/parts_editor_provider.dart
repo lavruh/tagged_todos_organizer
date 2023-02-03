@@ -11,6 +11,7 @@ import 'package:get/get.dart';
 import 'package:photo_data_picker/domain/camera_state.dart';
 import 'package:photo_data_picker/domain/camera_state_device.dart';
 import 'package:photo_data_picker/domain/recognizer.dart';
+import 'package:tagged_todos_organizer/utils/app_path_provider.dart';
 
 final partsEditorProvider =
     StateNotifierProvider<PartsEditorNotifier, List<UsedPart>>(
@@ -35,9 +36,7 @@ class PartsEditorNotifier extends StateNotifier<List<UsedPart>> {
         ));
   }
 
-  addPartFromPhotoNumber(BuildContext context) async {
-    final reading = await _getCameraReading(context);
-
+  addPartFromPhotoNumber(String? reading) async {
     if (reading != null) {
       final todo = ref.watch(todoEditorProvider);
 
@@ -66,20 +65,24 @@ class PartsEditorNotifier extends StateNotifier<List<UsedPart>> {
     }
     updatePart(newPart, index);
   }
-}
 
-Future<String?> _getCameraReading(BuildContext context) async {
-  final navigator = GoRouter.of(context);
-  if (Platform.isAndroid) {
-    final cams = await availableCameras();
-    Get.put(Recognizer());
-    Get.put<CameraState>(CameraStateDevice(
-      flashMode: FlashMode.off,
-      cameras: cams,
-      tmpFile: File('/storage/emulated/0/TagsTodosOrganizer/maximoNo.jpg'),
-    ));
+  Future<void> getCameraReading(BuildContext context) async {
+    final navigator = GoRouter.of(context);
+    if (Platform.isAndroid) {
+      final cams = await availableCameras();
+      final path = ref.read(appPathProvider);
+      Get.put(Recognizer());
+      Get.put<CameraState>(CameraStateDevice(
+        flashMode: FlashMode.off,
+        cameras: cams,
+        tmpFile: File('$path/maximoNo.jpg'),
+        returnWithValue: (String val) {
+          addPartFromPhotoNumber(val);
+          navigator.pop();
+        },
+      ));
 
-    navigator.go('/TodoEditorScreen/CameraScreen');
+      navigator.go('/TodoEditorScreen/CameraScreen');
+    }
   }
-  return null;
 }

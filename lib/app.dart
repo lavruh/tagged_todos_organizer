@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:photo_data_picker/ui/screen/camera_screen.dart';
+import 'package:photo_data_picker/ui/photo_data_picker.dart';
 import 'package:tagged_todos_organizer/images_view/presentation/screens/image_view_screen.dart';
 import 'package:tagged_todos_organizer/log/presentation/log_overview_screen.dart';
 import 'package:tagged_todos_organizer/tags/presentation/tags_edit_screen.dart';
@@ -29,7 +29,7 @@ final GoRouter _router = GoRouter(routes: <RouteBase>[
               GoRoute(
                 path: 'CameraScreen',
                 builder: (context, state) {
-                  return CameraScreen();
+                  return const PhotoDataPicker();
                 },
               ),
             ]),

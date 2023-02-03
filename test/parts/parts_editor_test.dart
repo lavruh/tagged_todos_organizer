@@ -26,7 +26,7 @@ void main() {
         fireImmediately: true);
     ref.listen<ToDo?>(todoEditorProvider, TodoEditorListener(),
         fireImmediately: true);
-    ref.read(todoEditorProvider.notifier).updateTodo(ToDo.empty());
+    ref.read(todoEditorProvider.notifier).setTodo(ToDo.empty());
     ref.read(partsEditorProvider.notifier).addPart();
     final part = UsedPart(
         maximoNumber: "maximoNumber", name: "name", bin: "bin", pieces: 1);
@@ -43,7 +43,7 @@ void main() {
         fireImmediately: true);
     ref.listen<ToDo?>(todoEditorProvider, TodoEditorListener(),
         fireImmediately: true);
-    ref.read(todoEditorProvider.notifier).updateTodo(ToDo.empty());
+    ref.read(todoEditorProvider.notifier).setTodo(ToDo.empty());
     expect(ref.read(partsEditorProvider).length, 0);
     ref.read(partsEditorProvider.notifier).addPart();
     ref.read(partsEditorProvider.notifier).delete(index: 0);
@@ -75,7 +75,7 @@ void main() {
         fireImmediately: true);
     ref.listen<ToDo?>(todoEditorProvider, TodoEditorListener(),
         fireImmediately: true);
-    ref.read(todoEditorProvider.notifier).updateTodo(ToDo.empty());
+    ref.read(todoEditorProvider.notifier).setTodo(ToDo.empty());
     ref.read(partsEditorProvider.notifier).addPart();
     final part = UsedPart.empty().copyWith(maximoNumber: maximoNo);
 
