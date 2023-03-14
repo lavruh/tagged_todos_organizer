@@ -8,6 +8,7 @@ import 'package:tagged_todos_organizer/todos/domain/todo.dart';
 import 'package:tagged_todos_organizer/todos/domain/todo_editor_provider.dart';
 import 'package:tagged_todos_organizer/todos/domain/todos_provider.dart';
 import 'package:tagged_todos_organizer/todos/presentation/widgets/postpone_menu.dart';
+import 'package:tagged_todos_organizer/utils/presentation/widget/confirm_dialog.dart';
 
 class TodoPrevWidget extends ConsumerWidget {
   const TodoPrevWidget({Key? key, required this.item}) : super(key: key);
@@ -18,9 +19,13 @@ class TodoPrevWidget extends ConsumerWidget {
     return Slidable(
       endActionPane: ActionPane(motion: const ScrollMotion(), children: [
         SlidableAction(
+            icon: Icons.archive,
+            backgroundColor: Colors.orangeAccent,
+            onPressed: (_) => _archiveTodoProcess(_, ref)),
+        SlidableAction(
             icon: Icons.delete,
             backgroundColor: Colors.red,
-            onPressed: (_) => _deleteTodoProcess(_, ref))
+            onPressed: (_) => _deleteTodoProcess(_, ref)),
       ]),
       child: Card(
         elevation: 3,
@@ -66,19 +71,7 @@ class TodoPrevWidget extends ConsumerWidget {
   }
 
   void _deleteTodoProcess(BuildContext context, WidgetRef ref) async {
-    final bool act = await showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-              title: const Text('Delete todo?'),
-              actions: [
-                IconButton(
-                    onPressed: () => Navigator.of(context).pop(true),
-                    icon: const Icon(Icons.check)),
-                IconButton(
-                    onPressed: () => Navigator.of(context).pop(false),
-                    icon: const Icon(Icons.cancel)),
-              ],
-            ));
+    final act = await confirmDialog(context, title: 'Delete todo?');
     if (act) {
       ref.read(todosProvider.notifier).deleteTodo(todo: item);
     }
@@ -103,6 +96,13 @@ class TodoPrevWidget extends ConsumerWidget {
     {
       ref.read(todoEditorProvider.notifier).setTodo(item);
       context.go('/TodoEditorScreen');
+    }
+  }
+
+  _archiveTodoProcess(BuildContext context, WidgetRef ref) async {
+    final act = await confirmDialog(context, title: "Archive todo?");
+    if (act) {
+      ref.read(todosProvider.notifier).archiveTodo(todo: item);
     }
   }
 }

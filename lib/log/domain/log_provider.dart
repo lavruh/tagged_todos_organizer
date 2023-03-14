@@ -36,6 +36,10 @@ class LogNotifier extends StateNotifier<List<LogEntry>> {
     logActionWithTodo(action: LoggableAction.created, todo: todo);
   }
 
+  logTodoArchived({required ToDo todo}) {
+    logActionWithTodo(action: LoggableAction.archived, todo: todo);
+  }
+
   logTodoDoneUndone({required ToDo todo, required bool done}) {
     final action = done ? LoggableAction.done : LoggableAction.undone;
     logActionWithTodo(action: action, todo: todo);

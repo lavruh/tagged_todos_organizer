@@ -8,6 +8,7 @@ import 'package:tagged_todos_organizer/todos/domain/todo_editor_provider.dart';
 import 'package:tagged_todos_organizer/todos/domain/todos_provider.dart';
 import 'package:tagged_todos_organizer/todos/presentation/widgets/attachemets_preview_widget.dart';
 import 'package:tagged_todos_organizer/todos/presentation/widgets/sub_todos_overview_widget.dart';
+import 'package:tagged_todos_organizer/utils/presentation/widget/confirm_dialog.dart';
 import 'package:tagged_todos_organizer/utils/presentation/widget/text_field_with_confirm.dart';
 import 'package:tagged_todos_organizer/utils/snackbar_provider.dart';
 
@@ -49,25 +50,24 @@ class TodoEditScreen extends ConsumerWidget {
             IconButton(
                 onPressed: () async {
                   final navigator = GoRouter.of(context);
-                  final bool act = await showDialog(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                            title: const Text('Delete todo?'),
-                            actions: [
-                              IconButton(
-                                  onPressed: () =>
-                                      Navigator.of(context).pop(true),
-                                  icon: const Icon(Icons.check)),
-                              IconButton(
-                                  onPressed: () =>
-                                      Navigator.of(context).pop(false),
-                                  icon: const Icon(Icons.cancel)),
-                            ],
-                          ));
+                  final act =
+                      await confirmDialog(context, title: "Archive todo?");
+                  if (act &&
+                      await ref
+                          .read(todosProvider.notifier)
+                          .archiveTodo(todo: item)) {
+                    navigator.go('/');
+                  }
+                },
+                icon: const Icon(Icons.archive)),
+            IconButton(
+                onPressed: () async {
+                  final navigator = GoRouter.of(context);
+                  final act =
+                      await confirmDialog(context, title: 'Delete todo?');
                   if (act) {
                     ref.read(todosProvider.notifier).deleteTodo(todo: item);
                     navigator.go('/');
-                    // _goToTodosScreen(navigator);
                   }
                 },
                 icon: const Icon(Icons.delete)),

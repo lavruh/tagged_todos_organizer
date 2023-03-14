@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tagged_todos_organizer/archive/domain/archive_provider.dart';
 import 'package:tagged_todos_organizer/log/domain/log_provider.dart';
 import 'package:tagged_todos_organizer/tags/domain/tags_provider.dart';
 import 'package:tagged_todos_organizer/todos/domain/attachements_provider.dart';
@@ -54,7 +55,9 @@ class TodosNotifier extends StateNotifier<List<ToDo>> {
     if (index != -1) {
       final oldTodo = state.removeAt(index);
       if (oldTodo.done != item.done) {
-        ref.read(logProvider.notifier).logTodoDoneUndone(todo: item, done: item.done);
+        ref
+            .read(logProvider.notifier)
+            .logTodoDoneUndone(todo: item, done: item.done);
       }
       state.insert(index, item);
       state = [...state];
@@ -126,5 +129,18 @@ class TodosNotifier extends StateNotifier<List<ToDo>> {
       attachDirPath: attachementsPath,
       attacments: attachementsList,
     );
+  }
+
+ Future<bool> archiveTodo({required ToDo todo}) async {
+    final archive = ref.read(archiveProvider);
+    try {
+      await archive.add(todo);
+      await deleteTodo(todo: todo);
+      await ref.read(logProvider.notifier).logTodoArchived(todo: todo);
+      return true;
+    } catch (e) {
+      ref.read(snackbarProvider).show(e.toString());
+    }
+    return false;
   }
 }

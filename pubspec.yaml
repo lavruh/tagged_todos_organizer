@@ -1,7 +1,7 @@
 name: tagged_todos_organizer
 description: A new Flutter project.
 publish_to: 'none' 
-version: 1.2.4+1
+version: 1.3.2+2
 
 environment:
   sdk: ">=2.17.5 <3.0.0"
