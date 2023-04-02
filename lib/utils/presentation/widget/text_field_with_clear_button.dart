@@ -25,7 +25,6 @@ class _TextFieldWithClearButtonState extends State<TextFieldWithClearButton> {
   @override
   Widget build(BuildContext context) {
     return TextField(
-        autofocus: false,
         controller: textController,
         onChanged: (v) {
           widget.onChanged(v);

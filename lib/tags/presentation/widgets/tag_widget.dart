@@ -19,7 +19,7 @@ class TagWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return SizedBox(
-      height: MediaQuery.of(context).size.height * ref.watch(tagHeightProvider),
+      height: 25 * ref.watch(tagHeightProvider),
       child: FittedBox(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 2),

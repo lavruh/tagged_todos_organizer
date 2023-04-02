@@ -24,9 +24,12 @@ final todosProvider = StateNotifierProvider<TodosNotifier, List<ToDo>>((ref) {
 
 class TodosNotifier extends StateNotifier<List<ToDo>> {
   StateNotifierProviderRef<TodosNotifier, List<ToDo>> ref;
-  TodosNotifier(this.ref) : super([]);
+  TodosNotifier(this.ref) : super([]) {
+    log = ref.read(logProvider.notifier);
+  }
   IDbService? db;
   final String tableName = 'todos';
+  late LogNotifier log;
 
   setDb(IDbService instance) {
     db = instance;
@@ -55,9 +58,7 @@ class TodosNotifier extends StateNotifier<List<ToDo>> {
     if (index != -1) {
       final oldTodo = state.removeAt(index);
       if (oldTodo.done != item.done) {
-        ref
-            .read(logProvider.notifier)
-            .logTodoDoneUndone(todo: item, done: item.done);
+        await log.logTodoDoneUndone(todo: item, done: item.done);
       }
       state.insert(index, item);
       state = [...state];
@@ -65,7 +66,7 @@ class TodosNotifier extends StateNotifier<List<ToDo>> {
       final id = '${item.id.id}_${item.title}'.replaceAll(RegExp('/'), '');
       item = item.copyWith(id: UniqueId(id: id));
       addTodo(todo: item);
-      await ref.read(logProvider.notifier).logTodoCreated(todo: item);
+      await log.logTodoCreated(todo: item);
     }
     try {
       item = _updateItemAttachements(item);
@@ -131,7 +132,7 @@ class TodosNotifier extends StateNotifier<List<ToDo>> {
     );
   }
 
- Future<bool> archiveTodo({required ToDo todo}) async {
+  Future<bool> archiveTodo({required ToDo todo}) async {
     final archive = ref.read(archiveProvider);
     try {
       await archive.add(todo);

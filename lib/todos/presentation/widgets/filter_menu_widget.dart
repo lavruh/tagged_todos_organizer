@@ -69,7 +69,7 @@ class FilterMenuWidget extends ConsumerWidget {
               SingleChildScrollView(
                 child: TagSelectWidget(
                   selectedTags: ref.watch(todosFilterByTags),
-                  height: 0.5,
+                  height: 0.4,
                   onPress: (tag) => filter.toggleFilter(tag.id),
                 ),
               ),

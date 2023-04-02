@@ -16,6 +16,8 @@ class TodoPrevWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final style = Theme.of(context).textTheme.titleMedium;
+
     return Slidable(
       endActionPane: ActionPane(motion: const ScrollMotion(), children: [
         SlidableAction(
@@ -30,10 +32,6 @@ class TodoPrevWidget extends ConsumerWidget {
       child: Card(
         elevation: 3,
         child: ListTile(
-          leading: Checkbox(
-            onChanged: (val) => _toggleDone(val, ref),
-            value: item.done,
-          ),
           title: ConstrainedBox(
             constraints: const BoxConstraints(minHeight: 55),
             child: Row(
@@ -44,6 +42,10 @@ class TodoPrevWidget extends ConsumerWidget {
                     child: Text(
                       item.title != '' ? item.title : 'Title',
                       overflow: TextOverflow.ellipsis,
+                      style: item.done
+                          ? style?.copyWith(
+                              decoration: TextDecoration.lineThrough)
+                          : style,
                     ),
                     onTap: () => _openInEditor(ref, context),
                   ),
@@ -74,14 +76,6 @@ class TodoPrevWidget extends ConsumerWidget {
     final act = await confirmDialog(context, title: 'Delete todo?');
     if (act) {
       ref.read(todosProvider.notifier).deleteTodo(todo: item);
-    }
-  }
-
-  void _toggleDone(bool? value, WidgetRef ref) {
-    if (value != null) {
-      ref
-          .read(todosProvider.notifier)
-          .setTodoDoneUndone(value: value, todo: item);
     }
   }
 

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tagged_todos_organizer/tags/domain/filtered_tags_provider.dart';
@@ -25,25 +27,9 @@ class TagSelectWidget extends ConsumerWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        FittedBox(
-          fit: BoxFit.cover,
-          child: SizedBox(
-            width: MediaQuery.of(context).size.width * 0.9,
-            height: MediaQuery.of(context).size.height * (height ?? 1),
-            child: SingleChildScrollView(
-              child: Wrap(
-                children: items.map((e) {
-                  return TagWidget(
-                    e: e,
-                    selected: _isSelected(e.id),
-                    onPress: onPress != null ? (tag) => onPress!(tag) : null,
-                    onDelete: onDelete != null ? (tag) => onDelete!(tag) : null,
-                  );
-                }).toList(),
-              ),
-            ),
-          ),
-        ),
+        Platform.isAndroid
+            ? FittedBox(fit: BoxFit.cover, child: _tagsWidget(items, context))
+            : _tagsWidget(items, context),
         if (selectedTags != null)
           SearchPanelWidget(
             initSearchText: ref.watch(tagsFilter),
@@ -57,5 +43,25 @@ class TagSelectWidget extends ConsumerWidget {
 
   bool _isSelected(UniqueId id) {
     return selectedTags?.contains(id) ?? false;
+  }
+
+  Widget _tagsWidget(List<Tag> items, BuildContext context) {
+    return SizedBox(
+        width: MediaQuery.of(context).size.width * 0.9,
+        height: MediaQuery.of(context).size.height * (height ?? 1),
+        child: SingleChildScrollView(
+          child: Wrap(
+            spacing: 3.0,
+            runSpacing: 3.0,
+            children: items.map((e) {
+              return TagWidget(
+                e: e,
+                selected: _isSelected(e.id),
+                onPress: onPress != null ? (tag) => onPress!(tag) : null,
+                onDelete: onDelete != null ? (tag) => onDelete!(tag) : null,
+              );
+            }).toList(),
+          ),
+        ));
   }
 }
