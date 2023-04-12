@@ -14,7 +14,7 @@ final filteredTodosProvider = Provider<List<ToDo>>((ref) {
     filteredTodos =
         filteredTodos.where((element) => element.done == false).toList();
   }
-  if (!ref.watch(todosFilterShowAll)) {
+  if (filter.isEmpty) {
     filteredTodos =
         filteredTodos.where((element) => element.parentId == null).toList();
   }

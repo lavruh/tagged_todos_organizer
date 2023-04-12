@@ -19,10 +19,14 @@ class TagsPreviewWidget extends ConsumerWidget {
     return tags.isEmpty
         ? Padding(
             padding: const EdgeInsets.symmetric(vertical: 8),
-            child: Text(
-              'Tags:',
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
+            child: GestureDetector(
+                child: Text(
+                  'Tags:',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                onTap: () {
+                  if (onTap != null) onTap!();
+                }),
           )
         : Wrap(
             children: selectedTags

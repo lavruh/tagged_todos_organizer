@@ -37,16 +37,6 @@ class FilterMenuWidget extends ConsumerWidget {
                     .update((state) => !flag);
               }),
           ListTile(
-            title: const Text('Show subtodos'),
-            leading: ref.watch(todosFilterShowAll)
-                ? const Icon(Icons.account_tree)
-                : const Icon(Icons.account_tree_outlined),
-            onTap: () {
-              final flag = ref.read(todosFilterShowAll);
-              ref.read(todosFilterShowAll.notifier).update((state) => !flag);
-            },
-          ),
-          ListTile(
             title: const Text('Filter by date'),
             leading: ref.watch(todosFilterByDate) == null
                 ? const Icon(Icons.calendar_month_outlined)

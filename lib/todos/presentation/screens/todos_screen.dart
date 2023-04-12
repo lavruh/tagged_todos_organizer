@@ -34,6 +34,7 @@ class TodosScreen extends ConsumerWidget {
           )),
           SearchPanelWidget(
             key: const Key('TodoSearchPanel'),
+            initSearchText: ref.read(todosFilter),
             onSearch: (v) {
               ref.read(todosFilter.notifier).update((state) => v);
             },
