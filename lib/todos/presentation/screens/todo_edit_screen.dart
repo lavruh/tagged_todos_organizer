@@ -6,11 +6,13 @@ import 'package:tagged_todos_organizer/parts/presentation/used_parts_widget.dart
 import 'package:tagged_todos_organizer/tags/presentation/widgets/tags_widget.dart';
 import 'package:tagged_todos_organizer/todos/domain/todo_editor_provider.dart';
 import 'package:tagged_todos_organizer/todos/domain/todos_provider.dart';
+import 'package:tagged_todos_organizer/todos/presentation/screens/todo_select_screen.dart';
 import 'package:tagged_todos_organizer/todos/presentation/widgets/attachemets_preview_widget.dart';
 import 'package:tagged_todos_organizer/todos/presentation/widgets/sub_todos_overview_widget.dart';
 import 'package:tagged_todos_organizer/utils/presentation/widget/confirm_dialog.dart';
 import 'package:tagged_todos_organizer/utils/presentation/widget/text_field_with_confirm.dart';
 import 'package:tagged_todos_organizer/utils/snackbar_provider.dart';
+import 'package:tagged_todos_organizer/utils/unique_id.dart';
 
 class TodoEditScreen extends ConsumerWidget {
   const TodoEditScreen({Key? key}) : super(key: key);
@@ -47,6 +49,27 @@ class TodoEditScreen extends ConsumerWidget {
                   },
                   child: const Text('Go parent',
                       style: TextStyle(color: Colors.white))),
+            IconButton(
+                onPressed: () async {
+                  final newPath = await Navigator.of(context).push(
+                      MaterialPageRoute(
+                          builder: (_) => const TodoSelectScreen()));
+                  try {
+                    if (newPath == '/') {
+                      ref
+                          .read(todoEditorProvider.notifier)
+                          .changeTodoParent(null);
+                    } else if (newPath != null &&
+                        newPath.runtimeType == UniqueId) {
+                      ref
+                          .read(todoEditorProvider.notifier)
+                          .changeTodoParent(newPath);
+                    }
+                  } on Exception catch (e) {
+                    ref.read(snackbarProvider).show(e.toString());
+                  }
+                },
+                icon: const Icon(Icons.move_up)),
             IconButton(
                 onPressed: () async {
                   final navigator = GoRouter.of(context);

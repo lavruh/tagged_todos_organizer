@@ -11,8 +11,15 @@ import 'package:tagged_todos_organizer/todos/presentation/widgets/postpone_menu.
 import 'package:tagged_todos_organizer/utils/presentation/widget/confirm_dialog.dart';
 
 class TodoPrevWidget extends ConsumerWidget {
-  const TodoPrevWidget({Key? key, required this.item}) : super(key: key);
+  const TodoPrevWidget({
+    Key? key,
+    this.onTapTitle,
+    this.onTapSubTaskCount,
+    required this.item,
+  }) : super(key: key);
   final ToDo item;
+  final Function()? onTapTitle;
+  final Function()? onTapSubTaskCount;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -31,10 +38,11 @@ class TodoPrevWidget extends ConsumerWidget {
       ]),
       child: Card(
         elevation: 3,
-        child: ListTile(
-          title: ConstrainedBox(
-            constraints: const BoxConstraints(minHeight: 55),
-            child: Row(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Flexible(
@@ -47,7 +55,9 @@ class TodoPrevWidget extends ConsumerWidget {
                               decoration: TextDecoration.lineThrough)
                           : style,
                     ),
-                    onTap: () => _openInEditor(ref, context),
+                    onTap: () => onTapTitle != null
+                        ? onTapTitle!()
+                        : _openInEditor(ref, context),
                   ),
                 ),
                 if (item.date != null)
@@ -58,15 +68,22 @@ class TodoPrevWidget extends ConsumerWidget {
                   ),
               ],
             ),
-          ),
-          subtitle: Wrap(
-            direction: Axis.vertical,
-            alignment: WrapAlignment.spaceBetween,
-            children: [
-              Text(item.description.split('\n').last),
-              TagsPreviewWidget(tags: item.tags),
-            ],
-          ),
+            Text(item.description.split('\n').last),
+            Row(
+              children: [
+                if (item.children.isNotEmpty)
+                  SizedBox.square(
+                    dimension: 40,
+                    child: TextButton(
+                      key: const Key('todoSubTaskCount'),
+                      onPressed: onTapSubTaskCount,
+                      child: Text("${item.children.length}"),
+                    ),
+                  ),
+                TagsPreviewWidget(tags: item.tags),
+              ],
+            ),
+          ]),
         ),
       ),
     );

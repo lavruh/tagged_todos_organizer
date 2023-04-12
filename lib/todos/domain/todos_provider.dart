@@ -2,15 +2,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tagged_todos_organizer/archive/domain/archive_provider.dart';
 import 'package:tagged_todos_organizer/log/domain/log_provider.dart';
 import 'package:tagged_todos_organizer/tags/domain/tags_provider.dart';
-import 'package:tagged_todos_organizer/todos/domain/attachements_provider.dart';
+import 'package:tagged_todos_organizer/todos/domain/attachments_provider.dart';
 import 'package:tagged_todos_organizer/todos/domain/sub_todos_provider.dart';
 import 'package:tagged_todos_organizer/todos/domain/todo.dart';
-import 'package:tagged_todos_organizer/todos/domain/todo_editor_provider.dart';
 import 'package:tagged_todos_organizer/todos/domain/todos_db_provider.dart';
 import 'package:tagged_todos_organizer/utils/data/i_db_service.dart';
 import 'package:tagged_todos_organizer/utils/snackbar_provider.dart';
 import 'package:tagged_todos_organizer/utils/unique_id.dart';
-import 'dart:io';
 import 'package:path/path.dart' as p;
 
 final todosProvider = StateNotifierProvider<TodosNotifier, List<ToDo>>((ref) {
@@ -53,35 +51,56 @@ class TodosNotifier extends StateNotifier<List<ToDo>> {
     state = [...state, todo ?? ToDo.empty()];
   }
 
-  updateTodo({required ToDo item}) async {
+  Future<ToDo> updateTodo({required ToDo item}) async {
     final index = state.indexWhere((e) => e.id == item.id);
+
     if (index != -1) {
-      final oldTodo = state.removeAt(index);
-      if (oldTodo.done != item.done) {
-        await log.logTodoDoneUndone(todo: item, done: item.done);
-      }
-      state.insert(index, item);
-      state = [...state];
+      item = item.copyWith(children: _getChildrenList(item.id));
+      await _updateState(
+        index,
+        item,
+      );
     } else {
-      final id = '${item.id.id}_${item.title}'.replaceAll(RegExp('/'), '');
-      item = item.copyWith(id: UniqueId(id: id));
-      addTodo(todo: item);
-      await log.logTodoCreated(todo: item);
+      item = await _saveNewTodoToState(item);
     }
+
     try {
-      item = _updateItemAttachements(item);
+      if (item.parentId != null) {
+        updateTodoChildren(id: item.parentId!);
+      }
+      item = _updateItemAttachments(item);
     } on Exception catch (e) {
       throw Exception(e);
     }
 
+    await _updateDb(item);
+    return item;
+  }
+
+  Future<void> _updateDb(ToDo item) async {
     final String table = item.parentId?.id ?? tableName;
     await db
         ?.update(id: item.id.toString(), item: item.toMap(), table: table)
         .onError((error, stackTrace) {
       return ref.read(snackbarProvider).show("$error");
     });
+  }
 
-    ref.read(todoEditorProvider.notifier).setTodo(item);
+  Future<ToDo> _saveNewTodoToState(ToDo item) async {
+    final id = '${item.id.id}_${item.title}'.replaceAll(RegExp('/'), '');
+    item = item.copyWith(id: UniqueId(id: id));
+    addTodo(todo: item);
+    await log.logTodoCreated(todo: item);
+    return item;
+  }
+
+  Future<void> _updateState(int index, ToDo item) async {
+    final oldTodo = state.removeAt(index);
+    state.insert(index, item);
+    state = [...state];
+    if (oldTodo.done != item.done) {
+      await log.logTodoDoneUndone(todo: item, done: item.done);
+    }
   }
 
   deleteTodo({required ToDo todo}) async {
@@ -114,21 +133,13 @@ class TodosNotifier extends StateNotifier<List<ToDo>> {
     state = cleanTodos;
   }
 
-  ToDo _updateItemAttachements(ToDo t) {
-    final attachementsState = ref.read(attachementsProvider.notifier);
-    final String attachementsPath = p.join(
-        attachementsState.getParentDirPath(parentId: t.parentId?.id.toString()),
+  ToDo _updateItemAttachments(ToDo t) {
+    final attachmentsState = ref.read(attachmentsProvider.notifier);
+    final String attachmentsPath = p.join(
+        attachmentsState.getParentDirPath(parentId: t.parentId?.id.toString()),
         t.id.id);
-    try {
-      Directory(attachementsPath).createSync();
-    } on FileSystemException catch (e) {
-      throw Exception(e);
-    }
-
-    final attachementsList = ref.read(attachementsProvider);
     return t.copyWith(
-      attachDirPath: attachementsPath,
-      attacments: attachementsList,
+      attachDirPath: attachmentsPath,
     );
   }
 
@@ -141,6 +152,33 @@ class TodosNotifier extends StateNotifier<List<ToDo>> {
       return true;
     } catch (e) {
       ref.read(snackbarProvider).show(e.toString());
+    }
+    return false;
+  }
+
+  updateTodoChildren({required UniqueId id}) {
+    final item = state.firstWhere((element) => element.id == id);
+    updateTodo(item: item.copyWith(children: _getChildrenList(id)));
+  }
+
+  List<UniqueId> _getChildrenList(UniqueId id) {
+    List<UniqueId> childrenList = [];
+    for (final i in state) {
+      if (i.parentId == id) childrenList.add(i.id);
+    }
+    return childrenList;
+  }
+
+  bool hasChild({required UniqueId node, required UniqueId child}) {
+    final children = state.where((e) => e.parentId == node);
+    if (children.isNotEmpty) {
+      for (ToDo c in children) {
+        if (c.id == child) {
+          return true;
+        } else {
+          return hasChild(node: c.id, child: child);
+        }
+      }
     }
     return false;
   }

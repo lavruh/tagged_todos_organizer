@@ -4,7 +4,7 @@ import 'package:tagged_todos_organizer/todos/domain/filtered_todos_provider.dart
 import 'package:tagged_todos_organizer/todos/presentation/widgets/appbar_widget.dart';
 import 'package:tagged_todos_organizer/todos/presentation/widgets/filter_menu_widget.dart';
 import 'package:tagged_todos_organizer/todos/presentation/widgets/menu_widget.dart';
-import 'package:tagged_todos_organizer/todos/presentation/widgets/todo_prev_widget.dart';
+import 'package:tagged_todos_organizer/todos/presentation/widgets/todo_tree_widget.dart';
 import 'package:tagged_todos_organizer/utils/presentation/widget/search_panel_widget.dart';
 import 'package:tagged_todos_organizer/utils/snackbar_provider.dart';
 
@@ -28,15 +28,10 @@ class TodosScreen extends ConsumerWidget {
       endDrawer: const FilterMenuWidget(),
       body: Column(
         children: [
-          Flexible(
-            child: ListView(
-              children: [
-                ...todos.map(
-                  (e) => TodoPrevWidget(item: e),
-                ),
-              ],
-            ),
-          ),
+          const Flexible(
+              child: TodoTreeWidget(
+            key: Key('TodosOverview'),
+          )),
           SearchPanelWidget(
             key: const Key('TodoSearchPanel'),
             onSearch: (v) {

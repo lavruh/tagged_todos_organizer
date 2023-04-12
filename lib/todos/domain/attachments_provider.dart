@@ -1,0 +1,173 @@
+import 'dart:io';
+import 'package:file_picker/file_picker.dart';
+import 'package:intl/intl.dart';
+import 'package:open_filex/open_filex.dart';
+import 'package:path/path.dart' as p;
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:process_run/shell.dart';
+import 'package:tagged_todos_organizer/todos/domain/todo.dart';
+import 'package:tagged_todos_organizer/utils/app_path_provider.dart';
+import 'package:tagged_todos_organizer/utils/snackbar_provider.dart';
+
+final attachmentsProvider =
+    StateNotifierProvider<AttachmentsNotifier, List<String>>(
+        (ref) => AttachmentsNotifier(ref));
+
+class AttachmentsNotifier extends StateNotifier<List<String>> {
+  AttachmentsNotifier(this.ref) : super([]);
+  String? path;
+  late Directory root;
+  StateNotifierProviderRef ref;
+
+  ToDo? manage({required ToDo todo, bool createDir = false}) {
+    try {
+      setPath(attachmentsFolder: todo.attachDirPath);
+    } on Exception {
+      String newPath = '';
+      try {
+        newPath = getParentDirPath(parentId: todo.id.id);
+        setPath(attachmentsFolder: newPath);
+      } on Exception {
+        newPath =
+            p.join(getParentDirPath(parentId: todo.parentId?.id), todo.id.id);
+       if(createDir) {
+          Directory(newPath).createSync(recursive: true);
+          setPath(attachmentsFolder: newPath);
+        }
+      }
+      updateAttachments();
+      return todo.copyWith(attachDirPath: newPath);
+    }
+    updateAttachments();
+    return null;
+  }
+
+  resetState() => path = null;
+
+  setPath({required String attachmentsFolder}) {
+    if (attachmentsFolder.isEmpty ||
+        !Directory(attachmentsFolder).existsSync()) {
+      throw Exception('Directory [$attachmentsFolder] does not exist');
+    }
+    path = attachmentsFolder;
+  }
+
+  updateAttachments() {
+    if (path != null) {
+      final dir = Directory(path!);
+      List<String> files = [];
+      for (final file in dir.listSync()) {
+        if (file is File) {
+          files.add(file.path);
+        }
+      }
+      state = files;
+    } else {
+      state = [];
+    }
+  }
+
+  void addPhoto() async {
+    if (path != null) {
+      if (Platform.isAndroid) {
+        final ImagePicker picker = ImagePicker();
+        final XFile? photo = await picker.pickImage(source: ImageSource.camera);
+        final name = DateFormat('y-M-d_hh_mm_ss').format(DateTime.now());
+        final filePath = p.join(path!, 'img_$name.jpg');
+        photo?.saveTo(filePath);
+        _updateState(filePath);
+      }
+    } else {
+      showNotification();
+    }
+  }
+
+  void attachFile() async {
+    if (path != null) {
+      final picker = await FilePicker.platform.pickFiles();
+      if (picker != null && picker.paths.first != null) {
+        final filePath = picker.paths.first!;
+        final name = p.basename(filePath);
+        final newPath = p.join(path!, name);
+        await File(filePath).copy(newPath);
+        _updateState(newPath);
+      }
+    } else {
+      showNotification();
+    }
+  }
+
+  void openFolder() {
+    if (path != null) {
+      OpenFilex.open(path);
+    }
+  }
+
+  void _updateState(String filePath) {
+    state = [...state, filePath];
+  }
+
+  void showNotification() {
+    ref
+        .read(snackbarProvider.notifier)
+        .show('Can not add attachment. Save item first.');
+  }
+
+  void openFile({required String file}) {
+    if (Platform.isLinux) {
+      final shell = Shell();
+      shell.run("xdg-open '$file'");
+    }
+    if (Platform.isAndroid) {
+      OpenFilex.open(file);
+    }
+  }
+
+  String getParentDirPath({String? parentId}) {
+    final root = Directory(ref.read(appPathProvider));
+    if (parentId == null) {
+      return p.join(root.path, 'todos');
+    }
+    for (final item in root.listSync(recursive: true)) {
+      if (p.basename(item.path) == parentId) {
+        return item.path;
+      }
+    }
+    throw (Exception(
+        'No item with id <$parentId>[${parentId.runtimeType}] found.'));
+  }
+
+  Directory moveAttachments({required String oldPath, String? newParent}) {
+    final root = ref.read(appPathProvider);
+    final path = getParentDirPath(parentId: newParent);
+    final oldDir = Directory(p.join(root, oldPath));
+    if (oldPath.isNotEmpty && oldDir.existsSync()) {
+      final dirName = p.basenameWithoutExtension(oldPath);
+      final newDirPath = p.join(path, dirName);
+      final newDir = Directory(newDirPath);
+      print('move from ${oldDir.path}');
+      print('move to ${newDir.path}');
+      _copyDirectory(oldDir, newDir);
+      oldDir.deleteSync(recursive: true);
+      return newDir;
+    } else {
+      throw Exception('Attachment folder does not exist $oldPath');
+    }
+  }
+
+  void _copyDirectory(Directory source, Directory destination) {
+    destination.createSync(recursive: true);
+    source.listSync().forEach((entity) {
+      final targetPath = p.join(destination.path, p.basename(entity.path));
+      if (entity is File ) {
+        entity.copySync(targetPath);
+      }
+      if (entity is Directory) {
+        Directory newSubdir = Directory(targetPath);
+        newSubdir.createSync(recursive: true);
+        _copyDirectory(entity, newSubdir);
+      }
+    });
+  }
+}

@@ -54,13 +54,14 @@ class ToDo {
     DateTime? date,
     List<UsedPart>? usedParts,
     bool clearDate = false,
+    bool clearParent = false,
   }) {
     return ToDo(
         id: id ?? this.id,
         title: title ?? this.title,
         description: description ?? this.description,
         done: done ?? this.done,
-        parentId: parentId ?? this.parentId,
+        parentId: clearParent ? null : parentId ?? this.parentId,
         children: children ?? this.children,
         attachDirPath: attachDirPath ?? this.attachDirPath,
         attacments: attacments ?? this.attacments,

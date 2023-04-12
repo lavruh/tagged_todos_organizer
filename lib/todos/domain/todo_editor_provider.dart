@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tagged_todos_organizer/parts/domain/used_part.dart';
-import 'package:tagged_todos_organizer/todos/domain/attachements_provider.dart';
+import 'package:tagged_todos_organizer/todos/domain/attachments_provider.dart';
 import 'package:tagged_todos_organizer/todos/domain/todo.dart';
 import 'package:tagged_todos_organizer/todos/domain/todos_provider.dart';
 import 'package:tagged_todos_organizer/utils/snackbar_provider.dart';
@@ -14,21 +14,24 @@ class TodoEditorNotifier extends StateNotifier<ToDo?> {
   StateNotifierProviderRef<TodoEditorNotifier, ToDo?> ref;
 
   setTodo(ToDo t) {
-    _setAttchPatch(t);
+    final todoWithUpdatedPath =
+        ref.read(attachmentsProvider.notifier).manage(todo: t);
+    if (todoWithUpdatedPath != null) {
+      state = todoWithUpdatedPath;
+    }
     state = t;
   }
 
   setById(UniqueId id) {
     final t =
         ref.watch(todosProvider).firstWhere((element) => element.id == id);
-    _setAttchPatch(t);
-    state = t;
+    setTodo(t);
   }
 
   updateTodo(ToDo t) async {
     bool fl = true;
     try {
-      await ref.read(todosProvider.notifier).updateTodo(item: t);
+      state = await ref.read(todosProvider.notifier).updateTodo(item: t);
     } on Exception catch (e) {
       ref.read(snackbarProvider).show('$e');
       fl = false;
@@ -38,11 +41,40 @@ class TodoEditorNotifier extends StateNotifier<ToDo?> {
     }
   }
 
-  _setAttchPatch(ToDo t) {
-    ref
-        .read(attachementsProvider.notifier)
-        .load(attachs: t.attacments, attachementsFolder: t.attachDirPath);
+  changeTodoParent(UniqueId? parentId) async {
+    final todo = state;
+    if (todo != null) {
+      if (parentId != null && (isChild(parentId) || parentId == todo.id)) {
+        throw Exception("Cannot move todo to self or own child");
+      }
+      try {
+        final newDir = ref.read(attachmentsProvider.notifier).moveAttachments(
+            oldPath: todo.attachDirPath, newParent: parentId?.id);
+
+        late ToDo updatedTodo;
+        if (parentId == null) {
+          updatedTodo =
+              todo.copyWith(clearParent: true, attachDirPath: newDir.path);
+        } else {
+          updatedTodo =
+              todo.copyWith(parentId: parentId, attachDirPath: newDir.path);
+        }
+
+        await updateTodo(updatedTodo);
+
+        final oldParent = todo.parentId;
+        if (oldParent != null) {
+          ref.read(todosProvider.notifier).updateTodoChildren(id: oldParent);
+        }
+      } on Exception {
+        rethrow;
+      }
+    }
   }
+
+  bool isChild(parentId) => ref
+      .read(todosProvider.notifier)
+      .hasChild(node: state!.id, child: parentId);
 
   updateTodoState(
       {UniqueId? id,
