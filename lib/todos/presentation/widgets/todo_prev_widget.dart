@@ -8,6 +8,7 @@ import 'package:tagged_todos_organizer/todos/domain/todo.dart';
 import 'package:tagged_todos_organizer/todos/domain/todo_editor_provider.dart';
 import 'package:tagged_todos_organizer/todos/domain/todos_provider.dart';
 import 'package:tagged_todos_organizer/todos/presentation/widgets/postpone_menu.dart';
+import 'package:tagged_todos_organizer/todos/presentation/widgets/priority_menu_widget.dart';
 import 'package:tagged_todos_organizer/utils/presentation/widget/confirm_dialog.dart';
 
 class TodoPrevWidget extends ConsumerWidget {
@@ -70,6 +71,7 @@ class TodoPrevWidget extends ConsumerWidget {
             ),
             Text(item.description.split('\n').last),
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 if (item.children.isNotEmpty)
                   SizedBox.square(
@@ -81,6 +83,9 @@ class TodoPrevWidget extends ConsumerWidget {
                     ),
                   ),
                 TagsPreviewWidget(tags: item.tags),
+                TextButton(
+                    onPressed: () => _priorityMenuDialog(context),
+                    child: Text('${item.priority}')),
               ],
             ),
           ]),
@@ -100,6 +105,13 @@ class TodoPrevWidget extends ConsumerWidget {
     showDialog(
       context: context,
       builder: (context) => Dialog(child: PostponeMenuWidget(item: item)),
+    );
+  }
+
+  void _priorityMenuDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(child: PriorityMenuWidget(item: item)),
     );
   }
 

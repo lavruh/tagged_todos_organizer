@@ -14,6 +14,8 @@ class ToDo {
   final List<UniqueId> tags;
   final DateTime? date;
   final List<UsedPart> usedParts;
+  final int priority;
+
   ToDo({
     required this.id,
     required this.title,
@@ -26,6 +28,7 @@ class ToDo {
     required this.tags,
     this.date,
     required this.usedParts,
+    this.priority = 0,
   });
 
   ToDo.empty()
@@ -39,7 +42,8 @@ class ToDo {
         attacments = [],
         tags = [],
         date = null,
-        usedParts = [];
+        usedParts = [],
+        priority = 0;
 
   ToDo copyWith({
     UniqueId? id,
@@ -53,6 +57,7 @@ class ToDo {
     List<UniqueId>? tags,
     DateTime? date,
     List<UsedPart>? usedParts,
+    int? priority,
     bool clearDate = false,
     bool clearParent = false,
   }) {
@@ -67,7 +72,8 @@ class ToDo {
         attacments: attacments ?? this.attacments,
         tags: tags ?? this.tags,
         date: clearDate ? null : date ?? this.date,
-        usedParts: usedParts ?? this.usedParts);
+        usedParts: usedParts ?? this.usedParts,
+        priority: priority ?? this.priority);
   }
 
   Map<String, dynamic> toMap() {
@@ -83,6 +89,7 @@ class ToDo {
       'tags': tags.map((e) => e.toMap()).toList(),
       'date': date?.millisecondsSinceEpoch,
       'usedParts': usedParts.map((e) => e.toMap()).toList(),
+      'priority': priority,
     };
   }
 
@@ -105,6 +112,7 @@ class ToDo {
       usedParts: map['usedParts'] != null
           ? List.from(map['usedParts'].map((e) => UsedPart.fromMap(e)))
           : [],
+      priority: map['priority'] ?? 0,
     );
   }
 

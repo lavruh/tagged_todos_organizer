@@ -19,7 +19,7 @@ class PostponeMenuWidget extends ConsumerWidget {
         children: [
           Text(
             'Postpone till...',
-            style: Theme.of(context).textTheme.headline5,
+            style: Theme.of(context).textTheme.titleMedium,
           ),
           TextButton(
               onPressed: () => _postpone(ref, context, DateTime.now(), days: 1),

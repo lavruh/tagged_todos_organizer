@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tagged_todos_organizer/todos/domain/todo.dart';
 import 'package:tagged_todos_organizer/todos/domain/todos_provider.dart';
+import 'package:tagged_todos_organizer/utils/domain/datetime_extension.dart';
 import 'package:tagged_todos_organizer/utils/unique_id.dart';
 
 final filteredTodosProvider = Provider<List<ToDo>>((ref) {
@@ -56,7 +57,11 @@ final filteredTodosProvider = Provider<List<ToDo>>((ref) {
   }
 
   withDates.sort((a, b) {
-    return b.date!.compareTo(a.date!);
+    final tmp = b.date!.compareDateTo(a.date!);
+    if(tmp == 0){
+      return b.priority.compareTo(a.priority);
+    }
+    return tmp;
   });
   return [...withDates, ...withNoDates];
 });
