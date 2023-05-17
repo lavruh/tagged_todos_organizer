@@ -31,9 +31,12 @@ class AttachmentsNotifier extends StateNotifier<List<String>> {
       } on Exception {
         newPath =
             p.join(getParentDirPath(parentId: todo.parentId?.id), todo.id.id);
-       if(createDir) {
+        if (createDir) {
           Directory(newPath).createSync(recursive: true);
           setPath(attachmentsFolder: newPath);
+        } else {
+          path = null;
+          updateAttachments();
         }
       }
       updateAttachments();
@@ -160,7 +163,7 @@ class AttachmentsNotifier extends StateNotifier<List<String>> {
     destination.createSync(recursive: true);
     source.listSync().forEach((entity) {
       final targetPath = p.join(destination.path, p.basename(entity.path));
-      if (entity is File ) {
+      if (entity is File) {
         entity.copySync(targetPath);
       }
       if (entity is Directory) {

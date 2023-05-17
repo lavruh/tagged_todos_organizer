@@ -68,7 +68,7 @@ class TodosNotifier extends StateNotifier<List<ToDo>> {
       if (item.parentId != null) {
         updateTodoChildren(id: item.parentId!);
       }
-      item = _updateItemAttachments(item);
+      item = _updateItemAttachmentsPath(item);
     } on Exception catch (e) {
       throw Exception(e);
     }
@@ -133,14 +133,12 @@ class TodosNotifier extends StateNotifier<List<ToDo>> {
     state = cleanTodos;
   }
 
-  ToDo _updateItemAttachments(ToDo t) {
+  ToDo _updateItemAttachmentsPath(ToDo t) {
     final attachmentsState = ref.read(attachmentsProvider.notifier);
     final String attachmentsPath = p.join(
         attachmentsState.getParentDirPath(parentId: t.parentId?.id.toString()),
         t.id.id);
-    return t.copyWith(
-      attachDirPath: attachmentsPath,
-    );
+    return t.copyWith(attachDirPath: attachmentsPath);
   }
 
   Future<bool> archiveTodo({required ToDo todo}) async {

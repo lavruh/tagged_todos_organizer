@@ -8,6 +8,7 @@ import 'package:tagged_todos_organizer/todos/domain/todo_editor_provider.dart';
 import 'package:tagged_todos_organizer/todos/domain/todos_provider.dart';
 import 'package:tagged_todos_organizer/todos/presentation/screens/todo_select_screen.dart';
 import 'package:tagged_todos_organizer/todos/presentation/widgets/attachemets_preview_widget.dart';
+import 'package:tagged_todos_organizer/todos/presentation/widgets/priority_slider_widget.dart';
 import 'package:tagged_todos_organizer/todos/presentation/widgets/sub_todos_overview_widget.dart';
 import 'package:tagged_todos_organizer/utils/presentation/widget/confirm_dialog.dart';
 import 'package:tagged_todos_organizer/utils/presentation/widget/text_field_with_confirm.dart';
@@ -173,6 +174,14 @@ class TodoEditScreen extends ConsumerWidget {
                       ),
                     ),
                   ],
+                ),
+                PrioritySliderWidget(
+                  initValue: item.priority,
+                  setValue: (val) {
+                    ref
+                        .read(todoEditorProvider.notifier)
+                        .setTodo(item.copyWith(priority: val.round()));
+                  },
                 ),
                 TagsWidget(
                   key: Key(item.tags.hashCode.toString()),

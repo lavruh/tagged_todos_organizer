@@ -31,7 +31,7 @@ class TodoEditorNotifier extends StateNotifier<ToDo?> {
   updateTodo(ToDo t) async {
     bool fl = true;
     try {
-      state = await ref.read(todosProvider.notifier).updateTodo(item: t);
+      setTodo(await ref.read(todosProvider.notifier).updateTodo(item: t));
     } on Exception catch (e) {
       ref.read(snackbarProvider).show('$e');
       fl = false;

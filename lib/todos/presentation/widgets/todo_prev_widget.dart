@@ -38,6 +38,9 @@ class TodoPrevWidget extends ConsumerWidget {
             onPressed: (_) => _deleteTodoProcess(_, ref)),
       ]),
       child: Card(
+        color: Colors.white
+            .withBlue(255 - item.priority * 7)
+            .withGreen(255 - item.priority * 5),
         elevation: 3,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
