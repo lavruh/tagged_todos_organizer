@@ -49,7 +49,7 @@ class UsedPartWidget extends StatelessWidget {
           ),
         ),
         Flexible(
-            flex: 5,
+            flex: 4,
             child: Padding(
               padding: const EdgeInsets.all(4.0),
               child: TextFieldWithConfirm(
@@ -78,18 +78,19 @@ class UsedPartWidget extends StatelessWidget {
           flex: 1,
           child: Padding(
             padding: const EdgeInsets.all(4.0),
-            child: TextFieldWithConfirm(
-                text: item.pieces.toString(),
-                key: Key(item.maximoNumber),
-                lable: 'Qty',
-                maxLines: 1,
-                keyboardType: TextInputType.number,
-                onConfirm: (val) {
-                  final n = int.tryParse(val);
-                  if (n != null) {
-                    update(item.copyWith(pieces: n));
-                  }
-                }),
+            child: TextField(
+              controller: TextEditingController(text: item.pieces.toString()),
+              key: Key(item.maximoNumber),
+              decoration: InputDecoration(labelText: 'Qty'),
+              maxLines: 1,
+              keyboardType: TextInputType.number,
+              onSubmitted: (val) {
+                final n = int.tryParse(val);
+                if (n != null) {
+                  update(item.copyWith(pieces: n));
+                }
+              },
+            ),
           ),
         ),
       ])),

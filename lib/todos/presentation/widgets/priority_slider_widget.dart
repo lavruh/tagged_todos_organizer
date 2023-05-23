@@ -41,9 +41,16 @@ class _PrioritySliderWidgetState extends State<PrioritySliderWidget> {
         ),
         SizedBox.square(
           dimension: 40,
-          child: IconButton(
-              onPressed: () => widget.setValue(value.round()),
-              icon: Icon(Icons.check)),
+          child: AnimatedCrossFade(
+            firstChild: Container(),
+            secondChild: IconButton(
+                onPressed: () => widget.setValue(value.round()),
+                icon: const Icon(Icons.check)),
+            crossFadeState: widget.initValue == value
+                ? CrossFadeState.showFirst
+                : CrossFadeState.showSecond,
+            duration: const Duration(milliseconds: 500),
+          ),
         )
       ],
     );

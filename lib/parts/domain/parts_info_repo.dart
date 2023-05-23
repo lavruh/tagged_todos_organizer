@@ -26,7 +26,10 @@ class PartsInfoRepo {
       request: {'maximoNo': maximoNo},
       table: 'parts',
     );
-    return Part.fromMap(map ?? {'maximoNo': maximoNo});
+    if(map!= null && map.isNotEmpty){
+      return Part.fromMap(map);
+    }
+    return Part.fromMap({'maximoNo': maximoNo});
   }
 
   initUpdatePartsFromFile() async {
