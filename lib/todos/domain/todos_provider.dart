@@ -154,6 +154,17 @@ class TodosNotifier extends StateNotifier<List<ToDo>> {
     return false;
   }
 
+  Future<void> unarchiveTodo({required UniqueId id}) async {
+    final archive = ref.read(archiveProvider);
+    try {
+      await archive.unarchive(id);
+    } catch (e) {
+      ref.read(snackbarProvider).show(e.toString());
+    }
+    state = [];
+    getTodos();
+  }
+
   updateTodoChildren({required UniqueId id}) {
     final item = state.firstWhere((element) => element.id == id);
     updateTodo(item: item.copyWith(children: _getChildrenList(id)));

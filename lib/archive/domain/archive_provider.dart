@@ -5,6 +5,7 @@ import 'package:tagged_todos_organizer/archive/data/local_archive_service.dart';
 import 'package:tagged_todos_organizer/archive/domain/archive_service_provider.dart';
 import 'package:tagged_todos_organizer/todos/domain/todo.dart';
 import 'package:tagged_todos_organizer/utils/app_path_provider.dart';
+import 'package:tagged_todos_organizer/utils/unique_id.dart';
 
 final archiveProvider = Provider<Archive>((ref) {
   final archiveService = ref.watch(archiveServiceProvider);
@@ -22,6 +23,17 @@ class Archive {
       try {
         final String path = p.join(appPath, todo.attachDirPath);
         await service.addToArchive(path: path);
+      } catch (e) {
+        rethrow;
+      }
+    }
+  }
+
+  unarchive(UniqueId id) async {
+    if (service is LocalArchiveService) {
+      try {
+        final String path = p.join(appPath, 'archive', '${id.id}.zip');
+        await service.extractFromArchive(path: path);
       } catch (e) {
         rethrow;
       }
