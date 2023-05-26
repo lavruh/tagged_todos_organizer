@@ -20,14 +20,6 @@ class TodoEditScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    ref.listen<SnackbarNotifier>(snackbarProvider, (p, val) {
-      if (val.msg != null) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(val.msg ?? ''),
-            duration: const Duration(milliseconds: 3000)));
-      }
-    });
-
     final item = ref.watch(todoEditorProvider);
     if (item == null) {
       return Scaffold(
