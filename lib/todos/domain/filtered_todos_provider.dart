@@ -58,7 +58,7 @@ final filteredTodosProvider = Provider<List<ToDo>>((ref) {
 
   withDates.sort((a, b) {
     final tmp = b.date!.compareDateTo(a.date!);
-    if(tmp == 0){
+    if (tmp == 0) {
       return b.priority.compareTo(a.priority);
     }
     return tmp;
@@ -86,6 +86,10 @@ class TodosFilterByTagsNotifier extends StateNotifier<List<UniqueId>> {
     } else {
       addFilter(id);
     }
+  }
+
+  bool isSelected(UniqueId id) {
+    return state.contains(id) ;
   }
 
   clearFilter() => state = [];

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tagged_todos_organizer/tags/domain/tags_from_string_provider.dart';
+import 'package:tagged_todos_organizer/tags/presentation/widgets/tags_row_widget.dart';
 import 'package:tagged_todos_organizer/todos/domain/filtered_todos_provider.dart';
 import 'package:tagged_todos_organizer/todos/presentation/widgets/appbar_widget.dart';
 import 'package:tagged_todos_organizer/todos/presentation/widgets/filter_menu_widget.dart';
@@ -13,7 +15,6 @@ class TodosScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final todos = ref.watch(filteredTodosProvider);
     ref.listen<SnackbarNotifier>(snackbarProvider, (p, val) {
       if (val.msg != null) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -32,11 +33,15 @@ class TodosScreen extends ConsumerWidget {
               child: TodoTreeWidget(
             key: Key('TodosOverview'),
           )),
+          const TagsRowWidget(),
           SearchPanelWidget(
             key: const Key('TodoSearchPanel'),
             initSearchText: ref.read(todosFilter),
             onSearch: (v) {
               ref.read(todosFilter.notifier).update((state) => v);
+              ref
+                  .read(tagsFromStringSearchProvider.notifier)
+                  .update((state) => v);
             },
             tagsFilter: true,
           ),
