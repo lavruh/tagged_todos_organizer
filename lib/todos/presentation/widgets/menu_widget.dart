@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:tagged_todos_organizer/parts/domain/parts_info_repo.dart';
 import 'package:tagged_todos_organizer/tags/domain/filtered_tags_provider.dart';
 import 'package:tagged_todos_organizer/tags/domain/tag_editor_provider.dart';
+import 'package:tagged_todos_organizer/utils/app_version_provider.dart';
 import 'package:tagged_todos_organizer/utils/snackbar_provider.dart';
 
 class MenuWidget extends ConsumerWidget {
@@ -14,6 +15,9 @@ class MenuWidget extends ConsumerWidget {
     return Drawer(
       child: ListView(
         children: [
+          ListTile(
+            title: Text(ref.watch(appVersionProvider)),
+          ),
           ListTile(
             leading: const Icon(Icons.tag_sharp),
             title: const Text('Tags Editor'),

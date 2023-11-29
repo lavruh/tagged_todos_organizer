@@ -49,12 +49,17 @@ class PostponeMenuWidget extends ConsumerWidget {
     _postpone(ref, context, date, days: days);
   }
 
-  _postpone(WidgetRef ref, BuildContext context, DateTime date,
-      {int days = 0}) {
+  _postpone(
+    WidgetRef ref,
+    BuildContext context,
+    DateTime date, {
+    int days = 0,
+  }) {
     ref.read(todosProvider.notifier).updateTodo(
           item: item.copyWith(
               date: DateTime.fromMillisecondsSinceEpoch(
-                  date.millisecondsSinceEpoch + 86400000 * days)),
+                  date.millisecondsSinceEpoch +
+                      Duration(days: days).inMilliseconds)),
         );
     Navigator.of(context).pop();
   }

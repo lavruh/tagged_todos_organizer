@@ -40,26 +40,32 @@ final filteredTodosProvider = Provider<List<ToDo>>((ref) {
   List<ToDo> withDates = [];
   List<ToDo> withNoDates = [];
   for (final item in filteredTodos) {
-    if (item.date != null) {
+    if (item.date == null) {
+      withNoDates.add(item);
+    } else {
       if (!ref.watch(todosFilterShowFutureDates)) {
-        final today = DateTime.now();
-        if (item.date!.millisecondsSinceEpoch <=
-            DateTime(today.year, today.month, today.day + 1)
-                .millisecondsSinceEpoch) {
+        final now = DateTime.now();
+        final today =
+            now.copyWith(hour: 23, minute: 59, second: 59, millisecond: 0);
+        if (item.date!.millisecondsSinceEpoch <= today.millisecondsSinceEpoch) {
           withDates.add(item);
         }
       } else {
         withDates.add(item);
       }
-    } else {
-      withNoDates.add(item);
     }
   }
 
   withDates.sort((a, b) {
     final tmp = b.date!.compareDateTo(a.date!);
-    if (tmp == 0) {
-      return b.priority.compareTo(a.priority);
+    final aDate = a.date;
+    final bDate = b.date;
+    if (aDate != null && bDate != null) {
+      if (aDate.year == bDate.year &&
+          aDate.month == bDate.month &&
+          aDate.day == bDate.day) {
+        return b.priority.compareTo(a.priority);
+      }
     }
     return tmp;
   });
@@ -89,7 +95,7 @@ class TodosFilterByTagsNotifier extends StateNotifier<List<UniqueId>> {
   }
 
   bool isSelected(UniqueId id) {
-    return state.contains(id) ;
+    return state.contains(id);
   }
 
   clearFilter() => state = [];
