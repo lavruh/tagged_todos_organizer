@@ -650,9 +650,11 @@ packages:
   notes_on_image:
     dependency: "direct main"
     description:
-      path: "/home/lavruh/storage/Documents/projects/flutter_apps/NotesOnImage"
-      relative: false
-    source: path
+      path: "."
+      ref: HEAD
+      resolved-ref: c255846789434a6461c6bb35ac54869df7008fa1
+      url: "https://github.com/lavruh/NotesOnImage.git"
+    source: git
     version: "1.2.5+1"
   open_filex:
     dependency: "direct main"
@@ -801,9 +803,11 @@ packages:
   photo_data_picker:
     dependency: "direct main"
     description:
-      path: "/home/lavruh/storage/Documents/projects/flutter_apps/photo_data_picker"
-      relative: false
-    source: path
+      path: "."
+      ref: HEAD
+      resolved-ref: "94f300ee6cc182aa5299149c29bc8f205bed0220"
+      url: "https://github.com/lavruh/photo_data_picker.git"
+    source: git
     version: "1.1.0+1"
   platform:
     dependency: transitive
