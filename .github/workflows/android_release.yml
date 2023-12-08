@@ -8,9 +8,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - id: read-version
-          uses: NiklasLehnfeld/flutter-version-number-action@main
-          with:
-            file-path: pubspec.yaml
+        uses: NiklasLehnfeld/flutter-version-number-action@main
+        with:
+          file-path: pubspec.yaml
       - uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
