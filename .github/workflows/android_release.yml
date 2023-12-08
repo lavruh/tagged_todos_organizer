@@ -1,0 +1,36 @@
+name: Android Release
+on: workflow_dispatch
+
+jobs:
+  build:
+    name: flutter release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - id: read-version
+          uses: NiklasLehnfeld/flutter-version-number-action@main
+          with:
+            file-path: pubspec.yaml
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          flutter-version: '3.16.2'
+      - name: Install project dependencies
+        run: flutter pub get
+      - name: Generate intermediates
+        run: flutter pub run build_runner build --delete-conflicting-outputs
+      - name: Build artifacts
+        run: flutter build apk
+      - name: Archive Release
+        uses: thedoctor0/zip-release@master
+        with:
+          type: 'zip'
+          filename: Tagged_todo_organizer-${{github.ref_name}}-windows-${{steps.read-version.outputs.version-number}}.zip
+          directory: build/app/outputs/apk/release
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: Tagged_todo_organizer-${{steps.read-version.outputs.version-number}}
+          files: build/app/outputs/apk/release/PartTracker-${{github.ref_name}}-windows-${{steps.read-version.outputs.version-number}}.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
