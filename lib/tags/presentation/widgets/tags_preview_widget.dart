@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tagged_todos_organizer/tags/domain/selected_tags_provider.dart';
+import 'package:tagged_todos_organizer/tags/domain/tag.dart';
 import 'package:tagged_todos_organizer/tags/presentation/widgets/tag_widget.dart';
 import 'package:tagged_todos_organizer/utils/unique_id.dart';
 
 class TagsPreviewWidget extends ConsumerWidget {
   const TagsPreviewWidget({
-    Key? key,
+    super.key,
     required this.tags,
     this.onTap,
-  }) : super(key: key);
+    this.onTapTag,
+  });
   final List<UniqueId> tags;
   final Function? onTap;
+  final Function(Tag)? onTapTag;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -28,15 +31,18 @@ class TagsPreviewWidget extends ConsumerWidget {
                   if (onTap != null) onTap!();
                 }),
           )
-        : Wrap(
-            children: selectedTags
-                .map((e) => TagWidget(
-                      e: e,
-                      onPress: (t) {
-                        if (onTap != null) onTap!();
-                      },
-                    ))
-                .toList(),
+        : GestureDetector(
+            onTap: () {
+              if (onTap != null) onTap!();
+            },
+            child: Wrap(
+              children: selectedTags
+                  .map((e) => TagWidget(
+                        e: e,
+                        onPress: onTapTag,
+                      ))
+                  .toList(),
+            ),
           );
   }
 }
