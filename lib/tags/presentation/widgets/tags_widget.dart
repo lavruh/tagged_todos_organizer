@@ -5,10 +5,10 @@ import 'package:tagged_todos_organizer/utils/unique_id.dart';
 
 class TagsWidget extends StatefulWidget {
   const TagsWidget({
-    Key? key,
+    super.key,
     required this.tags,
     required this.updateTags,
-  }) : super(key: key);
+  });
   final List<UniqueId> tags;
   final Function(List<UniqueId>) updateTags;
   @override
@@ -36,9 +36,19 @@ class _TagsWidgetState extends State<TagsWidget> {
               editMode ? CrossFadeState.showSecond : CrossFadeState.showFirst,
           firstChild: Padding(
             padding: const EdgeInsets.all(14.0),
-            child: TagsPreviewWidget(
-              tags: tags,
-              onTap: _toggleMode,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                TagsPreviewWidget(
+                  tags: tags,
+                  onTapTag: (tag) => setState(() {
+                    tags.remove(tag.id);
+                  }),
+                ),
+                IconButton(
+                    onPressed: () => _toggleMode(),
+                    icon: const Icon(Icons.edit)),
+              ],
             ),
           ),
           secondChild: Column(
