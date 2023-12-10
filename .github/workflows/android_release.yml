@@ -22,7 +22,7 @@ jobs:
       - name: Build artifacts
         run: flutter build apk --release
       - name: Rename file
-        run: mv app-release.apk Tagged_todo_organizer-${{steps.read-version.outputs.version-number}}.apk
+        run: mv build/app/outputs/apk/release/app-release.apk build/app/outputs/apk/release/Tagged_todo_organizer-${{steps.read-version.outputs.version-number}}.apk
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
