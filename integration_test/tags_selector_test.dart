@@ -77,8 +77,8 @@ Future<void> tagsSelectorTest(WidgetTester tester) async {
 
   await tester.pumpWidget(ProviderScope(
     overrides: [
-      tagsDbProvider.overrideWithProvider(FutureProvider((ref) => db)),
-      todosDbProvider.overrideWithProvider(FutureProvider((ref) => db)),
+      tagsDbProvider.overrideWith((ref) => db),
+      todosDbProvider.overrideWith((ref) => db),
     ],
     child: const MyApp(),
   ));
@@ -138,6 +138,7 @@ Future<void> tagsSelectorTest(WidgetTester tester) async {
   await tester.enterText(
       find.widgetWithText(TextField, 'Search'), tagToSelect.name);
   await tester.pump(const Duration(seconds: 1));
+  await tester.pump(const Duration(seconds: 10));
   final widgetTagToSelect =
       find.descendant(of: tagSelectWidget, matching: find.byType(InputChip));
   expect(widgetTagToSelect, findsOneWidget);

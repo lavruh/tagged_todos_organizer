@@ -6,7 +6,6 @@ import 'package:path/path.dart' as p;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:process_run/shell.dart';
-import 'package:tagged_todos_organizer/todos/domain/todo.dart';
 import 'package:tagged_todos_organizer/utils/app_path_provider.dart';
 import 'package:tagged_todos_organizer/utils/snackbar_provider.dart';
 
@@ -20,17 +19,21 @@ class AttachmentsNotifier extends StateNotifier<List<String>> {
   late Directory root;
   StateNotifierProviderRef ref;
 
-  ToDo? manage({required ToDo todo, bool createDir = false}) {
+  String? manage({
+    required String id,
+    bool createDir = false,
+    required String attachmentsDirPath,
+    String? parentId,
+  }) {
     try {
-      setPath(attachmentsFolder: todo.attachDirPath);
+      setPath(attachmentsFolder: attachmentsDirPath);
     } on Exception {
       String newPath = '';
       try {
-        newPath = getParentDirPath(parentId: todo.id.id);
+        newPath = getParentDirPath(parentId: id);
         setPath(attachmentsFolder: newPath);
       } on Exception {
-        newPath =
-            p.join(getParentDirPath(parentId: todo.parentId?.id), todo.id.id);
+        newPath = p.join(getParentDirPath(parentId: parentId), id);
         if (createDir) {
           Directory(newPath).createSync(recursive: true);
           setPath(attachmentsFolder: newPath);
@@ -40,7 +43,7 @@ class AttachmentsNotifier extends StateNotifier<List<String>> {
         }
       }
       updateAttachments();
-      return todo.copyWith(attachDirPath: newPath);
+      return newPath;
     }
     updateAttachments();
     return null;
