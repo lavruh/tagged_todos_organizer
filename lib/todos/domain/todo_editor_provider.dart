@@ -1,8 +1,11 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:tagged_todos_organizer/parts/domain/used_part.dart';
 import 'package:tagged_todos_organizer/todos/domain/attachments_provider.dart';
 import 'package:tagged_todos_organizer/todos/domain/todo.dart';
 import 'package:tagged_todos_organizer/todos/domain/todos_provider.dart';
+import 'package:tagged_todos_organizer/utils/presentation/widget/confirm_dialog.dart';
 import 'package:tagged_todos_organizer/utils/snackbar_provider.dart';
 import 'package:tagged_todos_organizer/utils/unique_id.dart';
 
@@ -12,13 +15,27 @@ final todoEditorProvider = StateNotifierProvider<TodoEditorNotifier, ToDo?>(
 class TodoEditorNotifier extends StateNotifier<ToDo?> {
   TodoEditorNotifier(this.ref) : super(null);
   StateNotifierProviderRef<TodoEditorNotifier, ToDo?> ref;
+  bool _editId = false;
+  bool _isChanged = false;
 
-  setTodo(ToDo t) {
-    final todoWithUpdatedPath =
-        ref.read(attachmentsProvider.notifier).manage(todo: t);
-    if (todoWithUpdatedPath != null) {
-      state = todoWithUpdatedPath;
+  setTodo(
+    ToDo t, {
+    editId = false,
+  }) {
+    _editId = editId;
+    final newAttachmentsPath = ref.read(attachmentsProvider.notifier).manage(
+          id: t.id.id,
+          attachmentsDirPath: t.attachDirPath,
+          parentId: t.parentId?.id,
+        );
+    if (newAttachmentsPath != null) {
+      state = t.copyWith(attachDirPath: newAttachmentsPath);
     }
+    state = t;
+  }
+
+  changeState(ToDo t) {
+    _isChanged = true;
     state = t;
   }
 
@@ -30,8 +47,11 @@ class TodoEditorNotifier extends StateNotifier<ToDo?> {
 
   updateTodo(ToDo t) async {
     bool fl = true;
+    _isChanged = false;
     try {
-      setTodo(await ref.read(todosProvider.notifier).updateTodo(item: t));
+      setTodo(await ref
+          .read(todosProvider.notifier)
+          .updateTodo(item: t, editId: _editId));
     } on Exception catch (e) {
       ref.read(snackbarProvider).show('$e');
       fl = false;
@@ -101,5 +121,21 @@ class TodoEditorNotifier extends StateNotifier<ToDo?> {
       date: date,
       usedParts: usedParts,
     );
+  }
+
+  checkIfToSave(GoRouter router, BuildContext context) async {
+    if (!_isChanged) {
+      router.pop();
+      return;
+    }
+    final shouldSave = await confirmDialog(context, title: "Save changes?");
+    if (shouldSave == null) return;
+    if (shouldSave) {
+      final todo = state;
+      if (todo != null) {
+        updateTodo(todo);
+      }
+    }
+    router.pop();
   }
 }

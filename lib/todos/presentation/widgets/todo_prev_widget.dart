@@ -13,11 +13,11 @@ import 'package:tagged_todos_organizer/utils/presentation/widget/confirm_dialog.
 
 class TodoPrevWidget extends ConsumerWidget {
   const TodoPrevWidget({
-    Key? key,
+    super.key,
     this.onTapTitle,
     this.onTapSubTaskCount,
     required this.item,
-  }) : super(key: key);
+  });
   final ToDo item;
   final Function()? onTapTitle;
   final Function()? onTapSubTaskCount;
@@ -99,7 +99,7 @@ class TodoPrevWidget extends ConsumerWidget {
 
   void _deleteTodoProcess(BuildContext context, WidgetRef ref) async {
     final act = await confirmDialog(context, title: 'Delete todo?');
-    if (act) {
+    if (act == true) {
       ref.read(todosProvider.notifier).deleteTodo(todo: item);
     }
   }
@@ -127,7 +127,7 @@ class TodoPrevWidget extends ConsumerWidget {
 
   _archiveTodoProcess(BuildContext context, WidgetRef ref) async {
     final act = await confirmDialog(context, title: "Archive todo?");
-    if (act) {
+    if (act == true) {
       ref.read(todosProvider.notifier).archiveTodo(todo: item);
     }
   }

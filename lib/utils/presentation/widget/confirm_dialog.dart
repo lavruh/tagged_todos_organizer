@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-Future<bool> confirmDialog(BuildContext context,
+Future<bool?> confirmDialog(BuildContext context,
     {required String title}) async {
   final res = await showDialog<bool>(
       context: context,
@@ -17,5 +17,5 @@ Future<bool> confirmDialog(BuildContext context,
                   icon: const Icon(Icons.cancel)),
             ],
           ));
-  return res ?? false;
+  return res;
 }
