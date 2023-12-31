@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:tagged_todos_organizer/app.dart';
+import 'package:tagged_todos_organizer/log/domain/log_provider.dart';
 import 'package:tagged_todos_organizer/parts/domain/part.dart';
 import 'package:tagged_todos_organizer/parts/presentation/used_part_widget.dart';
 import 'package:tagged_todos_organizer/parts/presentation/used_parts_widget.dart';
@@ -13,6 +14,7 @@ import 'package:tagged_todos_organizer/tags/domain/tag.dart';
 import 'package:tagged_todos_organizer/tags/domain/tags_db_provider.dart';
 import 'package:tagged_todos_organizer/tags/presentation/widgets/tag_widget.dart';
 import 'package:tagged_todos_organizer/tags/presentation/widgets/tags_preview_widget.dart';
+import 'package:tagged_todos_organizer/todos/domain/attachments_provider.dart';
 import 'package:tagged_todos_organizer/todos/domain/todo.dart';
 import 'package:tagged_todos_organizer/todos/domain/todos_db_provider.dart';
 import 'package:tagged_todos_organizer/todos/presentation/widgets/sub_todos_overview_widget.dart';
@@ -20,6 +22,7 @@ import 'package:tagged_todos_organizer/todos/presentation/widgets/todo_prev_widg
 import 'package:tagged_todos_organizer/utils/data/i_db_service.dart';
 import 'package:tagged_todos_organizer/utils/unique_id.dart';
 
+import 'attachments_mock.dart';
 import 'todo_editor_test.mocks.dart';
 
 /*
@@ -124,8 +127,10 @@ Future<void> todoEditorTest(WidgetTester tester) async {
 
   await tester.pumpWidget(ProviderScope(
     overrides: [
-      tagsDbProvider.overrideWithProvider(FutureProvider((ref) => db)),
-      todosDbProvider.overrideWithProvider(FutureProvider((ref) => db)),
+      tagsDbProvider.overrideWith((ref) => db),
+      todosDbProvider.overrideWith((ref) => db),
+      attachmentsProvider.overrideWith((ref) => AttachmentsNotifierMock(ref)),
+      logProvider.overrideWith((ref) => LogNotifier(ref)),
     ],
     child: const MyApp(),
   ));
@@ -149,6 +154,7 @@ Future<void> todoEditorTest(WidgetTester tester) async {
   // 2.
   await tester.tap(find.text(todoWithDate.title));
   await tester.pump(const Duration(seconds: 1));
+  await tester.pumpAndSettle();
   expect(find.text(todoWithDate.title), findsOneWidget);
   expect(find.text(DateFormat('y\nMM-dd').format(todoDate)), findsOneWidget);
   expect(find.text("Tags:"), findsOneWidget);
@@ -156,8 +162,9 @@ Future<void> todoEditorTest(WidgetTester tester) async {
   // 3.
   await tester.pageBack();
   await tester.pump(const Duration(seconds: 1));
+  await tester.pump(const Duration(seconds: 10));
   await tester.tap(find.text(todoWithTags.title));
-  await tester.pump(const Duration(seconds: 1));
+  await tester.pumpAndSettle();
   expect(find.text(todoWithTags.title), findsOneWidget);
   expect(find.textContaining(todoWithTags.description), findsOneWidget);
   expect(find.byIcon(Icons.calendar_month), findsOneWidget);
@@ -184,12 +191,14 @@ Future<void> todoEditorTest(WidgetTester tester) async {
 
   // 5.
   const newSubtaskName = 'new sub task';
-  await tester.enterText(
-      find.widgetWithText(TextField, "Title"), newSubtaskName);
+  final titleField = find.widgetWithText(TextField, "Title");
+  await tester.enterText(titleField, newSubtaskName);
   await tester.pump(const Duration(seconds: 1));
   await tester.testTextInput.receiveAction(TextInputAction.done);
   await tester.pump(const Duration(seconds: 1));
-  await tester.tap(find.byIcon(Icons.check));
+  final titleCheckIcon =
+      find.descendant(of: titleField, matching: find.byIcon(Icons.check));
+  await tester.tap(titleCheckIcon);
   await tester.pump(const Duration(seconds: 1));
   await tester.tap(find.byIcon(Icons.save));
   await tester.pump(const Duration(seconds: 1));
@@ -212,6 +221,7 @@ Future<void> todoEditorTest(WidgetTester tester) async {
 
   await tester.tap(find.text("Go parent"));
   await tester.pump(const Duration(seconds: 1));
+  await tester.pump(const Duration(seconds: 1));
   expect(find.text(todoWithTags.title), findsOneWidget);
   expect(find.textContaining(todoWithTags.description), findsOneWidget);
   expect(find.text("Go parent"), findsNothing);
@@ -230,12 +240,13 @@ Future<void> todoEditorTest(WidgetTester tester) async {
   // 10.
   await tester.tap(find.byIcon(Icons.cancel));
   await tester.pump(const Duration(seconds: 1));
+  await tester.pump(const Duration(seconds: 1));
   expect(find.textContaining(todoWithTags.title), findsOneWidget);
 
   // 11.
   await tester.tap(find.byIcon(Icons.delete));
   await tester.pump(const Duration(seconds: 1));
-  await tester.tap(find.byIcon(Icons.check));
+  await tester.tap(find.byKey(const Key('dialog_confirm')));
   await tester.pump(const Duration(seconds: 1));
   expect(find.textContaining(todoWithTags.title), findsNothing);
   expect(find.byType(TodoPrevWidget), findsNWidgets(todos.length - 1));
@@ -243,6 +254,7 @@ Future<void> todoEditorTest(WidgetTester tester) async {
   // 12.
   await tester.tap(find.byIcon(Icons.add));
   await tester.pump(const Duration(seconds: 1));
+  await tester.pumpAndSettle();
   expect(find.text("Go parent"), findsNothing);
   expect(find.text("Title"), findsOneWidget);
   expect(find.text("Description"), findsOneWidget);
@@ -275,14 +287,14 @@ Future<void> todoEditorTest(WidgetTester tester) async {
               pos: '',
               balance: '')
           .toMap());
-
-  await tester.enterText(find.widgetWithText(TextField, 'Maximo'), maximoNo);
+  final maximoField = find.widgetWithText(TextField, 'Maximo');
+  await tester.enterText(maximoField, maximoNo);
   await tester.pump(const Duration(seconds: 1));
   await tester.testTextInput.receiveAction(TextInputAction.done);
-  await tester.tap(find.byIcon(Icons.check));
+  await tester.tap(
+      find.descendant(of: maximoField, matching: find.byIcon(Icons.check)));
   await tester.pump(const Duration(seconds: 1));
   expect(find.text(maximoPartName), findsOneWidget);
-
 
   await tester.pageBack();
 }

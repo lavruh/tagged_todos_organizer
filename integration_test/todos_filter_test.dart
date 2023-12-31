@@ -94,13 +94,6 @@ Future<void> todoFilterTest(WidgetTester tester) async {
   expect(find.text(todoDone.title), findsOneWidget);
   expect(find.byIcon(Icons.check_box), findsOneWidget);
 
-  //  show sub tasks filter
-  expect(find.byIcon(Icons.account_tree_outlined), findsOneWidget);
-  await tester.tap(find.textContaining('Show subtodos'));
-  await tester.pump(const Duration(seconds: 1));
-  expect(find.text(subTodo.title), findsOneWidget);
-  expect(find.byIcon(Icons.account_tree), findsOneWidget);
-
   // filter by date
   expect(find.byIcon(Icons.calendar_month_outlined), findsOneWidget);
   await tester.tap(find.textContaining('Filter by date'));

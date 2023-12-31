@@ -52,13 +52,12 @@ Future<void> tagsEditorTest(WidgetTester tester) async {
 
   await tester.pumpWidget(ProviderScope(
     overrides: [
-      tagsDbProvider.overrideWithProvider(FutureProvider((ref) => tagsDb))
+      tagsDbProvider.overrideWith((ref) => tagsDb),
     ],
     child: const MyApp(),
   ));
 
   await tester.pump();
-  await tester.pump(const Duration(seconds: 1));
 
   await tester.tapAt(const Offset(10, 10));
   await tester.pumpAndSettle();
