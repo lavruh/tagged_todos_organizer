@@ -26,7 +26,11 @@ main() {
     final sut = ref.read(attachmentsProvider.notifier);
     final todo = ToDo.empty();
 
-    final res = sut.manage(todo: todo);
+    final res = sut.manage(
+      id: todo.id.toString(),
+      attachmentsDirPath: todo.attachDirPath,
+      parentId: todo.parentId.toString(),
+    );
 
     await pumpEventQueue(times: 20);
 
@@ -34,7 +38,7 @@ main() {
     final attachmentsPath = p.join(testDirPath, 'todos', todo.id.id);
     expect(sut.path, attachmentsPath);
     expect(Directory(attachmentsPath).existsSync(), true);
-    expect(res?.attachDirPath, attachmentsPath);
+    expect(res, attachmentsPath);
   });
 
   test('find attachment folder for todo with wrong path', () async {
@@ -51,12 +55,15 @@ main() {
         p.join(testDirPath, 'todos', 'someParent', todo.id.id);
     Directory(attachmentsPath).createSync(recursive: true);
 
-    final res = sut.manage(todo: todo);
+    final res = sut.manage(
+        id: todo.id.toString(),
+        attachmentsDirPath: todo.attachDirPath,
+        parentId: todo.parentId.toString());
 
     await pumpEventQueue(times: 20);
 
     expect(ref.read(attachmentsProvider), []);
     expect(sut.path, attachmentsPath);
-    expect(res?.attachDirPath, attachmentsPath);
+    expect(res, attachmentsPath);
   });
 }

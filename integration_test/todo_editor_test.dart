@@ -135,7 +135,7 @@ Future<void> todoEditorTest(WidgetTester tester) async {
     child: const MyApp(),
   ));
   await tester.pumpAndSettle();
-  await tester.pump(const Duration(seconds: 1));
+  await tester.pumpAndSettle();
   // 1.
   expect(find.byType(TodoPrevWidget), findsNWidgets(todos.length));
   expect(find.text(todos.first.title), findsOneWidget);
@@ -153,7 +153,7 @@ Future<void> todoEditorTest(WidgetTester tester) async {
 
   // 2.
   await tester.tap(find.text(todoWithDate.title));
-  await tester.pump(const Duration(seconds: 1));
+  await tester.pumpAndSettle();
   await tester.pumpAndSettle();
   expect(find.text(todoWithDate.title), findsOneWidget);
   expect(find.text(DateFormat('y\nMM-dd').format(todoDate)), findsOneWidget);
@@ -161,8 +161,7 @@ Future<void> todoEditorTest(WidgetTester tester) async {
 
   // 3.
   await tester.pageBack();
-  await tester.pump(const Duration(seconds: 1));
-  await tester.pump(const Duration(seconds: 10));
+  await tester.pumpAndSettle();
   await tester.tap(find.text(todoWithTags.title));
   await tester.pumpAndSettle();
   expect(find.text(todoWithTags.title), findsOneWidget);
@@ -180,7 +179,7 @@ Future<void> todoEditorTest(WidgetTester tester) async {
   await tester.tap(find.descendant(
       of: find.byType(SubTodosOverviewWidget),
       matching: find.byIcon(Icons.add)));
-  await tester.pump(const Duration(seconds: 1));
+  await tester.pumpAndSettle();
   expect(find.text("Go parent"), findsOneWidget);
   expect(find.text("Title"), findsOneWidget);
   expect(find.text("Description"), findsOneWidget);
@@ -193,19 +192,19 @@ Future<void> todoEditorTest(WidgetTester tester) async {
   const newSubtaskName = 'new sub task';
   final titleField = find.widgetWithText(TextField, "Title");
   await tester.enterText(titleField, newSubtaskName);
-  await tester.pump(const Duration(seconds: 1));
+  await tester.pumpAndSettle();
   await tester.testTextInput.receiveAction(TextInputAction.done);
-  await tester.pump(const Duration(seconds: 1));
+  await tester.pumpAndSettle();
   final titleCheckIcon =
       find.descendant(of: titleField, matching: find.byIcon(Icons.check));
   await tester.tap(titleCheckIcon);
-  await tester.pump(const Duration(seconds: 1));
+  await tester.pumpAndSettle();
   await tester.tap(find.byIcon(Icons.save));
-  await tester.pump(const Duration(seconds: 1));
+  await tester.pumpAndSettle();
 
   // 6.
   await tester.tap(find.text("Go parent"));
-  await tester.pump(const Duration(seconds: 1));
+  await tester.pumpAndSettle();
   expect(find.textContaining('Sub tasks (1)'), findsOneWidget);
   expect(find.text("Go parent"), findsNothing);
 
@@ -213,15 +212,14 @@ Future<void> todoEditorTest(WidgetTester tester) async {
   await tester.tap(find.descendant(
       of: find.byType(SubTodosOverviewWidget),
       matching: find.byIcon(Icons.add)));
-  await tester.pump(const Duration(seconds: 1));
+  await tester.pumpAndSettle();
 
   // uncomment to recreate problem with null on editor
   // await tester.tap(find.byIcon(Icons.save));
-  // await tester.pump(const Duration(seconds: 1));
+  // await tester.pumpAndSettle();
 
   await tester.tap(find.text("Go parent"));
-  await tester.pump(const Duration(seconds: 1));
-  await tester.pump(const Duration(seconds: 1));
+  await tester.pumpAndSettle();
   expect(find.text(todoWithTags.title), findsOneWidget);
   expect(find.textContaining(todoWithTags.description), findsOneWidget);
   expect(find.text("Go parent"), findsNothing);
@@ -229,31 +227,30 @@ Future<void> todoEditorTest(WidgetTester tester) async {
 
   // 8.
   await tester.tap(find.byType(SubTodosOverviewWidget));
-  await tester.pump(const Duration(seconds: 1));
+  await tester.pumpAndSettle();
   expect(find.text(newSubtaskName), findsOneWidget);
 
-  // 9.
+  // 9. 
   await tester.tap(find.byIcon(Icons.delete));
-  await tester.pump(const Duration(seconds: 1));
+  await tester.pumpAndSettle();
   expect(find.textContaining('Delete'), findsOneWidget);
 
   // 10.
   await tester.tap(find.byIcon(Icons.cancel));
-  await tester.pump(const Duration(seconds: 1));
-  await tester.pump(const Duration(seconds: 1));
+  await tester.pumpAndSettle();
   expect(find.textContaining(todoWithTags.title), findsOneWidget);
 
   // 11.
   await tester.tap(find.byIcon(Icons.delete));
-  await tester.pump(const Duration(seconds: 1));
+  await tester.pumpAndSettle();
   await tester.tap(find.byKey(const Key('dialog_confirm')));
-  await tester.pump(const Duration(seconds: 1));
+  await tester.pumpAndSettle();
   expect(find.textContaining(todoWithTags.title), findsNothing);
   expect(find.byType(TodoPrevWidget), findsNWidgets(todos.length - 1));
 
   // 12.
   await tester.tap(find.byIcon(Icons.add));
-  await tester.pump(const Duration(seconds: 1));
+  await tester.pumpAndSettle();
   await tester.pumpAndSettle();
   expect(find.text("Go parent"), findsNothing);
   expect(find.text("Title"), findsOneWidget);
@@ -262,10 +259,10 @@ Future<void> todoEditorTest(WidgetTester tester) async {
 
   final usedPartsWidget = find.byType(UsedPartsWidget);
   await tester.tap(usedPartsWidget);
-  await tester.pump(const Duration(seconds: 1));
+  await tester.pumpAndSettle();
   await tester.tap(
       find.descendant(of: usedPartsWidget, matching: find.byIcon(Icons.add)));
-  await tester.pump(const Duration(seconds: 1));
+  await tester.pumpAndSettle();
   expect(find.textContaining('Used parts (1)'), findsOneWidget);
   expect(find.byType(UsedPartWidget), findsOneWidget);
   expect(find.text('Maximo'), findsOneWidget);
@@ -289,11 +286,11 @@ Future<void> todoEditorTest(WidgetTester tester) async {
           .toMap());
   final maximoField = find.widgetWithText(TextField, 'Maximo');
   await tester.enterText(maximoField, maximoNo);
-  await tester.pump(const Duration(seconds: 1));
+  await tester.pumpAndSettle();
   await tester.testTextInput.receiveAction(TextInputAction.done);
   await tester.tap(
       find.descendant(of: maximoField, matching: find.byIcon(Icons.check)));
-  await tester.pump(const Duration(seconds: 1));
+  await tester.pumpAndSettle();
   expect(find.text(maximoPartName), findsOneWidget);
 
   await tester.pageBack();
