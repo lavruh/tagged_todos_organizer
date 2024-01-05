@@ -16,6 +16,11 @@ class UniqueId {
     );
   }
 
+  factory UniqueId.generateWithSuffix(String suffix) {
+    return UniqueId(
+        id: '${generate()}_$suffix'.replaceAll(RegExp('/'), ''));
+  }
+
   String toJson() => json.encode(toMap());
 
   factory UniqueId.fromJson(String source) =>

@@ -67,14 +67,21 @@ class FsDbService implements IDbService {
       throw FsDbException('Can not open db path [$dbPath], $e');
     }
   }
-
+  ///will update file in existing folder or create new folder and item
+  ///if id different from id in map will rename folder using id from map
   @override
   Future<void> update(
       {required String id,
       required Map<String, dynamic> item,
       required String table}) async {
     final folderName = id;
-    final dirPath = p.join(await findPath(path: table), folderName);
+    final parentPath = await findPath(path: table);
+    String dirPath = p.join(parentPath, folderName);
+    if (item['id'] != null && item['id'] != id) {
+      final newPath = p.join(parentPath, item['id']);
+      await Directory(dirPath).rename(newPath);
+      dirPath = newPath;
+    }
     await Directory(dirPath)
         .create()
         .onError((error, stackTrace) => throw FsDbException('$error'));
