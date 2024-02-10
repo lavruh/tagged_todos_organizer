@@ -12,17 +12,24 @@ import 'package:tagged_todos_organizer/utils/unique_id.dart';
 final todoEditorProvider = StateNotifierProvider<TodoEditorNotifier, ToDo?>(
     (ref) => TodoEditorNotifier(ref));
 
+final editIdProvider = StateProvider<bool>((ref) => false);
+
 class TodoEditorNotifier extends StateNotifier<ToDo?> {
   TodoEditorNotifier(this.ref) : super(null);
   StateNotifierProviderRef<TodoEditorNotifier, ToDo?> ref;
-  bool _editId = false;
   bool _isChanged = false;
+  bool _duplicateMode = false;
+
+  duplicateTodo(ToDo t) {
+    _duplicateMode = true;
+    setTodo(t);
+  }
 
   setTodo(
     ToDo t, {
     editId = false,
   }) {
-    _editId = editId;
+    ref.read(editIdProvider.notifier).state = editId;
     final newAttachmentsPath = ref.read(attachmentsProvider.notifier).manage(
           id: t.id.id,
           attachmentsDirPath: t.attachDirPath,
@@ -48,10 +55,11 @@ class TodoEditorNotifier extends StateNotifier<ToDo?> {
   updateTodo(ToDo t) async {
     bool fl = true;
     _isChanged = false;
+    final editId = ref.read(editIdProvider);
     try {
       setTodo(await ref
           .read(todosProvider.notifier)
-          .updateTodo(item: t, editId: _editId));
+          .updateTodo(item: t, editId: editId));
     } on Exception catch (e) {
       ref.read(snackbarProvider).show('$e');
       fl = false;
@@ -130,10 +138,14 @@ class TodoEditorNotifier extends StateNotifier<ToDo?> {
     }
     final shouldSave = await confirmDialog(context, title: "Save changes?");
     if (shouldSave == null) return;
+    final todo = state;
     if (shouldSave) {
-      final todo = state;
       if (todo != null) {
         updateTodo(todo);
+      }
+    } else {
+      if (_duplicateMode && todo != null) {
+        ref.read(todosProvider.notifier).deleteTodo(todo: todo);
       }
     }
     router.pop();

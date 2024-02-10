@@ -116,8 +116,11 @@ class TodoEditScreen extends ConsumerWidget {
                           key: Key(item.title),
                           text: item.title,
                           lable: 'Title',
-                          onConfirm: (value) => notifier
-                              .changeState(item.copyWith(title: value)))),
+                          onConfirm: (value) {
+                            ref.read(editIdProvider.notifier).state = true;
+                            return notifier
+                                .changeState(item.copyWith(title: value));
+                          })),
                 ]),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,

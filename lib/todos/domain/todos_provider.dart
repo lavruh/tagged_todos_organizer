@@ -58,7 +58,8 @@ class TodosNotifier extends StateNotifier<List<ToDo>> {
     if (editId) {
       final newId = UniqueId.generateWithSuffix(item.title);
       item = item.copyWith(id: newId);
-    } else if (index != -1) {
+    }
+    if (index != -1) {
       item = item.copyWith(children: _getChildrenList(item.id));
       await _updateState(index, item);
     } else {
@@ -74,7 +75,9 @@ class TodosNotifier extends StateNotifier<List<ToDo>> {
       throw Exception(e);
     }
 
-    await _updateDb(item: item, id: originalId);
+    final dbItemId = index == -1 ? item.id : originalId;
+
+    await _updateDb(item: item, id: dbItemId);
     return item;
   }
 
@@ -88,10 +91,7 @@ class TodosNotifier extends StateNotifier<List<ToDo>> {
   }
 
   Future<ToDo> _saveNewTodoToState(ToDo item) async {
-    final id = UniqueId.generateWithSuffix(item.title);
-    item = item.copyWith(id: id);
     addTodo(todo: item);
-    print("Save new todo with ID - $id \n========================================================");
     await log.logTodoCreated(todo: item);
     return item;
   }
