@@ -9,11 +9,11 @@ import 'tags_selector_test.dart';
 import 'todos_filter_test.dart';
 
 void main() async {
+  testWidgets('duplicate todo test', duplicateTodoTest);
   testWidgets('tags editor test', tagsEditorTest);
-   testWidgets('tags selector test', tagsSelectorTest);
+  testWidgets('tags selector test', tagsSelectorTest);
   testWidgets('todo editor test', todoEditorTest);
   testWidgets('todo filter test', todoFilterTest);
   testWidgets('postpone todo test', postponeTodoTest);
   testWidgets('log service test', logServiceTest);
-  testWidgets('duplicate todo test', duplicateTodoTest);
 }
