@@ -16,18 +16,21 @@ import 'package:tagged_todos_organizer/utils/snackbar_provider.dart';
 import 'package:tagged_todos_organizer/utils/unique_id.dart';
 
 class TodoEditScreen extends ConsumerWidget {
-  const TodoEditScreen({Key? key}) : super(key: key);
+  const TodoEditScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final item = ref.watch(todoEditorProvider);
+    final notifier = ref.read(todoEditorProvider.notifier);
     if (item == null) {
       return Scaffold(
           appBar: AppBar(),
           body: const Center(child: CircularProgressIndicator()));
     }
-    return WillPopScope(
-      onWillPop: () async => _goToTodosScreen(GoRouter.of(context)),
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (fl) async =>
+          notifier.checkIfToSave(GoRouter.of(context), context),
       child: Scaffold(
         appBar: AppBar(
           actions: [
@@ -35,9 +38,7 @@ class TodoEditScreen extends ConsumerWidget {
               TextButton(
                   onPressed: () {
                     if (item.parentId != null) {
-                      ref
-                          .read(todoEditorProvider.notifier)
-                          .setById(item.parentId!);
+                      notifier.setById(item.parentId!);
                     }
                   },
                   child: const Text('Go parent',
@@ -49,14 +50,10 @@ class TodoEditScreen extends ConsumerWidget {
                           builder: (_) => const TodoSelectScreen()));
                   try {
                     if (newPath == '/') {
-                      ref
-                          .read(todoEditorProvider.notifier)
-                          .changeTodoParent(null);
+                      notifier.changeTodoParent(null);
                     } else if (newPath != null &&
                         newPath.runtimeType == UniqueId) {
-                      ref
-                          .read(todoEditorProvider.notifier)
-                          .changeTodoParent(newPath);
+                      notifier.changeTodoParent(newPath);
                     }
                   } on Exception catch (e) {
                     ref.read(snackbarProvider).show(e.toString());
@@ -68,7 +65,7 @@ class TodoEditScreen extends ConsumerWidget {
                   final navigator = GoRouter.of(context);
                   final act =
                       await confirmDialog(context, title: "Archive todo?");
-                  if (act &&
+                  if (act == true &&
                       await ref
                           .read(todosProvider.notifier)
                           .archiveTodo(todo: item)) {
@@ -81,7 +78,7 @@ class TodoEditScreen extends ConsumerWidget {
                   final navigator = GoRouter.of(context);
                   final act =
                       await confirmDialog(context, title: 'Delete todo?');
-                  if (act) {
+                  if (act == true) {
                     ref.read(todosProvider.notifier).deleteTodo(todo: item);
                     navigator.go('/');
                   }
@@ -89,7 +86,7 @@ class TodoEditScreen extends ConsumerWidget {
                 icon: const Icon(Icons.delete)),
             IconButton(
               onPressed: () async {
-                await ref.read(todoEditorProvider.notifier).updateTodo(item);
+                await notifier.updateTodo(item);
               },
               icon: const Icon(Icons.save),
             )
@@ -105,11 +102,10 @@ class TodoEditScreen extends ConsumerWidget {
                     height: 60,
                     width: 60,
                     child: Checkbox(
+                      key: const Key('checkbox_done'),
                       onChanged: (value) {
                         if (value != null) {
-                          ref
-                              .read(todoEditorProvider.notifier)
-                              .setTodo(item.copyWith(done: value));
+                          notifier.changeState(item.copyWith(done: value));
                         }
                       },
                       value: item.done,
@@ -120,9 +116,11 @@ class TodoEditScreen extends ConsumerWidget {
                           key: Key(item.title),
                           text: item.title,
                           lable: 'Title',
-                          onConfirm: (value) => ref
-                              .read(todoEditorProvider.notifier)
-                              .setTodo(item.copyWith(title: value)))),
+                          onConfirm: (value) {
+                            ref.read(editIdProvider.notifier).state = true;
+                            return notifier
+                                .changeState(item.copyWith(title: value));
+                          })),
                 ]),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
@@ -142,9 +140,7 @@ class TodoEditScreen extends ConsumerWidget {
                                     lastDate:
                                         DateTime(DateTime.now().year + 3)));
                             if (date != null) {
-                              ref
-                                  .read(todoEditorProvider.notifier)
-                                  .setTodo(item.copyWith(date: date));
+                              notifier.changeState(item.copyWith(date: date));
                             }
                           },
                           child: item.date == null
@@ -158,9 +154,8 @@ class TodoEditScreen extends ConsumerWidget {
                         key: Key(item.description),
                         text: item.description,
                         onConfirm: (value) {
-                          ref
-                              .read(todoEditorProvider.notifier)
-                              .setTodo(item.copyWith(description: value));
+                          notifier
+                              .changeState(item.copyWith(description: value));
                         },
                         lable: 'Description',
                       ),
@@ -170,24 +165,19 @@ class TodoEditScreen extends ConsumerWidget {
                 PrioritySliderWidget(
                   initValue: item.priority,
                   setValue: (val) {
-                    ref
-                        .read(todoEditorProvider.notifier)
-                        .setTodo(item.copyWith(priority: val.round()));
+                    notifier.changeState(item.copyWith(priority: val.round()));
                   },
                 ),
                 TagsWidget(
                   key: Key(item.tags.hashCode.toString()),
                   tags: item.tags,
-                  updateTags: (t) => ref
-                      .read(todoEditorProvider.notifier)
-                      .setTodo(item.copyWith(tags: t)),
+                  updateTags: (t) =>
+                      notifier.changeState(item.copyWith(tags: t)),
                 ),
                 const AttachementsPreviewWidget(),
                 UsedPartsWidget(
                   update: (usedParts) {
-                    ref
-                        .read(todoEditorProvider.notifier)
-                        .setTodo(item.copyWith(usedParts: usedParts));
+                    notifier.changeState(item.copyWith(usedParts: usedParts));
                   },
                 ),
                 SubTodosOverviewWidget(parent: item),
@@ -197,9 +187,5 @@ class TodoEditScreen extends ConsumerWidget {
         ),
       ),
     );
-  }
-
-  bool _goToTodosScreen(GoRouter router) {
-    return true;
   }
 }

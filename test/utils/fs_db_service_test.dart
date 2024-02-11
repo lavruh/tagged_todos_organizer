@@ -171,4 +171,19 @@ void main() {
     );
     expect(result, testData);
   });
+
+  test('update method should change ID if it does not equal item["id"]',
+      () async {
+    final item = ToDo.empty();
+    await sut.init(dbPath: dbPath);
+    await sut.add(item: item.toMap(), table: '/');
+
+    final update = item.copyWith(title: 'update', id: UniqueId(id: 'newId'));
+    await sut.update(id: item.id.id, item: update.toMap(), table: '/');
+    final result = File(p.join(dbPath, update.id.id, 'data.json'));
+    expect(result.existsSync(), true);
+    final resultData = sut.fromJson(result.readAsStringSync());
+    expect(resultData['id'], update.toMap()['id']);
+    expect(resultData['title'], update.toMap()['title']);
+  });
 }

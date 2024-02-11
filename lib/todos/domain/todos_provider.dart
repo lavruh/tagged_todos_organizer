@@ -5,6 +5,7 @@ import 'package:tagged_todos_organizer/tags/domain/tags_provider.dart';
 import 'package:tagged_todos_organizer/todos/domain/attachments_provider.dart';
 import 'package:tagged_todos_organizer/todos/domain/sub_todos_provider.dart';
 import 'package:tagged_todos_organizer/todos/domain/todo.dart';
+import 'package:tagged_todos_organizer/todos/domain/todo_editor_provider.dart';
 import 'package:tagged_todos_organizer/todos/domain/todos_db_provider.dart';
 import 'package:tagged_todos_organizer/utils/data/i_db_service.dart';
 import 'package:tagged_todos_organizer/utils/snackbar_provider.dart';
@@ -51,15 +52,16 @@ class TodosNotifier extends StateNotifier<List<ToDo>> {
     state = [...state, todo ?? ToDo.empty()];
   }
 
-  Future<ToDo> updateTodo({required ToDo item}) async {
+  Future<ToDo> updateTodo({required ToDo item, editId = false}) async {
     final index = state.indexWhere((e) => e.id == item.id);
-
+    final originalId = item.id;
+    if (editId) {
+      final newId = UniqueId.generateWithSuffix(item.title);
+      item = item.copyWith(id: newId);
+    }
     if (index != -1) {
       item = item.copyWith(children: _getChildrenList(item.id));
-      await _updateState(
-        index,
-        item,
-      );
+      await _updateState(index, item);
     } else {
       item = await _saveNewTodoToState(item);
     }
@@ -73,22 +75,22 @@ class TodosNotifier extends StateNotifier<List<ToDo>> {
       throw Exception(e);
     }
 
-    await _updateDb(item);
+    final dbItemId = index == -1 ? item.id : originalId;
+
+    await _updateDb(item: item, id: dbItemId);
     return item;
   }
 
-  Future<void> _updateDb(ToDo item) async {
+  Future<void> _updateDb({required ToDo item, required UniqueId id}) async {
     final String table = item.parentId?.id ?? tableName;
     await db
-        ?.update(id: item.id.toString(), item: item.toMap(), table: table)
+        ?.update(id: id.toString(), item: item.toMap(), table: table)
         .onError((error, stackTrace) {
       return ref.read(snackbarProvider).show("$error");
     });
   }
 
   Future<ToDo> _saveNewTodoToState(ToDo item) async {
-    final id = '${item.id.id}_${item.title}'.replaceAll(RegExp('/'), '');
-    item = item.copyWith(id: UniqueId(id: id));
     addTodo(todo: item);
     await log.logTodoCreated(todo: item);
     return item;
@@ -165,6 +167,17 @@ class TodosNotifier extends StateNotifier<List<ToDo>> {
     getTodos();
   }
 
+  Future<void> duplicateTodo({required UniqueId id}) async {
+    final archive = ref.read(archiveProvider);
+    try {
+      await archive.unarchive(id);
+      final ToDo todo = await loadSingleTodo(id);
+      ref.read(todoEditorProvider.notifier).setTodo(todo);
+    } catch (e) {
+      ref.read(snackbarProvider).show(e.toString());
+    }
+  }
+
   updateTodoChildren({required UniqueId id}) {
     final item = state.firstWhere((element) => element.id == id);
     updateTodo(item: item.copyWith(children: _getChildrenList(id)));
@@ -190,5 +203,18 @@ class TodosNotifier extends StateNotifier<List<ToDo>> {
       }
     }
     return false;
+  }
+
+  Future<ToDo> loadSingleTodo(UniqueId id) async {
+    try {
+      final map = await db?.getItemByFieldValue(
+          request: {"id": id.toString()}, table: tableName);
+      if (map == null) {
+        throw Exception("Cannot open todo id = $id");
+      }
+      return ToDo.fromMap(map);
+    } on Exception {
+      rethrow;
+    }
   }
 }

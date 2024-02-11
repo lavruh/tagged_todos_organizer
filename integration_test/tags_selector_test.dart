@@ -9,6 +9,7 @@ import 'package:tagged_todos_organizer/tags/domain/tags_db_provider.dart';
 import 'package:tagged_todos_organizer/tags/presentation/widgets/tag_select_widget.dart';
 import 'package:tagged_todos_organizer/tags/presentation/widgets/tag_widget.dart';
 import 'package:tagged_todos_organizer/tags/presentation/widgets/tags_preview_widget.dart';
+import 'package:tagged_todos_organizer/tags/presentation/widgets/tags_widget.dart';
 import 'package:tagged_todos_organizer/todos/domain/todo.dart';
 import 'package:tagged_todos_organizer/todos/domain/todos_db_provider.dart';
 import 'package:tagged_todos_organizer/todos/presentation/widgets/todo_prev_widget.dart';
@@ -77,20 +78,20 @@ Future<void> tagsSelectorTest(WidgetTester tester) async {
 
   await tester.pumpWidget(ProviderScope(
     overrides: [
-      tagsDbProvider.overrideWithProvider(FutureProvider((ref) => db)),
-      todosDbProvider.overrideWithProvider(FutureProvider((ref) => db)),
+      tagsDbProvider.overrideWith((ref) => db),
+      todosDbProvider.overrideWith((ref) => db),
     ],
     child: const MyApp(),
   ));
   await tester.pumpAndSettle();
-  await tester.pump(const Duration(seconds: 1));
+  await tester.pump();
   expect(find.byType(TodoPrevWidget), findsNWidgets(todos.length));
   expect(find.byType(InputChip), findsNWidgets(todos.first.tags.length));
 
 // 1.
   await tester.tap(find.text(todos.first.title));
   await tester.pumpAndSettle();
-  await tester.pump(const Duration(seconds: 1));
+  await tester.pump();
   final tagsPrevWidget = find.byType(TagsPreviewWidget);
   expect(find.descendant(of: tagsPrevWidget, matching: find.byType(InputChip)),
       findsNWidgets(todos.first.tags.length));
@@ -104,8 +105,10 @@ Future<void> tagsSelectorTest(WidgetTester tester) async {
       findsOneWidget);
 
 // 2.
-  await tester.tap(tagsPrevWidget);
-  await tester.pump(const Duration(seconds: 1));
+  final modeButton = find.descendant(
+      of: find.byType(TagsWidget), matching: find.byIcon(Icons.edit));
+  await tester.tap(modeButton);
+  await tester.pump();
   expect(find.text('Confirm'), findsOneWidget);
   expect(find.text('Search'), findsOneWidget);
   final tagSelectWidget = find.byType(TagSelectWidget);
@@ -124,7 +127,7 @@ Future<void> tagsSelectorTest(WidgetTester tester) async {
   final tagToDeselect = tagWidgetsList1.firstWhere((e) => e.selected == true);
   final widgetTagToDeselect = find.byWidget(tagToDeselect);
   await tester.tap(widgetTagToDeselect);
-  await tester.pump(const Duration(seconds: 1));
+  await tester.pump();
   expect(
       tester
           .widget<TagWidget>(
@@ -137,17 +140,16 @@ Future<void> tagsSelectorTest(WidgetTester tester) async {
 //  4.
   await tester.enterText(
       find.widgetWithText(TextField, 'Search'), tagToSelect.name);
-  await tester.pump(const Duration(seconds: 1));
+  await tester.pump();
   final widgetTagToSelect =
       find.descendant(of: tagSelectWidget, matching: find.byType(InputChip));
   expect(widgetTagToSelect, findsOneWidget);
 
 //  5.
   await tester.tap(widgetTagToSelect);
-  await tester.pump(const Duration(seconds: 1));
+  await tester.pump();
   await tester.enterText(find.widgetWithText(TextField, 'Search'), '');
-  await tester.pump(const Duration(seconds: 1));
-  await tester.pump(const Duration(seconds: 1));
+  await tester.pump();
   final reSelectedTags = tester.widgetList<TagWidget>(find.descendant(
       of: tagSelectWidget,
       matching: find.widgetWithText(TagWidget, tagToSelect.name)));
@@ -157,11 +159,10 @@ Future<void> tagsSelectorTest(WidgetTester tester) async {
       true);
 // 6.
   await tester.tap(find.text('Confirm'));
-  await tester.pump(const Duration(seconds: 1));
+  await tester.pump();
   expect(find.descendant(of: tagsPrevWidget, matching: find.byType(TagWidget)),
       findsNWidgets(2));
 
   await tester.pageBack();
-  await tester.pump(const Duration(seconds: 1));
-  await tester.pump(const Duration(seconds: 10));
+  await tester.pump();
 }

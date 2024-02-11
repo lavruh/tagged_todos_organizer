@@ -77,11 +77,16 @@ class SembastDbService implements IDbService {
     required String table,
   }) async {
     final store = StoreRef(table);
-    await _db?.transaction(
-      (transaction) async {
-        await store.record(id).put(transaction, item);
-      },
-    );
+    if (item['id'] != null && id != item['id']) {
+      await delete(id: id, table: table);
+      await update(id: item['id'], item: item, table: table);
+    } else {
+      await _db?.transaction(
+        (transaction) async {
+          await store.record(id).put(transaction, item);
+        },
+      );
+    }
   }
 
   Future<Map<String, String>> getChildrenIds(String id) async {

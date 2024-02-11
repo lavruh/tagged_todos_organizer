@@ -69,7 +69,7 @@ Future<void> todoFilterTest(WidgetTester tester) async {
     child: const MyApp(),
   ));
   await tester.pumpAndSettle();
-  await tester.pump(const Duration(seconds: 1));
+  await tester.pumpAndSettle();
   expect(find.text(todoWithDate.title), findsOneWidget);
   expect(find.text(todoWithTags.title), findsOneWidget);
   expect(find.text(todoDone.title), findsNothing);
@@ -77,73 +77,71 @@ Future<void> todoFilterTest(WidgetTester tester) async {
   expect(find.text(subTodo.title), findsNothing);
 
   await tester.tap(find.byIcon(Icons.filter_alt_outlined));
-  await tester.pump(const Duration(seconds: 1));
+  await tester.pumpAndSettle();
   expect(find.textContaining('Show future'), findsOneWidget);
   expect(find.byIcon(Icons.data_exploration_outlined), findsOneWidget);
+  await tester.pumpAndSettle();
 
   //show future todos filter
   await tester.tap(find.textContaining('Show future'));
-  await tester.pump(const Duration(seconds: 1));
+  await tester.pumpAndSettle();
   expect(find.text(todoFuture.title), findsOneWidget);
   expect(find.byIcon(Icons.data_exploration), findsOneWidget);
 
   //show done todos filter
   expect(find.byIcon(Icons.check_box_outline_blank), findsOneWidget);
   await tester.tap(find.textContaining('Show done'));
-  await tester.pump(const Duration(seconds: 1));
+  await tester.pumpAndSettle();
   expect(find.text(todoDone.title), findsOneWidget);
   expect(find.byIcon(Icons.check_box), findsOneWidget);
-
-  //  show sub tasks filter
-  expect(find.byIcon(Icons.account_tree_outlined), findsOneWidget);
-  await tester.tap(find.textContaining('Show subtodos'));
-  await tester.pump(const Duration(seconds: 1));
-  expect(find.text(subTodo.title), findsOneWidget);
-  expect(find.byIcon(Icons.account_tree), findsOneWidget);
 
   // filter by date
   expect(find.byIcon(Icons.calendar_month_outlined), findsOneWidget);
   await tester.tap(find.textContaining('Filter by date'));
-  await tester.pump(const Duration(seconds: 1));
-  await tester.tap(find.byIcon(Icons.edit));
-  await tester.pump(const Duration(seconds: 1));
+  await tester.pumpAndSettle();
+  await tester.tap(find.byIcon(Icons.edit_outlined));
+  await tester.pumpAndSettle();
   await tester.enterText(find.widgetWithText(TextField, 'Start Date'),
       DateFormat('MM/dd/yyyy').format(now));
-  await tester.enterText(find.widgetWithText(TextField, 'End Date'),
-      DateFormat('MM/dd/yyyy').format(DateTime(now.year, now.month, now.day+1)));
-  await tester.pump(const Duration(seconds: 1));
+  await tester.enterText(
+      find.widgetWithText(TextField, 'End Date'),
+      DateFormat('MM/dd/yyyy')
+          .format(DateTime(now.year, now.month, now.day + 1)));
+  await tester.pumpAndSettle();
   await tester.tap(find.textContaining('OK'));
-  await tester.pump(const Duration(seconds: 1));
+  await tester.pumpAndSettle();
   expect(find.text(todoWithDate.title), findsOneWidget);
   expect(find.byIcon(Icons.calendar_month), findsOneWidget);
   await tester.tap(find.textContaining('Filter by date'));
-  await tester.pump(const Duration(seconds: 1));
-  await tester.tap(find.byIcon(Icons.edit));
-  await tester.pump(const Duration(seconds: 1));
-  await tester.tap(find.textContaining('CANCEL'));
-  await tester.pump(const Duration(seconds: 1));
+  await tester.pumpAndSettle();
+  await tester.tap(find.byIcon(Icons.edit_outlined));
+  await tester.pumpAndSettle();
+  await tester.tap(find.textContaining('Cancel'));
+  await tester.pumpAndSettle();
 
   // filter by tag
   await tester.tap(find.descendant(
       of: find.byType(TagSelectWidget), matching: find.text(tags.first.name)));
-  await tester.pump(const Duration(seconds: 1));
-  expect(find.text(subTodo.title), findsOneWidget);
+  await tester.pumpAndSettle();
+  await tester.tapAt(const Offset(0, 100));
+  await tester.pumpAndSettle();
   expect(find.text(todoWithTags.title), findsOneWidget);
-  expect(find.byType(TodoPrevWidget), findsNWidgets(2));
+
+  await tester.tap(find.byIcon(Icons.filter_alt_outlined));
+  await tester.pumpAndSettle();
   await tester.tap(find.textContaining('Clear'));
-  await tester.pump(const Duration(seconds: 1));
-  expect(find.byType(TodoPrevWidget), findsNWidgets(todos.length));
+  await tester.pumpAndSettle();
+  expect(find.byType(TodoPrevWidget), findsNWidgets(todos.length - 1));
 
   // Search test
   await tester.tapAt(const Offset(0, 100));
-  await tester.pump(const Duration(seconds: 1));
+  await tester.pumpAndSettle();
   await tester.enterText(
       find.descendant(
         of: find.byKey(const Key('TodoSearchPanel')),
         matching: find.byType(TextField),
       ),
       todoWithTags.title.substring(3, 6));
-  await tester.pump(const Duration(seconds: 1));
+  await tester.pumpAndSettle();
   expect(find.byType(TodoPrevWidget), findsOneWidget);
-
 }

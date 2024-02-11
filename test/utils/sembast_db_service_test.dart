@@ -104,4 +104,17 @@ void main() {
     );
     expect(result, testData);
   });
+
+  test('update method should change ID if it does not equal item["id"]', () async {
+    final sut = SembastDbService();
+    await sut.init(dbPath: dbPath);
+    const id = 'id1';
+    final Map<String, dynamic> item = {"id": "newId", "data": "someData"};
+    await sut.update(id: id, item: {"item": "data"}, table: "/");
+    await sut.update(id: id, item: item, table: "/");
+    final file = await File(dbfile).readAsString();
+    expect(file, contains('newId'));
+    expect(file, contains(item['data']));
+    expect(file, contains(id));
+  });
 }

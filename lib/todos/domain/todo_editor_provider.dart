@@ -1,24 +1,48 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:tagged_todos_organizer/parts/domain/used_part.dart';
 import 'package:tagged_todos_organizer/todos/domain/attachments_provider.dart';
 import 'package:tagged_todos_organizer/todos/domain/todo.dart';
 import 'package:tagged_todos_organizer/todos/domain/todos_provider.dart';
+import 'package:tagged_todos_organizer/utils/presentation/widget/confirm_dialog.dart';
 import 'package:tagged_todos_organizer/utils/snackbar_provider.dart';
 import 'package:tagged_todos_organizer/utils/unique_id.dart';
 
 final todoEditorProvider = StateNotifierProvider<TodoEditorNotifier, ToDo?>(
     (ref) => TodoEditorNotifier(ref));
 
+final editIdProvider = StateProvider<bool>((ref) => false);
+
 class TodoEditorNotifier extends StateNotifier<ToDo?> {
   TodoEditorNotifier(this.ref) : super(null);
   StateNotifierProviderRef<TodoEditorNotifier, ToDo?> ref;
+  bool _isChanged = false;
+  bool _duplicateMode = false;
 
-  setTodo(ToDo t) {
-    final todoWithUpdatedPath =
-        ref.read(attachmentsProvider.notifier).manage(todo: t);
-    if (todoWithUpdatedPath != null) {
-      state = todoWithUpdatedPath;
+  duplicateTodo(ToDo t) {
+    _duplicateMode = true;
+    setTodo(t);
+  }
+
+  setTodo(
+    ToDo t, {
+    editId = false,
+  }) {
+    ref.read(editIdProvider.notifier).state = editId;
+    final newAttachmentsPath = ref.read(attachmentsProvider.notifier).manage(
+          id: t.id.id,
+          attachmentsDirPath: t.attachDirPath,
+          parentId: t.parentId?.id,
+        );
+    if (newAttachmentsPath != null) {
+      state = t.copyWith(attachDirPath: newAttachmentsPath);
     }
+    state = t;
+  }
+
+  changeState(ToDo t) {
+    _isChanged = true;
     state = t;
   }
 
@@ -30,8 +54,12 @@ class TodoEditorNotifier extends StateNotifier<ToDo?> {
 
   updateTodo(ToDo t) async {
     bool fl = true;
+    _isChanged = false;
+    final editId = ref.read(editIdProvider);
     try {
-      setTodo(await ref.read(todosProvider.notifier).updateTodo(item: t));
+      setTodo(await ref
+          .read(todosProvider.notifier)
+          .updateTodo(item: t, editId: editId));
     } on Exception catch (e) {
       ref.read(snackbarProvider).show('$e');
       fl = false;
@@ -101,5 +129,25 @@ class TodoEditorNotifier extends StateNotifier<ToDo?> {
       date: date,
       usedParts: usedParts,
     );
+  }
+
+  checkIfToSave(GoRouter router, BuildContext context) async {
+    if (!_isChanged) {
+      router.pop();
+      return;
+    }
+    final shouldSave = await confirmDialog(context, title: "Save changes?");
+    if (shouldSave == null) return;
+    final todo = state;
+    if (shouldSave) {
+      if (todo != null) {
+        updateTodo(todo);
+      }
+    } else {
+      if (_duplicateMode && todo != null) {
+        ref.read(todosProvider.notifier).deleteTodo(todo: todo);
+      }
+    }
+    router.pop();
   }
 }
