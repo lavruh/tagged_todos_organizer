@@ -21,7 +21,7 @@ class _TagsWidgetState extends State<TagsWidget> {
 
   @override
   void initState() {
-    tags = widget.tags;
+    tags = [...widget.tags];
     super.initState();
   }
 
@@ -39,34 +39,21 @@ class _TagsWidgetState extends State<TagsWidget> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                TagsPreviewWidget(
-                  tags: tags,
-                  onTapTag: (tag) => setState(() {
-                    tags.remove(tag.id);
-                  }),
-                ),
+                TagsPreviewWidget(tags: tags, onTapTag: _removeTappedTag),
                 IconButton(
-                    onPressed: () => _toggleMode(),
-                    icon: const Icon(Icons.edit)),
+                    onPressed: _setEditMode, icon: const Icon(Icons.edit))
               ],
             ),
           ),
           secondChild: Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              TextButton(onPressed: _toggleMode, child: const Text('Confirm')),
+              TextButton(
+                  onPressed: _updateSelectedTags, child: const Text('Confirm')),
               TagSelectWidget(
-                selectedTags: tags,
-                height: 0.1,
-                onPress: (tag) {
-                  if (!tags.contains(tag.id)) {
-                    tags.add(tag.id);
-                  } else {
-                    tags.remove(tag.id);
-                  }
-                  setState(() {});
-                },
-              ),
+                  selectedTags: tags,
+                  height: 0.1,
+                  onPress: _toggleTagSelection),
             ],
           ),
         ),
@@ -74,9 +61,25 @@ class _TagsWidgetState extends State<TagsWidget> {
     );
   }
 
-  _toggleMode() {
-    setState(() {
-      editMode = !editMode;
-    });
+  _toggleTagSelection(tag) {
+    if (!tags.contains(tag.id)) {
+      tags.add(tag.id);
+    } else {
+      tags.remove(tag.id);
+    }
+    setState(() {});
   }
+
+  void _updateSelectedTags() {
+    widget.updateTags(tags);
+  }
+
+  void _removeTappedTag(tag) => setState(() {
+        tags.remove(tag.id);
+        widget.updateTags(tags);
+      });
+
+  void _setEditMode() => setState(() {
+        editMode = true;
+      });
 }
