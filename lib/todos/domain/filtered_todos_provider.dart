@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tagged_todos_organizer/tags/domain/filters_by_tags_provider.dart';
 import 'package:tagged_todos_organizer/todos/domain/todo.dart';
 import 'package:tagged_todos_organizer/todos/domain/todos_provider.dart';
 import 'package:tagged_todos_organizer/utils/domain/datetime_extension.dart';
-import 'package:tagged_todos_organizer/utils/unique_id.dart';
 
 final filteredTodosProvider = Provider<List<ToDo>>((ref) {
   final allTodos = ref.watch(todosProvider);
   final filter = ref.watch(todosFilter);
-  final filterByTags = ref.watch(todosFilterByTags);
+  final filterByTags = ref.watch(filterByTagsProvider);
   final filterByDate = ref.watch(todosFilterByDate);
   List<ToDo> filteredTodos = allTodos;
   if (ref.watch(todosFilterShowUnDone)) {
@@ -73,31 +73,7 @@ final filteredTodosProvider = Provider<List<ToDo>>((ref) {
 });
 
 final todosFilter = StateProvider<String>((ref) => '');
-final todosFilterByTags =
-    StateNotifierProvider<TodosFilterByTagsNotifier, List<UniqueId>>(
-        (ref) => TodosFilterByTagsNotifier());
 final todosFilterByDate = StateProvider<DateTimeRange?>((ref) => null);
 final todosFilterShowAll = StateProvider<bool>((ref) => false);
 final todosFilterShowUnDone = StateProvider<bool>((ref) => true);
 final todosFilterShowFutureDates = StateProvider<bool>((ref) => false);
-
-class TodosFilterByTagsNotifier extends StateNotifier<List<UniqueId>> {
-  TodosFilterByTagsNotifier() : super([]);
-  addFilter(UniqueId id) => state = [...state, id];
-  removeFilter(UniqueId id) =>
-      state = [...state.where((element) => element != id)];
-  toggleFilter(UniqueId id) {
-    if (state.contains(id)) {
-      removeFilter(id);
-    } else {
-      addFilter(id);
-    }
-  }
-
-  bool isSelected(UniqueId id) {
-    return state.contains(id);
-  }
-
-  clearFilter() => state = [];
-  List<UniqueId> getFilters() => state;
-}

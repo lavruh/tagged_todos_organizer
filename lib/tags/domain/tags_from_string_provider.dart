@@ -1,13 +1,13 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tagged_todos_organizer/tags/domain/filters_by_tags_provider.dart';
 import 'package:tagged_todos_organizer/tags/domain/tag.dart';
 import 'package:tagged_todos_organizer/tags/domain/tags_provider.dart';
-import 'package:tagged_todos_organizer/todos/domain/filtered_todos_provider.dart';
 
 final tagsFromStringSearchProvider = StateProvider((ref) => "");
 
 final tagsFromStringProvider = StateProvider<List<Tag>>((ref) {
   final availableTags = ref.watch(tagsProvider);
-  final selectedTags = ref.watch(todosFilterByTags);
+  final selectedTags = ref.watch(filterByTagsProvider);
   final str = ref.watch(tagsFromStringSearchProvider);
   final tagNames = str.split(' ');
   List<Tag> res =

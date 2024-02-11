@@ -5,12 +5,12 @@ import 'package:tagged_todos_organizer/utils/presentation/widget/text_field_with
 
 class SearchPanelWidget extends ConsumerWidget {
   const SearchPanelWidget({
-    Key? key,
+    super.key,
     this.initSearchText,
     required this.onSearch,
     this.tagsSort = false,
     this.tagsFilter = false,
-  }) : super(key: key);
+  });
   final String? initSearchText;
   final Function(String) onSearch;
   final bool tagsSort;
