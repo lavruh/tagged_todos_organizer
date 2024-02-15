@@ -6,9 +6,9 @@ import 'package:tagged_todos_organizer/todos/presentation/widgets/priority_slide
 
 class PriorityMenuWidget extends ConsumerWidget {
   const PriorityMenuWidget({
-    Key? key,
+    super.key,
     required this.item,
-  }) : super(key: key);
+  });
 
   final ToDo item;
 
@@ -27,9 +27,8 @@ class PriorityMenuWidget extends ConsumerWidget {
           PrioritySliderWidget(
             initValue: item.priority,
             setValue: (int val) {
-              ref
-                  .read(todosProvider.notifier)
-                  .updateTodo(item: item.copyWith(priority: val.round()));
+              ref.read(todosProvider.notifier).updateTodoPriority(
+                  todo: item, newPriority: val.round());
               Navigator.of(context).pop();
             },
           ),

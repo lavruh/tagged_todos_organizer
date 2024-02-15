@@ -54,16 +54,11 @@ class TodosNotifier extends StateNotifier<List<ToDo>> {
 
   Future<ToDo> updateTodo({required ToDo item, editId = false}) async {
     final index = state.indexWhere((e) => e.id == item.id);
+
     final originalId = item.id;
     if (editId) {
       final newId = UniqueId.generateWithSuffix(item.title);
       item = item.copyWith(id: newId);
-    }
-    if (index != -1) {
-      item = item.copyWith(children: _getChildrenList(item.id));
-      await _updateState(index, item);
-    } else {
-      item = await _saveNewTodoToState(item);
     }
 
     try {
@@ -73,6 +68,13 @@ class TodosNotifier extends StateNotifier<List<ToDo>> {
       item = _updateItemAttachmentsPath(item);
     } on Exception catch (e) {
       throw Exception(e);
+    }
+
+    if (index != -1) {
+      item = item.copyWith(children: _getChildrenList(item.id));
+      await _updateState(index, item);
+    } else {
+      item = await _saveNewTodoToState(item);
     }
 
     final dbItemId = index == -1 ? item.id : originalId;
@@ -216,5 +218,51 @@ class TodosNotifier extends StateNotifier<List<ToDo>> {
     } on Exception {
       rethrow;
     }
+  }
+
+  int getLowestPriorityOfSameDayTodos({required ToDo todo}) {
+    final todosWithSameDate = _getTodosWithSameDate(todo: todo);
+    if (todosWithSameDate.isEmpty) return 1;
+    return todosWithSameDate.length;
+  }
+
+  void updatePrioritiesOfSameDayTodos(
+      {required ToDo todoWithNewPriority}) async {
+    final newPriority = todoWithNewPriority.priority;
+    final todosWithSameDate = _getTodosWithSameDate(todo: todoWithNewPriority);
+    if (todosWithSameDate.isEmpty) return;
+
+    final idx = todosWithSameDate.indexWhere((e) => newPriority == e.priority);
+    if (idx != -1) {
+      final i = idx >= newPriority - 1 ? idx : idx + 1;
+      todosWithSameDate.insert(i, todoWithNewPriority);
+      for (int priorityOfTodo = 1;
+          priorityOfTodo <= todosWithSameDate.length;
+          priorityOfTodo++) {
+        if (priorityOfTodo == newPriority) continue;
+        final currentTodo = todosWithSameDate[priorityOfTodo - 1];
+        final upTodo = currentTodo.copyWith(priority: priorityOfTodo);
+        updateTodo(item: upTodo);
+      }
+    }
+  }
+
+  List<ToDo> _getTodosWithSameDate({required ToDo todo}) {
+    final d = todo.date;
+    if (d == null) return [];
+    final sameTodos = state.where((element) {
+      if (element.date == null) return false;
+      return element.date?.compareTo(d) == 0 && element.id != todo.id;
+    }).toList();
+    sameTodos.sort((a, b) {
+      return a.priority.compareTo(b.priority);
+    });
+    return sameTodos;
+  }
+
+  void updateTodoPriority({required ToDo todo, required int newPriority}) {
+    final todoWithNewPriority = todo.copyWith(priority: newPriority);
+    updateTodo(item: todoWithNewPriority);
+    updatePrioritiesOfSameDayTodos(todoWithNewPriority: todoWithNewPriority);
   }
 }
