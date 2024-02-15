@@ -251,8 +251,12 @@ class TodosNotifier extends StateNotifier<List<ToDo>> {
     final d = todo.date;
     if (d == null) return [];
     final sameTodos = state.where((element) {
-      if (element.date == null) return false;
-      return element.date?.compareTo(d) == 0 && element.id != todo.id;
+      final eDate = element.date;
+      if (eDate == null) return false;
+      return eDate.day == d.day &&
+          eDate.month == d.month &&
+          eDate.year == d.year &&
+          element.id != todo.id;
     }).toList();
     sameTodos.sort((a, b) {
       return a.priority.compareTo(b.priority);
