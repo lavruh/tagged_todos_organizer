@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 
 class PrioritySliderWidget extends StatefulWidget {
   const PrioritySliderWidget({
-    Key? key,
+    super.key,
     required this.initValue,
     required this.setValue,
-  }) : super(key: key);
+  });
   final int initValue;
   final Function(int) setValue;
   @override

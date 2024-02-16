@@ -64,7 +64,7 @@ final filteredTodosProvider = Provider<List<ToDo>>((ref) {
       if (aDate.year == bDate.year &&
           aDate.month == bDate.month &&
           aDate.day == bDate.day) {
-        return b.priority.compareTo(a.priority);
+        return a.priority.compareTo(b.priority);
       }
     }
     return tmp;

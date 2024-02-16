@@ -19,6 +19,7 @@ class TodoEditorNotifier extends StateNotifier<ToDo?> {
   StateNotifierProviderRef<TodoEditorNotifier, ToDo?> ref;
   bool _isChanged = false;
   bool _duplicateMode = false;
+  ToDo? _originalTodo;
 
   duplicateTodo(ToDo t) {
     _duplicateMode = true;
@@ -29,6 +30,7 @@ class TodoEditorNotifier extends StateNotifier<ToDo?> {
     ToDo t, {
     editId = false,
   }) {
+    _originalTodo = t;
     ref.read(editIdProvider.notifier).state = editId;
     final newAttachmentsPath = ref.read(attachmentsProvider.notifier).manage(
           id: t.id.id,
@@ -55,8 +57,17 @@ class TodoEditorNotifier extends StateNotifier<ToDo?> {
   updateTodo(ToDo t) async {
     bool fl = true;
     _isChanged = false;
+    final originalTodo = _originalTodo;
     final editId = ref.read(editIdProvider);
     try {
+      if (originalTodo != null &&
+          (originalTodo.priority != t.priority ||
+              originalTodo.date != t.date)) {
+        ref
+            .read(todosProvider.notifier)
+            .updatePrioritiesOfSameDayTodos(todoWithNewPriority: t);
+      }
+
       setTodo(await ref
           .read(todosProvider.notifier)
           .updateTodo(item: t, editId: editId));
