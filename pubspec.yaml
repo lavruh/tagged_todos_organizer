@@ -1,7 +1,7 @@
 name: tagged_todos_organizer
 description: A new Flutter project.
 publish_to: 'none' 
-version: 1.5.2+1
+version: 1.6.1+1
 
 environment:
   sdk: ">=2.19.6 <3.0.0"
@@ -35,6 +35,9 @@ dependencies:
   archive: ^3.4.9
   flutter_fancy_tree_view: ^1.4.1
   package_info_plus: ^5.0.1
+  shared_preferences: ^2.2.2
+  permission_handler: ^11.3.0
+  device_info_plus: ^9.1.2
 
 
 dev_dependencies:
