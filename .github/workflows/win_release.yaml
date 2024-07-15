@@ -19,7 +19,7 @@ jobs:
       - name: Generate intermediates
         run: flutter pub run build_runner build --delete-conflicting-outputs
       - name: Enable windows build
-        run: flutter config --enable-windows-desktop
+        run: flutter create --platforms=windows,android,linux .
       - name: Build artifacts
         run: flutter build windows --release
       - name: Archive Release
