@@ -3,7 +3,6 @@ on: workflow_dispatch
 
 env:
   APP_NAME: tagged_todos_organizer
-  BUILD_DIR: build/windows/x64/runner/Release
 
 jobs:
   build:
