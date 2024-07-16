@@ -29,7 +29,7 @@ jobs:
           filename: $APP_NAME-${{github.ref_name}}-windows.zip
           directory: build/windows/x64/runner/Release
       - name: Windows Release
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v4
         with:
           name: $APP_NAME-${{github.ref_name}}-windows.zip
           path: build/windows/x64/runner/Release/$APP_NAME-${{github.ref_name}}-win.zip
