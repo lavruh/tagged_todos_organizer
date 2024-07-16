@@ -3,6 +3,7 @@ on: workflow_dispatch
 
 env:
   APP_NAME: tagged_todos_organizer
+  BUILD_DIR: build/windows/x64/runner/Release
 
 jobs:
   build:
@@ -27,9 +28,9 @@ jobs:
         with:
           type: 'zip'
           filename: $APP_NAME-${{github.ref_name}}-windows.zip
-          directory: build/windows/x64/runner/Release
+          directory: $BUILD_DIR
       - name: Windows Release
         uses: actions/upload-artifact@v1
         with:
           name: $APP_NAME-${{github.ref_name}}-windows.zip
-          path: build/windows/runner/Release/$APP_NAME-${{github.ref_name}}-win.zip
+          path: $BUILD_DIR/$APP_NAME-${{github.ref_name}}-win.zip
