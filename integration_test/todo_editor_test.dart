@@ -19,6 +19,7 @@ import 'package:tagged_todos_organizer/todos/domain/todo.dart';
 import 'package:tagged_todos_organizer/todos/domain/todos_db_provider.dart';
 import 'package:tagged_todos_organizer/todos/presentation/widgets/sub_todos_overview_widget.dart';
 import 'package:tagged_todos_organizer/todos/presentation/widgets/todo_prev_widget.dart';
+import 'package:tagged_todos_organizer/utils/app_path_provider.dart';
 import 'package:tagged_todos_organizer/utils/data/i_db_service.dart';
 import 'package:tagged_todos_organizer/utils/unique_id.dart';
 
@@ -127,6 +128,7 @@ Future<void> todoEditorTest(WidgetTester tester) async {
 
   await tester.pumpWidget(ProviderScope(
     overrides: [
+      appPathProvider.overrideWith((ref) => '/home/lavruh/Documents/TaggedTodosOrganizer'),
       tagsDbProvider.overrideWith((ref) => db),
       todosDbProvider.overrideWith((ref) => db),
       attachmentsProvider.overrideWith((ref) => AttachmentsNotifierMock(ref)),
@@ -154,12 +156,16 @@ Future<void> todoEditorTest(WidgetTester tester) async {
   // 2.
   await tester.tap(find.text(todoWithDate.title));
   await tester.pumpAndSettle();
+  final titleInput = find.text(todoWithDate.title);
   await tester.pumpAndSettle();
-  expect(find.text(todoWithDate.title), findsOneWidget);
+  expect(titleInput, findsOneWidget);
   expect(find.text(DateFormat('y\nMM-dd').format(todoDate)), findsOneWidget);
   expect(find.text("Tags:"), findsOneWidget);
+  await tester.pump(const Duration(seconds: 10));
+
 
   // 3.
+  await tester.pumpAndSettle();
   await tester.pageBack();
   await tester.pumpAndSettle();
   await tester.tap(find.text(todoWithTags.title));

@@ -7,6 +7,7 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:tagged_todos_organizer/app.dart';
 import 'package:tagged_todos_organizer/tags/domain/tag.dart';
+import 'package:tagged_todos_organizer/utils/app_path_provider.dart';
 import 'package:tagged_todos_organizer/utils/data/i_db_service.dart';
 import 'package:tagged_todos_organizer/tags/domain/tags_db_provider.dart';
 import 'package:tagged_todos_organizer/todos/domain/todo.dart';
@@ -39,6 +40,7 @@ Future<void> postponeTodoTest(WidgetTester tester) async {
 
   await tester.pumpWidget(ProviderScope(
     overrides: [
+      appPathProvider.overrideWith((ref) => '/home/lavruh/Documents/TaggedTodosOrganizer'),
       tagsDbProvider.overrideWith((ref) => db),
       todosDbProvider.overrideWith((ref) => db)
     ],
