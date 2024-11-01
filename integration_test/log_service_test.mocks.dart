@@ -37,10 +37,9 @@ class _FakeDirectory_0 extends _i1.SmartFake implements _i2.Directory {
         );
 }
 
-class _FakeStateNotifierProviderRef_1<NotifierT extends _i3.StateNotifier<T>, T>
-    extends _i1.SmartFake
-    implements _i3.StateNotifierProviderRef<NotifierT, T> {
-  _FakeStateNotifierProviderRef_1(
+class _FakeRef_1<State extends Object?> extends _i1.SmartFake
+    implements _i3.Ref<State> {
+  _FakeRef_1(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -86,26 +85,20 @@ class MockAttachmentsNotifier extends _i1.Mock
       );
 
   @override
-  _i3.StateNotifierProviderRef<_i3.StateNotifier<dynamic>, dynamic> get ref =>
-      (super.noSuchMethod(
+  _i3.Ref<Object?> get ref => (super.noSuchMethod(
         Invocation.getter(#ref),
-        returnValue: _FakeStateNotifierProviderRef_1<_i3.StateNotifier<dynamic>,
-            dynamic>(
+        returnValue: _FakeRef_1<Object?>(
           this,
           Invocation.getter(#ref),
         ),
-        returnValueForMissingStub: _FakeStateNotifierProviderRef_1<
-            _i3.StateNotifier<dynamic>, dynamic>(
+        returnValueForMissingStub: _FakeRef_1<Object?>(
           this,
           Invocation.getter(#ref),
         ),
-      ) as _i3.StateNotifierProviderRef<_i3.StateNotifier<dynamic>, dynamic>);
+      ) as _i3.Ref<Object?>);
 
   @override
-  set ref(
-          _i3.StateNotifierProviderRef<_i3.StateNotifier<dynamic>, dynamic>?
-              _ref) =>
-      super.noSuchMethod(
+  set ref(_i3.Ref<Object?>? _ref) => super.noSuchMethod(
         Invocation.setter(
           #ref,
           _ref,

@@ -17,7 +17,6 @@ import 'package:tagged_todos_organizer/todos/presentation/screens/todo_edit_scre
 import 'package:tagged_todos_organizer/todos/presentation/screens/todos_screen.dart';
 import 'package:tagged_todos_organizer/utils/app_path_provider.dart';
 import 'package:tagged_todos_organizer/utils/data/i_db_service.dart';
-import 'attachments_mock.dart';
 import 'duplicate_todo_test.mocks.dart';
 
 @GenerateNiceMocks([MockSpec<AttachmentsNotifier>(), MockSpec<IDbService>()])
@@ -48,7 +47,7 @@ Future<void> tmpTodoTest(WidgetTester tester) async {
           .overrideWith((ref) => '/home/lavruh/Documents/TaggedTodosOrganizer'),
       todosDbProvider.overrideWith((ref) => db),
       tmpTodosDbProvider.overrideWith((ref) => db),
-      attachmentsProvider.overrideWith((ref) => AttachmentsNotifierMock(ref)),
+      attachmentsProvider.overrideWith((ref) => MockAttachmentsNotifier()),
       logProvider.overrideWith((ref) => LogNotifier(ref)),
     ],
     child: const MyApp(),

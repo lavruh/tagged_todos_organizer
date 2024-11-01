@@ -19,11 +19,9 @@ import 'package:tagged_todos_organizer/todos/domain/todo.dart';
 import 'package:tagged_todos_organizer/todos/domain/todos_db_provider.dart';
 import 'package:tagged_todos_organizer/todos/presentation/widgets/sub_todos_overview_widget.dart';
 import 'package:tagged_todos_organizer/todos/presentation/widgets/todo_prev_widget.dart';
-import 'package:tagged_todos_organizer/utils/app_path_provider.dart';
 import 'package:tagged_todos_organizer/utils/data/i_db_service.dart';
 import 'package:tagged_todos_organizer/utils/unique_id.dart';
 
-import 'attachments_mock.dart';
 import 'todo_editor_test.mocks.dart';
 
 /*
@@ -97,7 +95,7 @@ Tap add icon
     find state does not contain new todo
 */
 
-@GenerateMocks([IDbService])
+@GenerateMocks([IDbService, AttachmentsNotifier])
 Future<void> todoEditorTest(WidgetTester tester) async {
   final db = MockIDbService();
   final tags = List<Tag>.generate(
@@ -128,10 +126,9 @@ Future<void> todoEditorTest(WidgetTester tester) async {
 
   await tester.pumpWidget(ProviderScope(
     overrides: [
-      appPathProvider.overrideWith((ref) => '/home/lavruh/Documents/TaggedTodosOrganizer'),
       tagsDbProvider.overrideWith((ref) => db),
       todosDbProvider.overrideWith((ref) => db),
-      attachmentsProvider.overrideWith((ref) => AttachmentsNotifierMock(ref)),
+      attachmentsProvider.overrideWith((ref) => MockAttachmentsNotifier()),
       logProvider.overrideWith((ref) => LogNotifier(ref)),
     ],
     child: const MyApp(),
@@ -156,16 +153,12 @@ Future<void> todoEditorTest(WidgetTester tester) async {
   // 2.
   await tester.tap(find.text(todoWithDate.title));
   await tester.pumpAndSettle();
-  final titleInput = find.text(todoWithDate.title);
   await tester.pumpAndSettle();
-  expect(titleInput, findsOneWidget);
+  expect(find.text(todoWithDate.title), findsOneWidget);
   expect(find.text(DateFormat('y\nMM-dd').format(todoDate)), findsOneWidget);
   expect(find.text("Tags:"), findsOneWidget);
-  await tester.pump(const Duration(seconds: 10));
-
 
   // 3.
-  await tester.pumpAndSettle();
   await tester.pageBack();
   await tester.pumpAndSettle();
   await tester.tap(find.text(todoWithTags.title));
