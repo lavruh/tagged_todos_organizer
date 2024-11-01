@@ -19,7 +19,7 @@ jobs:
       - name: Generate intermediates
         run: flutter pub run build_runner build --delete-conflicting-outputs
       - name: Enable windows build
-        run: flutter config --enable-windows-desktop
+        run: flutter create --platforms=windows,android,linux .
       - name: Build artifacts
         run: flutter build windows --release
       - name: Archive Release
@@ -27,9 +27,9 @@ jobs:
         with:
           type: 'zip'
           filename: $APP_NAME-${{github.ref_name}}-windows.zip
-          directory: build/windows/runner/Release
+          directory: build/windows/x64/runner/Release
       - name: Windows Release
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v4
         with:
           name: $APP_NAME-${{github.ref_name}}-windows.zip
-          path: build/windows/runner/Release/$APP_NAME-${{github.ref_name}}-win.zip
+          path: build/windows/x64/runner/Release/$APP_NAME-${{github.ref_name}}-win.zip
