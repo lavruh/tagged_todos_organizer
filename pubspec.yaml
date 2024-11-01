@@ -1,14 +1,13 @@
 name: tagged_todos_organizer
 description: Todos manager organized by tags.
 publish_to: 'none' 
-version: 1.6.2+1
+version: 1.6.3+1
 
 environment:
   sdk: ">=3.3.2 <4.0.0"
 
 dependencies:
   csv: ^6.0.0
-  camera: ^0.11.0+1
   file_picker: ^8.0.3
   flutter:
     sdk: flutter
@@ -37,7 +36,7 @@ dependencies:
   package_info_plus: ^8.0.0
   shared_preferences: ^2.2.2
   permission_handler: ^11.3.0
-  device_info_plus: ^10.1.0
+  device_info_plus: ^11.1.0
 
 
 dev_dependencies:

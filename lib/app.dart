@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:photo_data_picker/ui/photo_data_picker.dart';
 import 'package:tagged_todos_organizer/images_view/presentation/screens/image_view_screen.dart';
 import 'package:tagged_todos_organizer/log/presentation/log_overview_screen.dart';
+import 'package:tagged_todos_organizer/one_day_view/presentation/screens/one_day_view_screen.dart';
 import 'package:tagged_todos_organizer/tags/presentation/tags_edit_screen.dart';
 import 'package:tagged_todos_organizer/todos/presentation/screens/todo_edit_screen.dart';
 import 'package:tagged_todos_organizer/todos/presentation/screens/todos_screen.dart';
@@ -43,11 +44,16 @@ final GoRouter _router = GoRouter(routes: <RouteBase>[
             builder: (context, state) {
               return const LogOverviewScreen();
             }),
+        GoRoute(
+            path: 'OneDayViewScreen',
+            builder: (context, state) {
+              return const OneDayViewScreen();
+            }),
       ]),
 ]);
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {

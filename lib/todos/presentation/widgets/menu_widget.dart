@@ -22,6 +22,13 @@ class MenuWidget extends ConsumerWidget {
             title: Text(ref.watch(appVersionProvider)),
           ),
           ListTile(
+            leading: const Icon(Icons.ad_units),
+            title: const Text('One Day View'),
+            onTap: () {
+              context.go('/OneDayViewScreen');
+            },
+          ),
+          ListTile(
             leading: const Icon(Icons.source),
             title: const Text('Change root folder'),
             subtitle: Text(ref.watch(appPathProvider)),
