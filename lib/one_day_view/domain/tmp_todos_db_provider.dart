@@ -6,9 +6,9 @@ import 'package:tagged_todos_organizer/utils/data/fs_db_service.dart';
 import 'package:tagged_todos_organizer/utils/data/i_db_service.dart';
 import 'package:path/path.dart' as p;
 
-final todosDbProvider = FutureProvider<IDbService>((ref) async {
+final tmpTodosDbProvider = FutureProvider<IDbService>((ref) async {
   final dbPath = ref.watch(appPathProvider);
-  await Directory(p.join(dbPath, 'todos')).create();
+  await Directory(p.join(dbPath, 'tmp_todos')).create();
   final db = FsDbService();
   await db.init(dbPath: dbPath);
   return db;

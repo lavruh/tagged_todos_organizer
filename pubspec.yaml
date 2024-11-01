@@ -1,26 +1,25 @@
 name: tagged_todos_organizer
-description: A new Flutter project.
+description: Todos manager organized by tags.
 publish_to: 'none' 
-version: 1.5.2+1
+version: 1.6.3+1
 
 environment:
-  sdk: ">=2.19.6 <3.0.0"
+  sdk: ">=3.3.2 <4.0.0"
 
 dependencies:
-  csv: ^5.1.1
-  camera: ^0.10.5+5
-  file_picker: ^6.1.1
+  csv: ^6.0.0
+  file_picker: ^8.0.3
   flutter:
     sdk: flutter
-  flutter_colorpicker: ^1.0.3
+  flutter_colorpicker: ^1.1.0
   flutter_riverpod: ^2.4.9
   image_picker: ^1.0.4
-  intl: ^0.18.1
+  intl: ^0.19.0
   mockito: ^5.4.3
   open_filex: ^4.3.4
   path: ^1.8.3
   path_provider: ^2.0.15
-  process_run: ^0.13.3
+  process_run: ^0.14.2
   sembast: ^3.5.0+1
   url_launcher: ^6.2.1
   notes_on_image:
@@ -31,10 +30,13 @@ dependencies:
       url: https://github.com/lavruh/photo_data_picker.git
   get: ^4.6.6
   flutter_slidable: ^3.0.1
-  go_router: ^12.1.1
+  go_router: ^14.1.4
   archive: ^3.4.9
   flutter_fancy_tree_view: ^1.4.1
-  package_info_plus: ^5.0.1
+  package_info_plus: ^8.0.0
+  shared_preferences: ^2.2.2
+  permission_handler: ^11.3.0
+  device_info_plus: ^11.1.0
 
 
 dev_dependencies:
@@ -43,7 +45,7 @@ dev_dependencies:
     sdk: flutter
   integration_test:
     sdk: flutter
-  flutter_lints: ^3.0.1
+  flutter_lints: ^4.0.0
   flutter_launcher_icons: ^0.13.1
 
 flutter:

@@ -8,12 +8,16 @@ class TextFieldWithConfirm extends StatefulWidget {
     this.maxLines,
     this.lable,
     this.keyboardType,
+    this.suffix,
+    this.border,
   });
   final String text;
   final Function(String) onConfirm;
   final int? maxLines;
   final String? lable;
   final TextInputType? keyboardType;
+  final Widget? suffix;
+  final InputBorder? border;
 
   @override
   State<TextFieldWithConfirm> createState() => _TextFieldWithConfirmState();
@@ -36,12 +40,13 @@ class _TextFieldWithConfirmState extends State<TextFieldWithConfirm> {
       keyboardType: widget.keyboardType,
       decoration: InputDecoration(
         labelText: widget.lable,
+        border: widget.border,
         suffix: controller.text != widget.text
             ? IconButton(
                 onPressed: () => widget.onConfirm(controller.text),
                 icon: const Icon(Icons.check),
               )
-            : null,
+            : widget.suffix,
       ),
       onChanged: (value) {
         setState(() {});

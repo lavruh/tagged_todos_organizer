@@ -17,7 +17,7 @@ class AttachmentsNotifier extends StateNotifier<List<String>> {
   AttachmentsNotifier(this.ref) : super([]);
   String? path;
   late Directory root;
-  StateNotifierProviderRef ref;
+  Ref ref;
 
   String? manage({
     required String id,
@@ -106,7 +106,7 @@ class AttachmentsNotifier extends StateNotifier<List<String>> {
 
   void openFolder() {
     if (path != null) {
-      OpenFilex.open(path);
+      OpenFilex.open(path!);
     }
   }
 
@@ -152,8 +152,6 @@ class AttachmentsNotifier extends StateNotifier<List<String>> {
       final dirName = p.basenameWithoutExtension(oldPath);
       final newDirPath = p.join(path, dirName);
       final newDir = Directory(newDirPath);
-      print('move from ${oldDir.path}');
-      print('move to ${newDir.path}');
       _copyDirectory(oldDir, newDir);
       oldDir.deleteSync(recursive: true);
       return newDir;

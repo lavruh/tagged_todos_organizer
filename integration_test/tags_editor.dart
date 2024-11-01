@@ -7,6 +7,7 @@ import 'package:mockito/annotations.dart';
 import 'package:tagged_todos_organizer/tags/domain/tag.dart';
 import 'package:tagged_todos_organizer/tags/domain/tags_db_provider.dart';
 import 'package:tagged_todos_organizer/tags/presentation/widgets/tag_widget.dart';
+import 'package:tagged_todos_organizer/utils/app_path_provider.dart';
 import 'package:tagged_todos_organizer/utils/data/sembast_db_service.dart';
 import './tags_editor.mocks.dart';
 
@@ -52,6 +53,7 @@ Future<void> tagsEditorTest(WidgetTester tester) async {
 
   await tester.pumpWidget(ProviderScope(
     overrides: [
+      appPathProvider.overrideWith((ref) => '/home/lavruh/Documents/TaggedTodosOrganizer'),
       tagsDbProvider.overrideWith((ref) => tagsDb),
     ],
     child: const MyApp(),

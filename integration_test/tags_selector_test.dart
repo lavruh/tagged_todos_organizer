@@ -13,6 +13,7 @@ import 'package:tagged_todos_organizer/tags/presentation/widgets/tags_widget.dar
 import 'package:tagged_todos_organizer/todos/domain/todo.dart';
 import 'package:tagged_todos_organizer/todos/domain/todos_db_provider.dart';
 import 'package:tagged_todos_organizer/todos/presentation/widgets/todo_prev_widget.dart';
+import 'package:tagged_todos_organizer/utils/app_path_provider.dart';
 import 'package:tagged_todos_organizer/utils/data/i_db_service.dart';
 import 'package:tagged_todos_organizer/utils/unique_id.dart';
 import 'tags_selector_test.mocks.dart';
@@ -78,6 +79,7 @@ Future<void> tagsSelectorTest(WidgetTester tester) async {
 
   await tester.pumpWidget(ProviderScope(
     overrides: [
+      appPathProvider.overrideWith((ref) => '/home/lavruh/Documents/TaggedTodosOrganizer'),
       tagsDbProvider.overrideWith((ref) => db),
       todosDbProvider.overrideWith((ref) => db),
     ],
@@ -85,6 +87,7 @@ Future<void> tagsSelectorTest(WidgetTester tester) async {
   ));
   await tester.pumpAndSettle();
   await tester.pump();
+  await tester.pump(const Duration(seconds: 10));
   expect(find.byType(TodoPrevWidget), findsNWidgets(todos.length));
   expect(find.byType(InputChip), findsNWidgets(todos.first.tags.length));
 

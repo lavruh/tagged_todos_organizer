@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 
 import 'duplicate_todo_test.dart';
+import 'tmp_todo_test.dart';
 import 'todo_editor_test.dart';
 import 'log_service_test.dart';
 import 'postpone_menu_test.dart';
@@ -16,4 +17,5 @@ void main() async {
   testWidgets('todo filter test', todoFilterTest);
   testWidgets('postpone todo test', postponeTodoTest);
   testWidgets('log service test', logServiceTest);
+  testWidgets('tmp todo test', tmpTodoTest);
 }

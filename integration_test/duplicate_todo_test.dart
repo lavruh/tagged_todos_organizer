@@ -8,6 +8,7 @@ import 'package:tagged_todos_organizer/app.dart';
 import 'package:tagged_todos_organizer/todos/domain/attachments_provider.dart';
 import 'package:tagged_todos_organizer/todos/domain/todo.dart';
 import 'package:tagged_todos_organizer/todos/presentation/screens/todo_edit_screen.dart';
+import 'package:tagged_todos_organizer/utils/app_path_provider.dart';
 import 'package:tagged_todos_organizer/utils/data/i_db_service.dart';
 
 @GenerateNiceMocks([MockSpec<AttachmentsNotifier>(), MockSpec<IDbService>()])
@@ -28,7 +29,13 @@ Future<void> duplicateTodoTest(WidgetTester tester) async {
   clearDirectory("archive");
   clearDirectory("log");
 
-  await tester.pumpWidget(const ProviderScope(child: MyApp()));
+  await tester.pumpWidget(ProviderScope(
+    overrides: [
+      appPathProvider
+          .overrideWith((ref) => '/home/lavruh/Documents/TaggedTodosOrganizer')
+    ],
+    child: const MyApp(),
+  ));
 
   await tester.pumpAndSettle();
 

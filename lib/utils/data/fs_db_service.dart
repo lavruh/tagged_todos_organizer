@@ -61,8 +61,6 @@ class FsDbService implements IDbService {
   Future<void> init({required String dbPath}) async {
     try {
       root = Directory(dbPath);
-      await Directory(p.join(dbPath, 'todos')).create();
-      await Directory(p.join(dbPath, 'tags')).create();
     } on Exception catch (e) {
       throw FsDbException('Can not open db path [$dbPath], $e');
     }

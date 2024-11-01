@@ -1,9 +1,8 @@
 import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tagged_todos_organizer/main.dart';
 
-final appPathProvider = Provider<String>((ref) {
-  return getAppFolderPath();
-});
+final appPathProvider = Provider<String>((ref) => appRootPath);
 
 String getAppFolderPath() {
   final appName = "TaggedTodosOrganizer";

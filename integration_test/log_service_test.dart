@@ -12,7 +12,6 @@ import 'package:tagged_todos_organizer/todos/domain/todos_provider.dart';
 import 'package:tagged_todos_organizer/todos/presentation/screens/todo_edit_screen.dart';
 import 'package:tagged_todos_organizer/todos/presentation/widgets/sub_todos_overview_widget.dart';
 import 'package:tagged_todos_organizer/utils/data/i_db_service.dart';
-import 'attachments_mock.dart';
 import 'duplicate_todo_test.mocks.dart';
 
 @GenerateNiceMocks([MockSpec<AttachmentsNotifier>(), MockSpec<IDbService>()])
@@ -36,7 +35,7 @@ Future<void> logServiceTest(WidgetTester tester) async {
         notifier.getTodos();
         return notifier;
       }),
-      attachmentsProvider.overrideWith((ref) => AttachmentsNotifierMock(ref)),
+      attachmentsProvider.overrideWith((ref) => MockAttachmentsNotifier()),
       logProvider.overrideWith((ref) => LogNotifier(ref)),
     ],
     child: const MyApp(),

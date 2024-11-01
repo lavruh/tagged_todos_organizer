@@ -6,3 +6,10 @@ extension CompareDateTo on DateTime {
     return 0;
   }
 }
+
+
+extension IsSameDate on DateTime {
+  bool isSameDate(DateTime b) {
+    return year == b.year && month == b.month && day == b.day;
+  }
+}

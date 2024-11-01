@@ -22,7 +22,6 @@ import 'package:tagged_todos_organizer/todos/presentation/widgets/todo_prev_widg
 import 'package:tagged_todos_organizer/utils/data/i_db_service.dart';
 import 'package:tagged_todos_organizer/utils/unique_id.dart';
 
-import 'attachments_mock.dart';
 import 'todo_editor_test.mocks.dart';
 
 /*
@@ -96,7 +95,7 @@ Tap add icon
     find state does not contain new todo
 */
 
-@GenerateMocks([IDbService])
+@GenerateMocks([IDbService, AttachmentsNotifier])
 Future<void> todoEditorTest(WidgetTester tester) async {
   final db = MockIDbService();
   final tags = List<Tag>.generate(
@@ -129,7 +128,7 @@ Future<void> todoEditorTest(WidgetTester tester) async {
     overrides: [
       tagsDbProvider.overrideWith((ref) => db),
       todosDbProvider.overrideWith((ref) => db),
-      attachmentsProvider.overrideWith((ref) => AttachmentsNotifierMock(ref)),
+      attachmentsProvider.overrideWith((ref) => MockAttachmentsNotifier()),
       logProvider.overrideWith((ref) => LogNotifier(ref)),
     ],
     child: const MyApp(),
