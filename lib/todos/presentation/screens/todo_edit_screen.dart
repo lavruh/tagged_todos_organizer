@@ -29,7 +29,7 @@ class TodoEditScreen extends ConsumerWidget {
     }
     return PopScope(
       canPop: false,
-      onPopInvokedWithResult: (fl, _) async {
+      onPopInvoked: (fl) async {
         if (fl) return;
         return notifier.checkIfToSave(GoRouter.of(context), context);
       },
