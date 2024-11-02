@@ -22,6 +22,10 @@ class OneDayViewNotifier extends StateNotifier<List<Widget>> {
     final permanentTodos = ref.watch(todosProvider).where((e) {
       if (e.date == null) return false;
       return e.date?.isSameDate(DateTime.now()) ?? false;
+    }).toList();
+
+    permanentTodos.sort((a, b) {
+      return a.priority.compareTo(b.priority);
     });
 
     final tmpProvider = ref.read(tmpTodoProvider.notifier);
@@ -30,6 +34,7 @@ class OneDayViewNotifier extends StateNotifier<List<Widget>> {
 
     state = [
       ...tmpTodos.map((e) => DayViewItemWidget(
+            key: Key(e.id.id),
             item: e,
             onUpdate: (newValue) => tmpProvider.updateTmpTodo(newValue),
             onRemove: tmpProvider.removeTmpTodo,
@@ -43,6 +48,7 @@ class OneDayViewNotifier extends StateNotifier<List<Widget>> {
             isTmpTodo: true,
           )),
       ...permanentTodos.map((e) => DayViewItemWidget(
+            key: Key(e.id.id),
             item: e,
             onUpdate: (newValue) => todoProvider.updateTodo(item: newValue),
             onOpenInEditor: (newVal, openEditor) {

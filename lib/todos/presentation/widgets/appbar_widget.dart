@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:tagged_todos_organizer/tags/domain/filters_by_tags_provider.dart';
 import 'package:tagged_todos_organizer/todos/domain/todo.dart';
 import 'package:tagged_todos_organizer/todos/domain/todo_editor_provider.dart';
@@ -12,6 +13,10 @@ class AppBarWidget extends ConsumerWidget implements PreferredSizeWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return AppBar(
       actions: [
+        TextButton(
+          child: Text(DateFormat('EE, MMM dd, yyyy').format(DateTime.now())),
+          onPressed: () => context.go('/OneDayViewScreen'),
+        ),
         IconButton(
           onPressed: () => _createNewTodo(ref, context),
           icon: const Icon(Icons.add),
