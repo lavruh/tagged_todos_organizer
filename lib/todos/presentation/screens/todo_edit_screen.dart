@@ -129,7 +129,7 @@ class TodoEditScreen extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     SizedBox(
-                      height: 60,
+                      height: 80,
                       width: 60,
                       child: TextButton(
                           onPressed: () async {
@@ -148,7 +148,8 @@ class TodoEditScreen extends ConsumerWidget {
                           child: item.date == null
                               ? const Icon(Icons.calendar_month)
                               : Text(
-                                  DateFormat('y\nMM-dd').format(item.date!),
+                                  DateFormat('dd\nMMM\ny').format(item.date!),
+                                  textAlign: TextAlign.center,
                                 )),
                     ),
                     Flexible(
