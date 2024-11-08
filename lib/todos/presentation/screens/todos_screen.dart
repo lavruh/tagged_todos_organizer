@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tagged_todos_organizer/log/domain/log_provider.dart';
+import 'package:tagged_todos_organizer/tags/domain/tags_aliases_provider.dart';
 import 'package:tagged_todos_organizer/tags/domain/tags_from_string_provider.dart';
 import 'package:tagged_todos_organizer/tags/presentation/widgets/tags_row_widget.dart';
 import 'package:tagged_todos_organizer/todos/domain/filtered_todos_provider.dart';
@@ -11,7 +13,7 @@ import 'package:tagged_todos_organizer/utils/presentation/widget/search_panel_wi
 import 'package:tagged_todos_organizer/utils/snackbar_provider.dart';
 
 class TodosScreen extends ConsumerWidget {
-  const TodosScreen({Key? key}) : super(key: key);
+  const TodosScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -22,6 +24,10 @@ class TodosScreen extends ConsumerWidget {
             duration: const Duration(milliseconds: 3000)));
       }
     });
+
+    //ensure necessary providers are initialized
+    final aliases = ref.watch(tagsAliasesProvider);
+    final log = ref.watch(logProvider);
 
     return Scaffold(
       appBar: const AppBarWidget(),

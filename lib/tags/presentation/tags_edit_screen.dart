@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:tagged_todos_organizer/tags/domain/filtered_tags_provider.dart';
 import 'package:tagged_todos_organizer/tags/domain/tag.dart';
 import 'package:tagged_todos_organizer/tags/domain/tag_editor_provider.dart';
@@ -10,7 +11,7 @@ import 'package:tagged_todos_organizer/utils/presentation/widget/search_panel_wi
 import 'package:tagged_todos_organizer/utils/snackbar_provider.dart';
 
 class TagsEditScreen extends ConsumerWidget {
-  const TagsEditScreen({Key? key}) : super(key: key);
+  const TagsEditScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -25,8 +26,17 @@ class TagsEditScreen extends ConsumerWidget {
       appBar: AppBar(
         actions: [
           IconButton(
-              onPressed: () => ref.read(tagsProvider.notifier).addTag(),
-              icon: const Icon(Icons.add))
+            onPressed: () {
+              context.go('/TagsEditScreen/TagsAliasesEditScreen');
+            },
+            icon: const Icon(Icons.add_comment_outlined),
+            tooltip: "Edit alias",
+          ),
+          IconButton(
+            onPressed: () => ref.read(tagsProvider.notifier).addTag(),
+            icon: const Icon(Icons.add),
+            tooltip: "Add new tag",
+          )
         ],
       ),
       body: SingleChildScrollView(
