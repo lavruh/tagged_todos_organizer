@@ -4,6 +4,7 @@ import 'package:photo_data_picker/ui/photo_data_picker.dart';
 import 'package:tagged_todos_organizer/images_view/presentation/screens/image_view_screen.dart';
 import 'package:tagged_todos_organizer/log/presentation/log_overview_screen.dart';
 import 'package:tagged_todos_organizer/one_day_view/presentation/screens/one_day_view_screen.dart';
+import 'package:tagged_todos_organizer/tags/presentation/tags_aliases_edit_screen.dart';
 import 'package:tagged_todos_organizer/tags/presentation/tags_edit_screen.dart';
 import 'package:tagged_todos_organizer/todos/presentation/screens/todo_edit_screen.dart';
 import 'package:tagged_todos_organizer/todos/presentation/screens/todos_screen.dart';
@@ -38,7 +39,15 @@ final GoRouter _router = GoRouter(routes: <RouteBase>[
             path: 'TagsEditScreen',
             builder: (context, state) {
               return const TagsEditScreen();
-            }),
+            },
+            routes: <RouteBase>[
+              GoRoute(
+                path: 'TagsAliasesEditScreen',
+                builder: (context, state) {
+                  return const TagsAliasesEditScreen();
+                },
+              ),
+            ]),
         GoRoute(
             path: 'LogOverviewScreen',
             builder: (context, state) {

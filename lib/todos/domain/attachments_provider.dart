@@ -174,4 +174,17 @@ class AttachmentsNotifier extends StateNotifier<List<String>> {
       }
     });
   }
+
+  void deleteAttachmentFile({required String path}) {
+    File(path).deleteSync();
+    updateAttachments();
+  }
+
+  void renameAttachmentFile({required String filePath, required String newName}) {
+    final f = File(filePath);
+    if(f.existsSync()) {
+      f.renameSync(p.join(p.dirname(filePath), newName));
+      updateAttachments();
+    }
+  }
 }

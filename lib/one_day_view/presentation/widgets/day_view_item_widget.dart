@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tagged_todos_organizer/tags/presentation/widgets/tags_preview_widget.dart';
 import 'package:tagged_todos_organizer/todos/domain/todo.dart';
+import 'package:tagged_todos_organizer/todos/presentation/widgets/priority_menu_widget.dart';
+import 'package:tagged_todos_organizer/utils/domain/todo_color_provider.dart';
 import 'package:tagged_todos_organizer/utils/presentation/widget/text_field_with_confirm.dart';
 
 class DayViewItemWidget extends StatelessWidget {
@@ -42,35 +45,59 @@ class DayViewItemWidget extends StatelessWidget {
             tooltip: "Open editor",
             icon: const Icon(Icons.note_alt));
 
-    return ListTile(
-      title: TextFormField(
-        initialValue: item.title,
-        decoration: InputDecoration(suffix: suffixPanel),
-        onFieldSubmitted: (v) => onUpdate(item.copyWith(title: v)),
-      ),
-      subtitle: Row(
-        children: [
-          SizedBox(
-            width: 50,
-            child: TextButton(
-              onPressed: () {},
-              child: Text(item.priority.toString()),
-            ),
-          ),
-          Flexible(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              decoration:
-                  const BoxDecoration(border: Border(left: BorderSide())),
-              child: TextFieldWithConfirm(
-                text: item.description,
-                border: InputBorder.none,
-                onConfirm: (v) => onUpdate(item.copyWith(description: v)),
+    return Container(
+      color: getColorForPriority(item.priority),
+      child: ListTile(
+        title: TextFormField(
+          initialValue: item.title,
+          decoration: InputDecoration(suffix: suffixPanel),
+          onFieldSubmitted: (v) => onUpdate(item.copyWith(title: v)),
+        ),
+        subtitle: Wrap(children: [
+          Row(
+            children: [
+              SizedBox(
+                width: 50,
+                child: isTmpTodo
+                    ? null
+                    : TextButton(
+                        onPressed: () => _priorityMenuDialog(context),
+                        child: Text(item.priority.toString()),
+                      ),
               ),
-            ),
+              Flexible(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  decoration:
+                      const BoxDecoration(border: Border(left: BorderSide())),
+                  child: TextFieldWithConfirm(
+                    text: item.description,
+                    border: InputBorder.none,
+                    onConfirm: (v) => onUpdate(item.copyWith(description: v)),
+                  ),
+                ),
+              )
+            ],
           ),
-        ],
+          if (item.tags.isNotEmpty)
+            Row(
+              children: [
+                Container(width: 50),
+                Container(
+                    decoration:
+                        const BoxDecoration(border: Border(left: BorderSide())),
+                    child: TagsPreviewWidget(tags: item.tags)),
+              ],
+            ),
+        ]),
       ),
+    );
+  }
+
+  void _priorityMenuDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(child: PriorityMenuWidget(item: item)),
     );
   }
 }

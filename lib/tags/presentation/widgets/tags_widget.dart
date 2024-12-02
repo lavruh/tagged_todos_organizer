@@ -8,9 +8,11 @@ class TagsWidget extends StatefulWidget {
     super.key,
     required this.tags,
     required this.updateTags,
+    this.getGeneratedTagsList,
   });
   final List<UniqueId> tags;
   final Function(List<UniqueId>) updateTags;
+  final List<UniqueId> Function()? getGeneratedTagsList;
   @override
   State<TagsWidget> createState() => _TagsWidgetState();
 }
@@ -40,8 +42,18 @@ class _TagsWidgetState extends State<TagsWidget> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 TagsPreviewWidget(tags: tags, onTapTag: _removeTappedTag),
-                IconButton(
-                    onPressed: _setEditMode, icon: const Icon(Icons.edit))
+                Row(
+                  children: [
+                    IconButton(
+                        tooltip: "Get tags from title",
+                        onPressed: _updateTagsFromTitle,
+                        icon: const Icon(Icons.tag)),
+                    IconButton(
+                        tooltip: "Edit tags",
+                        onPressed: _setEditMode,
+                        icon: const Icon(Icons.edit)),
+                  ],
+                ),
               ],
             ),
           ),
@@ -82,4 +94,11 @@ class _TagsWidgetState extends State<TagsWidget> {
   void _setEditMode() => setState(() {
         editMode = true;
       });
+
+  void _updateTagsFromTitle() {
+    if (widget.getGeneratedTagsList != null) {
+      tags = widget.getGeneratedTagsList!();
+      _updateSelectedTags();
+    }
+  }
 }

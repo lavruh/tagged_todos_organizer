@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:tagged_todos_organizer/one_day_view/domain/one_day_view_provider.dart';
 import 'package:tagged_todos_organizer/one_day_view/domain/tmp_todo_provider.dart';
-import 'package:tagged_todos_organizer/one_day_view/presentation/widgets/one_day_view_widget.dart';
 import 'package:tagged_todos_organizer/utils/snackbar_provider.dart';
 
 class OneDayViewScreen extends ConsumerWidget {
@@ -18,9 +18,11 @@ class OneDayViewScreen extends ConsumerWidget {
       }
     });
 
+    final items = ref.watch(oneDayViewProvider);
+
     return Scaffold(
         appBar: AppBar(
-          title: Text(DateFormat('EEEE, MMMM dd, yyyy').format(DateTime.now())),
+          title: Text(DateFormat('EE, MMM dd, yyyy').format(DateTime.now())),
           actions: [
             IconButton(
                 tooltip: "Add tmp todo",
@@ -29,6 +31,9 @@ class OneDayViewScreen extends ConsumerWidget {
                 icon: const Icon(Icons.add))
           ],
         ),
-        body: const OneDayViewWidget());
+        body: ListView(
+          key: Key(items.length.toString()),
+          children: items,
+        ));
   }
 }

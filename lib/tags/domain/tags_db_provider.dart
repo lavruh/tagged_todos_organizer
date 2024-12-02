@@ -19,3 +19,16 @@ final tagsDbProvider = FutureProvider<IDbService>((ref) async {
   }
   return db;
 });
+
+final tagsAliasesDbProvider = FutureProvider<IDbService>((ref) async {
+
+  final dbPath = ref.watch(appPathProvider);
+  final db = SembastDbService();
+  final dir = await Directory(p.join(dbPath, 'tags_aliases')).create();
+  try {
+    await db.init(dbPath: dir.path);
+  } on Exception catch (e) {
+    ref.read(snackbarProvider.notifier).show('Error: $e');
+  }
+  return db;
+});

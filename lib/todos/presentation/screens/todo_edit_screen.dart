@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tagged_todos_organizer/parts/presentation/used_parts_widget.dart';
+import 'package:tagged_todos_organizer/tags/domain/tags_from_string_provider.dart';
 import 'package:tagged_todos_organizer/tags/presentation/widgets/tags_widget.dart';
 import 'package:tagged_todos_organizer/todos/domain/todo_editor_provider.dart';
 import 'package:tagged_todos_organizer/todos/domain/todos_provider.dart';
@@ -129,7 +130,7 @@ class TodoEditScreen extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     SizedBox(
-                      height: 60,
+                      height: 80,
                       width: 60,
                       child: TextButton(
                           onPressed: () async {
@@ -148,7 +149,8 @@ class TodoEditScreen extends ConsumerWidget {
                           child: item.date == null
                               ? const Icon(Icons.calendar_month)
                               : Text(
-                                  DateFormat('y\nMM-dd').format(item.date!),
+                                  DateFormat('dd\nMMM\ny').format(item.date!),
+                                  textAlign: TextAlign.center,
                                 )),
                     ),
                     Flexible(
@@ -175,6 +177,10 @@ class TodoEditScreen extends ConsumerWidget {
                   tags: item.tags,
                   updateTags: (t) =>
                       notifier.changeState(item.copyWith(tags: t)),
+                  getGeneratedTagsList: () => ref
+                      .read(tagsFromStringWithAliasesProvider(item.title))
+                      .map((e) => e.id)
+                      .toList(),
                 ),
                 const AttachementsPreviewWidget(),
                 UsedPartsWidget(

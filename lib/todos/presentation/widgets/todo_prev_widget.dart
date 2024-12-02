@@ -9,10 +9,8 @@ import 'package:tagged_todos_organizer/todos/domain/todo_editor_provider.dart';
 import 'package:tagged_todos_organizer/todos/domain/todos_provider.dart';
 import 'package:tagged_todos_organizer/todos/presentation/widgets/postpone_menu.dart';
 import 'package:tagged_todos_organizer/todos/presentation/widgets/priority_menu_widget.dart';
+import 'package:tagged_todos_organizer/utils/domain/todo_color_provider.dart';
 import 'package:tagged_todos_organizer/utils/presentation/widget/confirm_dialog.dart';
-
-const _maxBlue = 255 - 10 * 7;
-const _maxGreen = 255 - 10 * 5;
 
 class TodoPrevWidget extends ConsumerWidget {
   const TodoPrevWidget({
@@ -41,7 +39,7 @@ class TodoPrevWidget extends ConsumerWidget {
             onPressed: (_) => _deleteTodoProcess(_, ref)),
       ]),
       child: Card(
-        color: _getColor(),
+        color: getColorForPriority(item.priority),
         elevation: 3,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -96,14 +94,6 @@ class TodoPrevWidget extends ConsumerWidget {
         ),
       ),
     );
-  }
-
-  Color _getColor() {
-    final blue = _maxBlue + item.priority * 7;
-    final green = _maxGreen + item.priority * 5;
-    return Colors.white
-        .withBlue(blue > 255 ? 255 : blue)
-        .withGreen(green > 255 ? 255 : green);
   }
 
   void _deleteTodoProcess(BuildContext context, WidgetRef ref) async {
