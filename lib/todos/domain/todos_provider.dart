@@ -22,7 +22,7 @@ final todosProvider = StateNotifierProvider<TodosNotifier, List<ToDo>>((ref) {
 });
 
 class TodosNotifier extends StateNotifier<List<ToDo>> {
-  StateNotifierProviderRef<TodosNotifier, List<ToDo>> ref;
+  Ref ref;
   TodosNotifier(this.ref) : super([]) {
     log = ref.read(logProvider.notifier);
   }
@@ -50,6 +50,15 @@ class TodosNotifier extends StateNotifier<List<ToDo>> {
 
   addTodo({ToDo? todo}) {
     state = [...state, todo ?? ToDo.empty()];
+  }
+
+  postponeTodo({required ToDo item, required DateTime date, int days = 0}) {
+    updateTodo(
+      item: item.copyWith(
+          date: DateTime.fromMillisecondsSinceEpoch(
+              date.millisecondsSinceEpoch +
+                  Duration(days: days).inMilliseconds)),
+    );
   }
 
   Future<ToDo> updateTodo({required ToDo item, editId = false}) async {

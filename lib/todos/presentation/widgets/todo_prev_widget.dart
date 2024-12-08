@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tagged_todos_organizer/tags/presentation/widgets/tags_preview_widget.dart';
@@ -10,7 +9,7 @@ import 'package:tagged_todos_organizer/todos/domain/todos_provider.dart';
 import 'package:tagged_todos_organizer/todos/presentation/widgets/postpone_menu.dart';
 import 'package:tagged_todos_organizer/todos/presentation/widgets/priority_menu_widget.dart';
 import 'package:tagged_todos_organizer/utils/domain/todo_color_provider.dart';
-import 'package:tagged_todos_organizer/utils/presentation/widget/confirm_dialog.dart';
+import 'package:tagged_todos_organizer/utils/presentation/widget/slide_action_widget.dart';
 
 class TodoPrevWidget extends ConsumerWidget {
   const TodoPrevWidget({
@@ -27,17 +26,11 @@ class TodoPrevWidget extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final style = Theme.of(context).textTheme.titleMedium;
 
-    return Slidable(
-      endActionPane: ActionPane(motion: const ScrollMotion(), children: [
-        SlidableAction(
-            icon: Icons.archive,
-            backgroundColor: Colors.orangeAccent,
-            onPressed: (_) => _archiveTodoProcess(_, ref)),
-        SlidableAction(
-            icon: Icons.delete,
-            backgroundColor: Colors.red,
-            onPressed: (_) => _deleteTodoProcess(_, ref)),
-      ]),
+    return SlideActionWidget(
+      slideLeftLabel: "Tomorrow",
+      slideRightLabel: "Today",
+      onSlideLeft: () => _postponeTillTomorrow(ref),
+      onSlideRight: () => _setTodoForToday(ref),
       child: Card(
         color: getColorForPriority(item.priority),
         elevation: 3,
@@ -96,11 +89,16 @@ class TodoPrevWidget extends ConsumerWidget {
     );
   }
 
-  void _deleteTodoProcess(BuildContext context, WidgetRef ref) async {
-    final act = await confirmDialog(context, title: 'Delete todo?');
-    if (act == true) {
-      ref.read(todosProvider.notifier).deleteTodo(todo: item);
-    }
+  void _setTodoForToday(WidgetRef ref) {
+    ref
+        .read(todosProvider.notifier)
+        .postponeTodo(item: item, date: DateTime.now());
+  }
+
+  void _postponeTillTomorrow(WidgetRef ref) {
+    ref
+        .read(todosProvider.notifier)
+        .postponeTodo(item: item, date: DateTime.now(), days: 1);
   }
 
   void _postponeTodoDialog(BuildContext context) {
@@ -121,13 +119,6 @@ class TodoPrevWidget extends ConsumerWidget {
     {
       ref.read(todoEditorProvider.notifier).setTodo(item);
       context.go('/TodoEditorScreen');
-    }
-  }
-
-  _archiveTodoProcess(BuildContext context, WidgetRef ref) async {
-    final act = await confirmDialog(context, title: "Archive todo?");
-    if (act == true) {
-      ref.read(todosProvider.notifier).archiveTodo(todo: item);
     }
   }
 }
