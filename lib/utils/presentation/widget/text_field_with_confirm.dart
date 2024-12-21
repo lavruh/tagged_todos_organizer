@@ -87,7 +87,7 @@ class _TextFieldWithConfirmState extends State<TextFieldWithConfirm> {
     final fieldText = editableTextState.currentTextEditingValue.text;
     final selection = editableTextState.currentTextEditingValue.selection;
 
-    const checked = "☑";
+    const checked = "☒";
     const check = "☐";
 
     final selText = _getRowUnderCursor(fieldText, selection.start);
