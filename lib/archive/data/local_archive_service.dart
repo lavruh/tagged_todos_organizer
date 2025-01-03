@@ -22,7 +22,7 @@ class LocalArchiveService implements IArchiveService {
   @override
   Future<void> extractFromArchive({required String path}) async {
     final name = p.basenameWithoutExtension(path);
-    final zip = ZipDecoder().decodeBuffer(InputFileStream(path));
+    final zip = ZipDecoder().decodeBytes(File(path).readAsBytesSync());
     for (final file in zip) {
       final filename = file.name;
       if (file.isFile) {
