@@ -23,9 +23,8 @@ dependencies:
   sembast: ^3.8.5
   url_launcher: ^6.3.1
   notes_on_image:
-    path: /home/lavruh/Documents/projects/flutter_apps/notes_on_image/NotesOnImage/
-#    git:
-#      url: https://github.com/lavruh/NotesOnImage.git
+    git:
+      url: https://github.com/lavruh/NotesOnImage.git
   photo_data_picker:
     git:
       url: https://github.com/lavruh/photo_data_picker.git

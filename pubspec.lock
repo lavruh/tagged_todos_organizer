@@ -722,10 +722,12 @@ packages:
   notes_on_image:
     dependency: "direct main"
     description:
-      path: "/home/lavruh/Documents/projects/flutter_apps/notes_on_image/NotesOnImage"
-      relative: false
-    source: path
-    version: "1.2.12+1"
+      path: "."
+      ref: HEAD
+      resolved-ref: fced842bc1bffc84162ab8fbeef180faaeb0b8d1
+      url: "https://github.com/lavruh/NotesOnImage.git"
+    source: git
+    version: "1.2.11+1"
   open_filex:
     dependency: "direct main"
     description:
