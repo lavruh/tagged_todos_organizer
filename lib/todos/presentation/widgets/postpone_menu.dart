@@ -5,9 +5,9 @@ import 'package:tagged_todos_organizer/todos/domain/todos_provider.dart';
 
 class PostponeMenuWidget extends ConsumerWidget {
   const PostponeMenuWidget({
-    Key? key,
+    super.key,
     required this.item,
-  }) : super(key: key);
+  });
   final ToDo item;
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -55,12 +55,9 @@ class PostponeMenuWidget extends ConsumerWidget {
     DateTime date, {
     int days = 0,
   }) {
-    ref.read(todosProvider.notifier).updateTodo(
-          item: item.copyWith(
-              date: DateTime.fromMillisecondsSinceEpoch(
-                  date.millisecondsSinceEpoch +
-                      Duration(days: days).inMilliseconds)),
-        );
+    ref
+        .read(todosProvider.notifier)
+        .postponeTodo(item: item, date: date, days: days);
     Navigator.of(context).pop();
   }
 

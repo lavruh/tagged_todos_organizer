@@ -1,4 +1,7 @@
+import 'dart:async';
 import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:path/path.dart' as p;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
@@ -12,15 +15,23 @@ class ImagesViewNotifier extends StateNotifier<String?> {
   final editor = Get.put(DesignationOnImageState());
   List<String> filesToPreview = [];
   int currentImageIndex = 0;
+  StreamSubscription<FileSystemEvent>? _eventSubscription;
+  BuildContext? context;
 
   openImage(String path) async {
-    editor.loadImage(File(path));
+    final file = File(path);
+    editor.open(file);
     final dir = Directory(p.dirname(path));
+    final eventStream = dir.watch();
+    _eventSubscription = eventStream.listen(_updateDueToFSEvent);
     filesToPreview.clear();
+    int i = 0;
     for (final f in dir.listSync()) {
       final ext = p.extension(f.path);
-      if (ext == '.jpg' || ext == '.jpeg') {
+      if (ext == '.jpg' || ext == '.jpeg' || ext == '.notes') {
         filesToPreview.add(f.path);
+        if(f.path == path) currentImageIndex = i;
+        i++;
       }
     }
     state = path;
@@ -44,17 +55,33 @@ class ImagesViewNotifier extends StateNotifier<String?> {
         currentImageIndex = filesToPreview.length - 1;
       }
     }
-    editor.loadImage(File(filesToPreview[currentImageIndex]));
+    final nextFile = File(filesToPreview[currentImageIndex]);
+    editor.open(nextFile);
+    state = nextFile.path;
   }
 
   Future<bool> saveImageRequest() async {
     bool result = false;
-    await editor.hasToSavePromt(onConfirmCallback: () async {
-      await editor.saveImage();
+    await editor.hasToSaveDialog(onConfirmCallback: () async {
+      await editor.saveZip();
       result = true;
     }, onNoCallback: () {
       result = true;
     });
     return result;
+  }
+
+  _updateDueToFSEvent(FileSystemEvent event) {
+    if (event is FileSystemMoveEvent) {
+      final path = event.destination;
+      if (path != null) openImage(path);
+    }
+    if (event is FileSystemDeleteEvent) close();
+  }
+
+  close() {
+    _eventSubscription?.cancel();
+    context?.pop();
+    context = null;
   }
 }
