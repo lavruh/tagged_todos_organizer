@@ -16,7 +16,7 @@ dependencies {
 android {
     namespace = "com.example.tagged_todos_organizer"
     compileSdkVersion = 35
-    ndkVersion "25.1.8937393"
+    ndkVersion "26.3.11579264"
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
@@ -55,6 +55,33 @@ android {
             // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig signingConfigs.debug
         }
+    }
+
+    flavorDimensions += "default"
+
+    productFlavors {
+        dev {
+            dimension = "default"
+            manifestPlaceholders = [appName: "[DEV] Tagged Todos Organizer"]
+            applicationIdSuffix = ".dev"
+        }
+//        create("dev") {
+//            dimension = "default"
+//            resValue(
+//                    type = "string",
+//                    name = "app_name",
+//                    value = "dev Tagged Todos Organizer")
+//            applicationIdSuffix = ".dev"
+//        }
+//
+//        create("release") {
+//            dimension = "default"
+//            resValue(
+//                    type = "string",
+//                    name = "app_name",
+//                    value = "Tagged Todos Organizer")
+//            applicationIdSuffix = ""
+//        }
     }
 }
 
