@@ -1,0 +1,41 @@
+name: Windows64 release
+on: workflow_dispatch
+
+env:
+  APP_NAME: tagged_todos_organizer
+
+jobs:
+  build:
+    name: Windows64 flutter release
+    runs-on: windows-latest
+    steps:
+        - uses: actions/checkout@v3
+        - id: read-version
+          uses: NiklasLehnfeld/flutter-version-number-action@main
+          with:
+            file-path: pubspec.yaml
+        - uses: subosito/flutter-action@v2
+          with:
+            channel: 'stable'
+            flutter-version: '3.22.3'
+        - name: Install project dependencies
+          run: flutter pub get
+        - name: Generate intermediates
+          run: flutter pub run build_runner build --delete-conflicting-outputs
+        - name: Enable windows build
+          run: flutter create --platforms=windows,android,linux .
+        - name: Build artifacts
+          run: flutter build windows --release
+        - name: Archive Release
+          uses: thedoctor0/zip-release@master
+          with:
+            type: 'zip'
+            filename: $APP_NAME-${{github.ref_name}}-win64-${{steps.read-version.outputs.version-number}}.zip
+            directory: build/windows/x64/runner/Release
+        - name: Release
+          uses: softprops/action-gh-release@v1
+          with:
+            tag_name: $APP_NAME-${{github.ref_name}}-win64-${{steps.read-version.outputs.version-number}}
+            files: build/windows/x64/runner/Release/$APP_NAME-${{github.ref_name}}-win64-${{steps.read-version.outputs.version-number}}.zip
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
