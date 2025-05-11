@@ -25,10 +25,13 @@ class ImagesViewNotifier extends StateNotifier<String?> {
     final eventStream = dir.watch();
     _eventSubscription = eventStream.listen(_updateDueToFSEvent);
     filesToPreview.clear();
+    int i = 0;
     for (final f in dir.listSync()) {
       final ext = p.extension(f.path);
       if (ext == '.jpg' || ext == '.jpeg' || ext == '.notes') {
         filesToPreview.add(f.path);
+        if(f.path == path) currentImageIndex = i;
+        i++;
       }
     }
     state = path;
