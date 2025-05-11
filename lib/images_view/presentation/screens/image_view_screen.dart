@@ -20,49 +20,52 @@ class ImagesViewScreen extends ConsumerWidget {
       return const Center(child: CircularProgressIndicator());
     }
 
-    return GetMaterialApp(
-        home: KeyboardListener(
-      focusNode: FocusNode(),
-      autofocus: true,
-      onKeyEvent: (keyboard) async {
-        if (keyboard is KeyDownEvent) {
-          if (keyboard.physicalKey == PhysicalKeyboardKey.escape) {
-            _back(context, state);
+    return PopScope(
+      canPop: false, onPopInvokedWithResult: (fl,__){
+        if(fl) return;
+        _back(context, state);
+    },
+      child: GetMaterialApp(
+          home: KeyboardListener(
+        focusNode: FocusNode(),
+        autofocus: true,
+        onKeyEvent: (keyboard) async {
+          if (keyboard is KeyDownEvent) {
+            if (keyboard.physicalKey == PhysicalKeyboardKey.escape) {
+              _back(context, state);
+            }
+            if (keyboard.physicalKey == PhysicalKeyboardKey.arrowRight) {
+              _openNextImage(state);
+            }
+            if (keyboard.physicalKey == PhysicalKeyboardKey.arrowLeft) {
+              _openPrevImage(state);
+            }
           }
-          if (keyboard.physicalKey == PhysicalKeyboardKey.arrowRight) {
-            _openNextImage(state);
-          }
-          if (keyboard.physicalKey == PhysicalKeyboardKey.arrowLeft) {
-            _openPrevImage(state);
-          }
-        }
-      },
-      child: PopScope(
-        canPop: false,
-        onPopInvokedWithResult: (fl, __) async {
-          if (fl) return;
         },
-        child: Scaffold(
-            appBar: AppBar(
-              leading: IconButton(
-                onPressed: () async => _back(context, state),
-                icon: Icon(Icons.arrow_back),
+        child: PopScope(
+          canPop: false,
+          child: Scaffold(
+              appBar: AppBar(
+                leading: IconButton(
+                  onPressed: () async => _back(context, state),
+                  icon: Icon(Icons.arrow_back),
+                ),
+                title: Text(p.basename(currentImage)),
+                actions: [
+                  RenameAttachmentButton(e: currentImage),
+                  DeleteAttachmentButton(e: currentImage),
+                ],
               ),
-              title: Text(p.basename(currentImage)),
-              actions: [
-                RenameAttachmentButton(e: currentImage),
-                DeleteAttachmentButton(e: currentImage),
-              ],
-            ),
-            extendBodyBehindAppBar: true,
-            body: _swipeHandler(
-              screenWidth: MediaQuery.of(context).size.width,
-              onSwipeLeft: () => _openNextImage(state),
-              onSwipeRight: () => _openPrevImage(state),
-              child: const NotesOnImageScreen(),
-            )),
-      ),
-    ));
+              extendBodyBehindAppBar: true,
+              body: _swipeHandler(
+                screenWidth: MediaQuery.of(context).size.width,
+                onSwipeLeft: () => _openNextImage(state),
+                onSwipeRight: () => _openPrevImage(state),
+                child: const NotesOnImageScreen(),
+              )),
+        ),
+      )),
+    );
   }
 
   _openPrevImage(ImagesViewNotifier state) =>
