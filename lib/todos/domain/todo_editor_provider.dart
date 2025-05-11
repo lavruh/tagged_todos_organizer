@@ -16,7 +16,7 @@ final editIdProvider = StateProvider<bool>((ref) => false);
 
 class TodoEditorNotifier extends StateNotifier<ToDo?> {
   TodoEditorNotifier(this.ref) : super(null);
-  StateNotifierProviderRef<TodoEditorNotifier, ToDo?> ref;
+  Ref ref;
   bool _isChanged = false;
   bool _duplicateMode = false;
   ToDo? _originalTodo;
@@ -142,9 +142,9 @@ class TodoEditorNotifier extends StateNotifier<ToDo?> {
     );
   }
 
-  checkIfToSave(GoRouter router, BuildContext context) async {
+  checkIfToSave(BuildContext context) async {
     if (!_isChanged) {
-      router.pop();
+      context.pop();
       return;
     }
     final shouldSave = await confirmDialog(context, title: "Save changes?");
@@ -159,6 +159,6 @@ class TodoEditorNotifier extends StateNotifier<ToDo?> {
         ref.read(todosProvider.notifier).deleteTodo(todo: todo);
       }
     }
-    router.pop();
+    if (context.mounted) context.pop();
   }
 }
