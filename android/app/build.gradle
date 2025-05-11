@@ -65,23 +65,6 @@ android {
             manifestPlaceholders = [appName: "[DEV] Tagged Todos Organizer"]
             applicationIdSuffix = ".dev"
         }
-//        create("dev") {
-//            dimension = "default"
-//            resValue(
-//                    type = "string",
-//                    name = "app_name",
-//                    value = "dev Tagged Todos Organizer")
-//            applicationIdSuffix = ".dev"
-//        }
-//
-//        create("release") {
-//            dimension = "default"
-//            resValue(
-//                    type = "string",
-//                    name = "app_name",
-//                    value = "Tagged Todos Organizer")
-//            applicationIdSuffix = ""
-//        }
     }
 }
 
