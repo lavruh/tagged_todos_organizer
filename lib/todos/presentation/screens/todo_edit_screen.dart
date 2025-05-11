@@ -30,9 +30,9 @@ class TodoEditScreen extends ConsumerWidget {
     }
     return PopScope(
       canPop: false,
-      onPopInvoked: (fl) async {
+      onPopInvokedWithResult: (fl, __) async {
         if (fl) return;
-        return notifier.checkIfToSave(GoRouter.of(context), context);
+        notifier.checkIfToSave(context);
       },
       child: Scaffold(
         appBar: AppBar(

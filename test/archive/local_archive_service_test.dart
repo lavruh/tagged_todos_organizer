@@ -43,7 +43,7 @@ main() {
     await pumpEventQueue(times: 20);
     final archivedFilePath =
         p.join(path, 'archive', '${p.basename(todoPath)}.zip');
-    final zip = ZipDecoder().decodeBuffer(InputFileStream(archivedFilePath));
+    final zip = ZipDecoder().decodeBytes(File(archivedFilePath).readAsBytesSync());
     expect(zip.files.length, 3);
     await pumpEventQueue(times: 20);
   });
