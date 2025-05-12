@@ -48,46 +48,50 @@ class PartsInfoRepo {
     final path = p.normalize(filePath);
     if (p.extension(path) == '.csv') {
       final file = await File(path).readAsString();
-      final data = const CsvToListConverter().convert(
-        file,
-        fieldDelimiter: ',',
-        textDelimiter: '"',
-        shouldParseNumbers: false,
-      );
-      for (int i = 0; i < data.length; i++) {
-        if (i == 0) {
-          if (data[0][0] != 'Item' ||
-              data[0][1] != 'Description' ||
-              data[0][2] != 'Catalog #' ||
-              data[0][3] != 'modelnr. Item' ||
-              data[0][4] != 'modelnr. vessel' ||
-              data[0][5] != 'Manufacturer' ||
-              data[0][6] != 'Default Bin' ||
-              data[0][7] != 'Assembly drwg' ||
-              data[0][8] != 'Pos. nr. Assembly drwg' ||
-              data[0][9] != 'Current Balance' ||
-              data[0][10] != 'Asset') {
-            throw PartsInfoRepoException('Wrong file supplied');
-          }
-        }
-        if (i > 0) {
-          final part = Part(
-              maximoNo: data[i][0],
-              name: data[i][1],
-              catalogNo: data[i][2],
-              modelNo: data[i][3],
-              modelNoVessel: data[i][4],
-              manufacturer: data[i][5],
-              bin: data[i][6],
-              dwg: data[i][7],
-              pos: data[i][8],
-              balance: data[i][9]);
-          await db?.update(
-              id: part.maximoNo, item: part.toMap(), table: 'parts');
-        }
-      }
+      await updatePartsFromCsvString(file);
     } else {
       throw PartsInfoRepoException('File with wrong extention provided');
+    }
+  }
+
+  Future<void> updatePartsFromCsvString(String file) async {
+    final data = const CsvToListConverter().convert(
+      file,
+      fieldDelimiter: ',',
+      textDelimiter: '"',
+      shouldParseNumbers: false,
+    );
+    for (int i = 0; i < data.length; i++) {
+      if (i == 0) {
+        if (data[0][0] != 'Item' ||
+            data[0][1] != 'Description' ||
+            data[0][2] != 'Catalog #' ||
+            data[0][3] != 'modelnr. Item' ||
+            data[0][4] != 'modelnr. vessel' ||
+            data[0][5] != 'Manufacturer' ||
+            data[0][6] != 'Default Bin' ||
+            data[0][7] != 'Assembly drwg' ||
+            data[0][8] != 'Pos. nr. Assembly drwg' ||
+            data[0][9] != 'Current Balance' ||
+            data[0][10] != 'Asset') {
+          throw PartsInfoRepoException('Wrong file supplied');
+        }
+      }
+      if (i > 0) {
+        final part = Part(
+            maximoNo: data[i][0],
+            name: data[i][1],
+            catalogNo: data[i][2],
+            modelNo: data[i][3],
+            modelNoVessel: data[i][4],
+            manufacturer: data[i][5],
+            bin: data[i][6],
+            dwg: data[i][7],
+            pos: data[i][8],
+            balance: data[i][9]);
+        await db?.update(
+            id: part.maximoNo, item: part.toMap(), table: 'parts');
+      }
     }
   }
 }

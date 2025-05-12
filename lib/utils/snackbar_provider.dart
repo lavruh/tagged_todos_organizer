@@ -8,7 +8,6 @@ class SnackbarNotifier extends ChangeNotifier {
   String? msg;
 
   show(String m) {
-    print('Snackbar> $msg');
     msg = m;
     notifyListeners();
   }

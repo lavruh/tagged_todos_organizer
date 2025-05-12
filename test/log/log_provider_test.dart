@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
+import 'package:tagged_todos_organizer/log/domain/log_db_provider.dart';
 import 'package:tagged_todos_organizer/log/domain/log_entry.dart';
 import 'package:tagged_todos_organizer/log/domain/log_provider.dart';
 import 'package:tagged_todos_organizer/log/domain/loggable_action.dart';
@@ -22,9 +23,6 @@ void main() {
 
   setUp(() async {
     db = MockIDbService();
-    ref = ProviderContainer();
-    ref.listen<List<LogEntry>>(logProvider, Listener(), fireImmediately: true);
-    await ref.read(logProvider.notifier).setDb(db);
   });
 
   tearDown(() => addTearDown(ref.dispose));
@@ -54,6 +52,13 @@ void main() {
     final todo = ToDo.empty().copyWith(title: 'test');
     final todoWithTags = ToDo.empty().copyWith(tags: [UniqueId()]);
 
+    when(db.getAll(table: 'log')).thenAnswer((_) => Stream.empty());
+
+    final ref = ProviderContainer(overrides: [
+      logDbProvider.overrideWith((ref) => db),
+    ]);
+    ref.listen<List<LogEntry>>(logProvider, Listener().call, fireImmediately: true);
+
     await ref
         .read(logProvider.notifier)
         .logActionWithTodo(action: action, todo: todo);
@@ -80,6 +85,13 @@ void main() {
             .copyWith(id: UniqueId(id: '$index'), title: '$index'));
     when(db.getAll(table: 'log'))
         .thenAnswer((_) => Stream.fromIterable(entries.map((e) => e.toMap())));
+
+    ref =
+        ProviderContainer(overrides: [logDbProvider.overrideWith((ref) => db)]);
+    ref.listen<List<LogEntry>>(logProvider, Listener().call, fireImmediately: true);
+
+    await pumpEventQueue(times: 20);
+
     await ref.read(logProvider.notifier).getAllEntries();
     expect(ref.read(logProvider).length, 3);
   });

@@ -1,13 +1,17 @@
+import 'dart:io';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
+import 'package:path/path.dart' as p;
 import 'package:tagged_todos_organizer/parts/domain/part.dart';
 import 'package:tagged_todos_organizer/parts/domain/parts_editor_provider.dart';
 import 'package:tagged_todos_organizer/parts/domain/parts_info_repo.dart';
 import 'package:tagged_todos_organizer/parts/domain/used_part.dart';
 import 'package:tagged_todos_organizer/todos/domain/todo.dart';
 import 'package:tagged_todos_organizer/todos/domain/todo_editor_provider.dart';
+import 'package:tagged_todos_organizer/utils/app_path_provider.dart';
 import './parts_editor_test.mocks.dart';
 
 class Listener extends Mock {
@@ -20,11 +24,21 @@ class TodoEditorListener extends Mock {
 
 @GenerateMocks([PartsInfoRepo])
 void main() {
+  final testDir = Directory(p.normalize("/home/lavruh/tmp/test"));
+  final testDirPath = testDir.path;
+  tearDown(() {
+    for (final i in testDir.listSync()) {
+      i.deleteSync(recursive: true);
+    }
+  });
+
   test('add part to parts list', () async {
-    final ref = ProviderContainer();
-    ref.listen<List<UsedPart>>(partsEditorProvider, Listener(),
+    final ref = ProviderContainer(
+        overrides: [appPathProvider.overrideWithValue(testDirPath)]);
+    addTearDown(ref.dispose);
+    ref.listen<List<UsedPart>>(partsEditorProvider, Listener().call,
         fireImmediately: true);
-    ref.listen<ToDo?>(todoEditorProvider, TodoEditorListener(),
+    ref.listen<ToDo?>(todoEditorProvider, TodoEditorListener().call,
         fireImmediately: true);
     ref.read(todoEditorProvider.notifier).setTodo(ToDo.empty());
     ref.read(partsEditorProvider.notifier).addPart();
@@ -38,10 +52,12 @@ void main() {
   });
 
   test('delete part from part list', () async {
-    final ref = ProviderContainer();
-    ref.listen<List<UsedPart>>(partsEditorProvider, Listener(),
+    final ref = ProviderContainer(
+        overrides: [appPathProvider.overrideWithValue(testDirPath)]);
+    addTearDown(ref.dispose);
+    ref.listen<List<UsedPart>>(partsEditorProvider, Listener().call,
         fireImmediately: true);
-    ref.listen<ToDo?>(todoEditorProvider, TodoEditorListener(),
+    ref.listen<ToDo?>(todoEditorProvider, TodoEditorListener().call,
         fireImmediately: true);
     ref.read(todoEditorProvider.notifier).setTodo(ToDo.empty());
     expect(ref.read(partsEditorProvider).length, 0);
@@ -69,11 +85,15 @@ void main() {
         pos: 'pos',
         balance: 'balance'));
 
-    final ref = ProviderContainer(
-        overrides: [partsInfoProvider.overrideWithValue(repo)]);
-    ref.listen<List<UsedPart>>(partsEditorProvider, Listener(),
+    final ref = ProviderContainer(overrides: [
+      partsInfoProvider.overrideWithValue(repo),
+      appPathProvider.overrideWithValue(testDirPath),
+    ]);
+    addTearDown(ref.dispose);
+
+    ref.listen<List<UsedPart>>(partsEditorProvider, Listener().call,
         fireImmediately: true);
-    ref.listen<ToDo?>(todoEditorProvider, TodoEditorListener(),
+    ref.listen<ToDo?>(todoEditorProvider, TodoEditorListener().call,
         fireImmediately: true);
     ref.read(todoEditorProvider.notifier).setTodo(ToDo.empty());
     ref.read(partsEditorProvider.notifier).addPart();

@@ -46,11 +46,10 @@ void main() {
       pos: '',
       balance: '1',
     );
-    String filePath =
-        '/home/lavruh/Documents/TaggedTodosOrganizer/parts/bin_utf8.csv';
+
     when(db.getItemByFieldValue(request: anyNamed('request'), table: 'table'));
 
-    await sut.updatePartsFromFile(filePath: filePath);
+    await sut.updatePartsFromCsvString(csvData);
 
     verify(await db.update(
       id: maximoNo,
@@ -68,3 +67,5 @@ void main() {
         throwsException);
   });
 }
+
+const csvData ='"Item","Description","Catalog #","modelnr. Item","modelnr. vessel","Manufacturer","Default Bin","Assembly drwg","Pos. nr. Assembly drwg","Current Balance","Asset"\r\n"6.121.560","Switch,25A,3-Pole with Extended Knob","OETL 25D1",,,"MABB",10E124,,,1,10069.0003';

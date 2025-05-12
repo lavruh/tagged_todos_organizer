@@ -56,6 +56,7 @@ main() {
     final archName = '${p.basename(todoPath)}.zip';
     await sut.init(rootPath: path);
     await sut.addToArchive(path: todoPath);
+    await pumpEventQueue(times: 20);
     Directory(todoPath).deleteSync(recursive: true);
     expect(Directory(p.join(path, 'todos')).listSync().length, 0);
     await sut.extractFromArchive(path: p.join(arch.path, archName));
