@@ -6,8 +6,7 @@ import 'package:tagged_todos_organizer/todos/domain/todo_editor_provider.dart';
 import 'package:tagged_todos_organizer/todos/presentation/widgets/todo_prev_widget.dart';
 
 class SubTodosOverviewWidget extends ConsumerWidget {
-  const SubTodosOverviewWidget({Key? key, required this.parent})
-      : super(key: key);
+  const SubTodosOverviewWidget({super.key, required this.parent});
   final ToDo parent;
 
   @override
@@ -20,6 +19,7 @@ class SubTodosOverviewWidget extends ConsumerWidget {
         children: [
           Text('Sub tasks (${todos.length}) :'),
           IconButton(
+              tooltip: "Add sub todo",
               onPressed: () => _addSubTodo(ref, context),
               icon: const Icon(Icons.add)),
         ],

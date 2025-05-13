@@ -11,31 +11,27 @@ import 'package:tagged_todos_organizer/todos/domain/todos_db_provider.dart';
 import 'package:tagged_todos_organizer/todos/domain/todos_provider.dart';
 import 'package:tagged_todos_organizer/todos/presentation/screens/todo_edit_screen.dart';
 import 'package:tagged_todos_organizer/todos/presentation/widgets/sub_todos_overview_widget.dart';
+import 'package:tagged_todos_organizer/utils/app_path_provider.dart';
 import 'package:tagged_todos_organizer/utils/data/i_db_service.dart';
 import 'duplicate_todo_test.mocks.dart';
+import 'utils.dart';
 
 @GenerateNiceMocks([MockSpec<AttachmentsNotifier>(), MockSpec<IDbService>()])
+void main() async {
+  testWidgets('log service test', logServiceTest);
+}
+
 Future<void> logServiceTest(WidgetTester tester) async {
   final db = MockIDbService();
 
-  when(db.getAll(table: anyNamed('table')))
-      .thenAnswer((realInvocation) => const Stream.empty());
+  clearDirectory(testDirPath);
+
   when(db.getAll(table: 'tags'))
-      .thenAnswer((realInvocation) => const Stream.empty());
-  when(db.getAll(table: 'todos'))
       .thenAnswer((realInvocation) => const Stream.empty());
 
   await tester.pumpWidget(ProviderScope(
     overrides: [
-      todosDbProvider.overrideWith((ref) {
-        return db;
-      }),
-      todosProvider.overrideWith((ref) {
-        final notifier = TodosNotifier(ref);
-        notifier.getTodos();
-        return notifier;
-      }),
-      attachmentsProvider.overrideWith((ref) => MockAttachmentsNotifier()),
+      appPathProvider.overrideWith((ref) => testDirPath),
       logProvider.overrideWith((ref) => LogNotifier(ref)),
     ],
     child: const MyApp(),
@@ -63,6 +59,7 @@ Future<void> logServiceTest(WidgetTester tester) async {
   expect(ref.read(logProvider).length, 1);
   expect(ref.read(logProvider).last.title, title);
   expect(ref.read(logProvider).last.action, LoggableAction.created);
+
   await tester.tap(find.byType(Checkbox));
   await tester.pump(const Duration(seconds: 1));
   expect(ref.read(logProvider).length, 1);
@@ -71,6 +68,7 @@ Future<void> logServiceTest(WidgetTester tester) async {
   expect(ref.read(logProvider).length, 2, reason: '${ref.read(logProvider)}');
   expect(ref.read(logProvider).last.title, title);
   expect(ref.read(logProvider).last.action, LoggableAction.done);
+
   await tester.tap(find.byType(Checkbox));
   await tester.pump(const Duration(seconds: 1));
   expect(ref.read(logProvider).length, 2, reason: '${ref.read(logProvider)}');
@@ -78,11 +76,15 @@ Future<void> logServiceTest(WidgetTester tester) async {
   await tester.pump(const Duration(seconds: 1));
   expect(ref.read(logProvider).length, 3, reason: '${ref.read(logProvider)}');
   expect(ref.read(logProvider).last.action, LoggableAction.undone);
+
   await tester.tap(find.descendant(
       of: find.byType(SubTodosOverviewWidget),
       matching: find.byIcon(Icons.add)));
   await tester.pump(const Duration(seconds: 1));
   await tester.pumpAndSettle();
+
+  await tester.pump(const Duration(seconds: 10));
+
 
   final contextSub = tester.element(find.byType(TodoEditScreen));
   final refSub = ProviderScope.containerOf(contextSub);
@@ -100,6 +102,7 @@ Future<void> logServiceTest(WidgetTester tester) async {
   await tester.pump(const Duration(seconds: 1));
   await tester.tap(find.byIcon(Icons.save));
   await tester.pumpAndSettle();
+
   expect(refSub.read(logProvider).length, 4,
       reason: '${ref.read(logProvider)}');
   expect(refSub.read(logProvider).last.title, titleSubTodo);

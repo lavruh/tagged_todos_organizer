@@ -14,7 +14,7 @@ class AppBarWidget extends ConsumerWidget implements PreferredSizeWidget {
     return AppBar(
       actions: [
         TextButton(
-          child: Text(DateFormat('EE, MMM dd, yyyy').format(DateTime.now())),
+          child: const Text("Plans for today"),
           onPressed: () => context.go('/OneDayViewScreen'),
         ),
         IconButton(

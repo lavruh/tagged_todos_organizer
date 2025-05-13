@@ -15,6 +15,7 @@ import 'package:tagged_todos_organizer/todos/domain/todos_db_provider.dart';
 import 'package:tagged_todos_organizer/utils/unique_id.dart';
 
 import 'todo_editor_test.mocks.dart';
+import 'utils.dart';
 
 /*
 Load app only todos with date now visiable
@@ -22,6 +23,10 @@ enable see future
  */
 
 @GenerateMocks([IDbService])
+void main() async {
+  testWidgets('postpone todo test', postponeTodoTest);
+}
+
 Future<void> postponeTodoTest(WidgetTester tester) async {
   final db = MockIDbService();
   final now = DateTime.now();
@@ -40,7 +45,8 @@ Future<void> postponeTodoTest(WidgetTester tester) async {
 
   await tester.pumpWidget(ProviderScope(
     overrides: [
-      appPathProvider.overrideWith((ref) => '/home/lavruh/Documents/TaggedTodosOrganizer'),
+      appPathProvider
+          .overrideWith((ref) => '/home/lavruh/Documents/TaggedTodosOrganizer'),
       tagsDbProvider.overrideWith((ref) => db),
       todosDbProvider.overrideWith((ref) => db)
     ],
@@ -88,28 +94,10 @@ Future<void> postponeTodoTest(WidgetTester tester) async {
   await checkMenuItem(tester, '6 weeks', date6Week);
   checkDbUpdated(db);
 
-
   await tester.tap(find.byKey(const Key('todoPreviewDate')));
   await tester.pump(const Duration(seconds: 1));
   await tester.tap(find.text('Clear Date'));
   await tester.pump(const Duration(seconds: 1));
   expect(find.textContaining('${now.year}'), findsNothing);
   checkDbUpdated(db);
-}
-
-DateTime postponeDate(DateTime d, int days) =>
-    DateTime(d.year, d.month, d.day + days);
-
-checkMenuItem(WidgetTester tester, String itemName, DateTime result) async {
-  await tester.tap(find.byKey(const Key('todoPreviewDate')));
-  await tester.pump(const Duration(seconds: 1));
-  await tester.tap(find.text(itemName));
-  await tester.pump(const Duration(seconds: 1));
-  expect(find.text(DateFormat('y-MM-dd').format(result)), findsOneWidget);
-}
-
-void checkDbUpdated(MockIDbService db) {
-  verify(db.update(
-          id: anyNamed('id'), item: anyNamed('item'), table: anyNamed('table')))
-      .called(1);
 }

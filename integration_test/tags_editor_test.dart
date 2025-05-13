@@ -10,6 +10,7 @@ import 'package:tagged_todos_organizer/tags/presentation/widgets/tag_widget.dart
 import 'package:tagged_todos_organizer/utils/app_path_provider.dart';
 import 'package:tagged_todos_organizer/utils/data/sembast_db_service.dart';
 import './tags_editor.mocks.dart';
+import 'utils.dart';
 
 /* 
 open app todos screen
@@ -44,7 +45,12 @@ click text 'Search' enter text
 */
 
 @GenerateMocks([SembastDbService])
+void main() async {
+  testWidgets('tags editor test', tagsEditorTest);
+}
+
 Future<void> tagsEditorTest(WidgetTester tester) async {
+
   final tagsDb = MockSembastDbService();
   final existedTag = Tag.empty().copyWith(name: 'tag1', color: 0);
 
@@ -53,7 +59,7 @@ Future<void> tagsEditorTest(WidgetTester tester) async {
 
   await tester.pumpWidget(ProviderScope(
     overrides: [
-      appPathProvider.overrideWith((ref) => '/home/lavruh/Documents/TaggedTodosOrganizer'),
+      appPathProvider.overrideWith((ref) => testDirPath),
       tagsDbProvider.overrideWith((ref) => tagsDb),
     ],
     child: const MyApp(),

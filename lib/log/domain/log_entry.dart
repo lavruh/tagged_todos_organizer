@@ -89,6 +89,6 @@ class LogEntry {
 
   @override
   String toString() {
-    return 'LogEntry{id: $id, title: $title, date: $date, tags: $tags, relatedId: $relatedId, action: $action}';
+    return 'LogEntry id: $id,\n title: $title,\n date: $date,\n tags: $tags,\n relatedId: $relatedId,\n action: $action,\n';
   }
 }

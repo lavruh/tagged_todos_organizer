@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -16,13 +17,16 @@ import 'package:tagged_todos_organizer/tags/presentation/widgets/tag_widget.dart
 import 'package:tagged_todos_organizer/tags/presentation/widgets/tags_preview_widget.dart';
 import 'package:tagged_todos_organizer/todos/domain/attachments_provider.dart';
 import 'package:tagged_todos_organizer/todos/domain/todo.dart';
-import 'package:tagged_todos_organizer/todos/domain/todos_db_provider.dart';
+import 'package:tagged_todos_organizer/todos/domain/todos_provider.dart';
+import 'package:tagged_todos_organizer/todos/presentation/screens/todos_screen.dart';
 import 'package:tagged_todos_organizer/todos/presentation/widgets/sub_todos_overview_widget.dart';
 import 'package:tagged_todos_organizer/todos/presentation/widgets/todo_prev_widget.dart';
+import 'package:tagged_todos_organizer/utils/app_path_provider.dart';
 import 'package:tagged_todos_organizer/utils/data/i_db_service.dart';
 import 'package:tagged_todos_organizer/utils/unique_id.dart';
 
 import 'todo_editor_test.mocks.dart';
+import 'utils.dart';
 
 /*
 1.
@@ -96,201 +100,219 @@ Tap add icon
 */
 
 @GenerateMocks([IDbService, AttachmentsNotifier])
+
+
+void main() async {
+  testWidgets('todo editor test', todoEditorTest);
+}
+
+
 Future<void> todoEditorTest(WidgetTester tester) async {
-  final db = MockIDbService();
-  final tags = List<Tag>.generate(
-      4,
-      (i) => Tag.empty().copyWith(
-          id: UniqueId(id: "tag_$i"), name: "tag_$i", color: 100 * i));
-  final todoDate = DateTime(2022, 3, 3);
-  const descriptionLineToSee = 'some information';
-  final todoWithTags = ToDo.empty().copyWith(
-    title: "Todo_1",
-    id: UniqueId(id: "id_1"),
-    description: "line1 \n line2 \n $descriptionLineToSee",
-    tags: [tags.first.id, tags.last.id],
-  );
-  final todoWithDate = ToDo.empty().copyWith(
-    title: "Todo_2",
-    id: UniqueId(id: "id_2"),
-    date: todoDate,
-  );
-  List<ToDo> todos = [todoWithTags, todoWithDate];
+    clearDirectory(testDirPath);
+    final db = MockIDbService();
+    final tags = List<Tag>.generate(
+        4,
+        (i) => Tag.empty().copyWith(
+            id: UniqueId(id: "tag_$i"), name: "tag_$i", color: 100 * i));
+    final todoDate = DateTime(2022, 3, 3);
+    const descriptionLineToSee = 'some information';
+    final todoWithTags = ToDo.empty().copyWith(
+      title: "Todo_1",
+      id: UniqueId(id: "id_1"),
+      description: "line1 \n line2 \n $descriptionLineToSee",
+      tags: [tags.first.id, tags.last.id],
+    );
+    final todoWithDate = ToDo.empty().copyWith(
+      title: "Todo_2",
+      id: UniqueId(id: "id_2"),
+      date: todoDate,
+    );
+    List<ToDo> todos = [todoWithTags, todoWithDate];
 
-  when(db.getAll(table: anyNamed('table')))
-      .thenAnswer((realInvocation) => const Stream.empty());
-  when(db.getAll(table: 'tags')).thenAnswer(
-      (realInvocation) => Stream.fromIterable(tags.map((e) => e.toMap())));
-  when(db.getAll(table: 'todos')).thenAnswer(
-      (realInvocation) => Stream.fromIterable(todos.map((e) => e.toMap())));
+    when(db.getAll(table: anyNamed('table')))
+        .thenAnswer((realInvocation) => const Stream.empty());
+    when(db.getAll(table: 'tags')).thenAnswer(
+        (realInvocation) => Stream.fromIterable(tags.map((e) => e.toMap())));
 
-  await tester.pumpWidget(ProviderScope(
-    overrides: [
-      tagsDbProvider.overrideWith((ref) => db),
-      todosDbProvider.overrideWith((ref) => db),
-      attachmentsProvider.overrideWith((ref) => MockAttachmentsNotifier()),
-      logProvider.overrideWith((ref) => LogNotifier(ref)),
-    ],
-    child: const MyApp(),
-  ));
-  await tester.pumpAndSettle();
-  await tester.pumpAndSettle();
-  // 1.
-  expect(find.byType(TodoPrevWidget), findsNWidgets(todos.length));
-  expect(find.text(todos.first.title), findsOneWidget);
-  expect(find.textContaining(descriptionLineToSee), findsOneWidget);
-  expect(find.text(tags.first.name), findsOneWidget);
 
-  expect(
-      find.descendant(
-          of: find.byType(TagsPreviewWidget), matching: find.byType(TagWidget)),
-      findsNWidgets(todoWithTags.tags.length));
+    await tester.pumpWidget(ProviderScope(
+      overrides: [
+        appPathProvider.overrideWithValue(testDirPath),
+        tagsDbProvider.overrideWith((ref) => db),
+        logProvider.overrideWith((ref) => LogNotifier(ref)),
+      ],
+      child: const MyApp(),
+    ));
+    await tester.pumpAndSettle();
 
-  expect(find.text(todoWithTags.title), findsOneWidget);
-  expect(find.text(DateFormat('y-MM-dd').format(todoDate)), findsOneWidget);
-  expect(find.text("Tags:"), findsOneWidget);
+    final context = tester.element(find.byType(TodosScreen));
+    final ref = ProviderScope.containerOf(context);
+    ref.read(todosProvider.notifier).updateTodo(item: todoWithTags);
+    ref.read(todosProvider.notifier).updateTodo(item: todoWithDate);
+    await tester.pumpAndSettle();
+    // 1.
+    expect(find.byType(TodoPrevWidget), findsNWidgets(todos.length));
+    expect(find.text(todos.first.title), findsOneWidget);
+    expect(find.textContaining(descriptionLineToSee), findsOneWidget);
+    expect(find.text(tags.first.name), findsOneWidget);
 
-  // 2.
-  await tester.tap(find.text(todoWithDate.title));
-  await tester.pumpAndSettle();
-  await tester.pumpAndSettle();
-  expect(find.text(todoWithDate.title), findsOneWidget);
-  expect(find.text(DateFormat('y\nMM-dd').format(todoDate)), findsOneWidget);
-  expect(find.text("Tags:"), findsOneWidget);
+    expect(
+        find.descendant(
+            of: find.byType(TagsPreviewWidget),
+            matching: find.byType(TagWidget)),
+        findsNWidgets(todoWithTags.tags.length));
 
-  // 3.
-  await tester.pageBack();
-  await tester.pumpAndSettle();
-  await tester.tap(find.text(todoWithTags.title));
-  await tester.pumpAndSettle();
-  expect(find.text(todoWithTags.title), findsOneWidget);
-  expect(find.textContaining(todoWithTags.description), findsOneWidget);
-  expect(find.byIcon(Icons.calendar_month), findsOneWidget);
-  expect(find.byIcon(Icons.delete), findsOneWidget);
-  expect(find.byIcon(Icons.save), findsOneWidget);
-  expect(find.text("Tags:"), findsNothing);
-  expect(find.textContaining("Attachements"), findsOneWidget);
-  expect(find.textContaining("Used parts"), findsOneWidget);
-  expect(find.textContaining("Sub tasks"), findsOneWidget);
-  expect(find.text("Go parent"), findsNothing);
+    expect(find.text(todoWithTags.title), findsOneWidget);
+    expect(find.text(DateFormat('y-MM-dd').format(todoDate)), findsOneWidget);
+    expect(find.text("Tags:"), findsOneWidget);
 
-  // 4.
-  await tester.tap(find.descendant(
-      of: find.byType(SubTodosOverviewWidget),
-      matching: find.byIcon(Icons.add)));
-  await tester.pumpAndSettle();
-  expect(find.text("Go parent"), findsOneWidget);
-  expect(find.text("Title"), findsOneWidget);
-  expect(find.text("Description"), findsOneWidget);
-  expect(
-      find.descendant(
-          of: find.byType(TagsPreviewWidget), matching: find.byType(TagWidget)),
-      findsNWidgets(todoWithTags.tags.length));
+    // 2.
+    await tester.tap(find.text(todoWithDate.title));
+    await tester.pumpAndSettle();
+    await tester.pumpAndSettle();
+    expect(find.text(todoWithDate.title), findsOneWidget);
+    expect(
+        find.text(DateFormat('dd\nMMM\ny').format(todoDate)), findsOneWidget);
+    expect(find.text("Tags:"), findsOneWidget);
 
-  // 5.
-  const newSubtaskName = 'new sub task';
-  final titleField = find.widgetWithText(TextField, "Title");
-  await tester.enterText(titleField, newSubtaskName);
-  await tester.pumpAndSettle();
-  await tester.testTextInput.receiveAction(TextInputAction.done);
-  await tester.pumpAndSettle();
-  final titleCheckIcon =
-      find.descendant(of: titleField, matching: find.byIcon(Icons.check));
-  await tester.tap(titleCheckIcon);
-  await tester.pumpAndSettle();
-  await tester.tap(find.byIcon(Icons.save));
-  await tester.pumpAndSettle();
+    // 3.
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(todoWithTags.title));
+    await tester.pumpAndSettle();
+    expect(find.text(todoWithTags.title), findsOneWidget);
+    expect(find.textContaining(todoWithTags.description), findsOneWidget);
+    expect(find.byIcon(Icons.calendar_month), findsOneWidget);
+    expect(find.byIcon(Icons.delete), findsOneWidget);
+    expect(find.byIcon(Icons.save), findsOneWidget);
+    expect(find.text("Tags:"), findsNothing);
+    expect(find.textContaining("Attachments"), findsOneWidget);
+    expect(find.textContaining("Used parts"), findsOneWidget);
+    expect(find.textContaining("Sub tasks"), findsOneWidget);
+    expect(find.text("Go parent"), findsNothing);
 
-  // 6.
-  await tester.tap(find.text("Go parent"));
-  await tester.pumpAndSettle();
-  expect(find.textContaining('Sub tasks (1)'), findsOneWidget);
-  expect(find.text("Go parent"), findsNothing);
+    // 4.
+    final subTodoAddButton = find.byTooltip("Add sub todo");
+    expect(subTodoAddButton, findsOneWidget);
+    await tester.tap(subTodoAddButton);
+    await tester.pumpAndSettle();
 
-  // 7.
-  await tester.tap(find.descendant(
-      of: find.byType(SubTodosOverviewWidget),
-      matching: find.byIcon(Icons.add)));
-  await tester.pumpAndSettle();
+    await tester.pump(Duration(seconds: 10));
 
-  // uncomment to recreate problem with null on editor
-  // await tester.tap(find.byIcon(Icons.save));
-  // await tester.pumpAndSettle();
+    expect(find.text("Go parent"), findsOneWidget);
+    expect(find.text("Title"), findsOneWidget);
+    expect(find.text("Description"), findsOneWidget);
+    expect(
+        find.descendant(
+            of: find.byType(TagsPreviewWidget),
+            matching: find.byType(TagWidget)),
+        findsNWidgets(todoWithTags.tags.length));
 
-  await tester.tap(find.text("Go parent"));
-  await tester.pumpAndSettle();
-  expect(find.text(todoWithTags.title), findsOneWidget);
-  expect(find.textContaining(todoWithTags.description), findsOneWidget);
-  expect(find.text("Go parent"), findsNothing);
-  expect(find.textContaining('Sub tasks (1)'), findsOneWidget);
+    // 5.
+    const newSubtaskName = 'new sub task';
+    final titleField = find.widgetWithText(TextField, "Title");
+    await tester.enterText(titleField, newSubtaskName);
+    await tester.pumpAndSettle();
+    await tester.testTextInput.receiveAction(TextInputAction.done);
+    await tester.pumpAndSettle();
+    final titleCheckIcon =
+        find.descendant(of: titleField, matching: find.byIcon(Icons.check));
+    await tester.tap(titleCheckIcon);
+    await tester.pumpAndSettle();
+    await tester.tap(find.byIcon(Icons.save));
+    await tester.pumpAndSettle();
 
-  // 8.
-  await tester.tap(find.byType(SubTodosOverviewWidget));
-  await tester.pumpAndSettle();
-  expect(find.text(newSubtaskName), findsOneWidget);
+    // 6.
+    await tester.tap(find.text("Go parent"));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('Sub tasks (1)'), findsOneWidget);
+    expect(find.text("Go parent"), findsNothing);
 
-  // 9. 
-  await tester.tap(find.byIcon(Icons.delete));
-  await tester.pumpAndSettle();
-  expect(find.textContaining('Delete'), findsOneWidget);
+    // 7.
+    await tester.tap(find.descendant(
+        of: find.byType(SubTodosOverviewWidget),
+        matching: find.byIcon(Icons.add)));
+    await tester.pumpAndSettle();
 
-  // 10.
-  await tester.tap(find.byIcon(Icons.cancel));
-  await tester.pumpAndSettle();
-  expect(find.textContaining(todoWithTags.title), findsOneWidget);
+    // uncomment to recreate problem with null on editor
+    // await tester.tap(find.byIcon(Icons.save));
+    // await tester.pumpAndSettle();
 
-  // 11.
-  await tester.tap(find.byIcon(Icons.delete));
-  await tester.pumpAndSettle();
-  await tester.tap(find.byKey(const Key('dialog_confirm')));
-  await tester.pumpAndSettle();
-  expect(find.textContaining(todoWithTags.title), findsNothing);
-  expect(find.byType(TodoPrevWidget), findsNWidgets(todos.length - 1));
+    await tester.tap(find.text("Go parent"));
+    await tester.pumpAndSettle();
+    expect(find.text(todoWithTags.title), findsOneWidget);
+    expect(find.textContaining(todoWithTags.description), findsOneWidget);
+    expect(find.text("Go parent"), findsNothing);
+    expect(find.textContaining('Sub tasks (1)'), findsOneWidget);
 
-  // 12.
-  await tester.tap(find.byIcon(Icons.add));
-  await tester.pumpAndSettle();
-  await tester.pumpAndSettle();
-  expect(find.text("Go parent"), findsNothing);
-  expect(find.text("Title"), findsOneWidget);
-  expect(find.text("Description"), findsOneWidget);
-  expect(find.text("Tags:"), findsOneWidget);
+    // 8.
+    await tester.tap(find.byType(SubTodosOverviewWidget));
+    await tester.pumpAndSettle();
+    expect(find.text(newSubtaskName), findsOneWidget);
 
-  final usedPartsWidget = find.byType(UsedPartsWidget);
-  await tester.tap(usedPartsWidget);
-  await tester.pumpAndSettle();
-  await tester.tap(
-      find.descendant(of: usedPartsWidget, matching: find.byIcon(Icons.add)));
-  await tester.pumpAndSettle();
-  expect(find.textContaining('Used parts (1)'), findsOneWidget);
-  expect(find.byType(UsedPartWidget), findsOneWidget);
-  expect(find.text('Maximo'), findsOneWidget);
-  expect(find.text('name'), findsOneWidget);
-  expect(find.text('bin'), findsOneWidget);
+    // 9.
+    await tester.tap(find.byIcon(Icons.delete));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('Delete'), findsOneWidget);
 
-  const maximoNo = '6.123.123';
-  const maximoPartName = 'SomePartName';
-  when(db.getItemByFieldValue(request: {'maximoNo': maximoNo}, table: 'parts'))
-      .thenAnswer((_) async => Part(
-              maximoNo: maximoNo,
-              name: maximoPartName,
-              catalogNo: '',
-              modelNo: '',
-              modelNoVessel: '',
-              manufacturer: '',
-              bin: '',
-              dwg: '',
-              pos: '',
-              balance: '')
-          .toMap());
-  final maximoField = find.widgetWithText(TextField, 'Maximo');
-  await tester.enterText(maximoField, maximoNo);
-  await tester.pumpAndSettle();
-  await tester.testTextInput.receiveAction(TextInputAction.done);
-  await tester.tap(
-      find.descendant(of: maximoField, matching: find.byIcon(Icons.check)));
-  await tester.pumpAndSettle();
-  expect(find.text(maximoPartName), findsOneWidget);
+    // 10.
+    await tester.tap(find.byIcon(Icons.cancel));
+    await tester.pumpAndSettle();
+    expect(find.textContaining(todoWithTags.title), findsOneWidget);
 
-  await tester.pageBack();
+    // 11.
+    await tester.tap(find.byIcon(Icons.delete));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('dialog_confirm')));
+    await tester.pumpAndSettle();
+    expect(find.textContaining(todoWithTags.title), findsNothing);
+    expect(find.byType(TodoPrevWidget), findsNWidgets(todos.length - 1));
+
+    // 12.
+    await tester.tap(find.byIcon(Icons.add));
+    await tester.pumpAndSettle();
+    await tester.pumpAndSettle();
+    expect(find.text("Go parent"), findsNothing);
+    expect(find.text("Title"), findsOneWidget);
+    expect(find.text("Description"), findsOneWidget);
+    expect(find.text("Tags:"), findsOneWidget);
+
+    final usedPartsWidget = find.byType(UsedPartsWidget);
+    await tester.tap(usedPartsWidget);
+    await tester.pumpAndSettle();
+    await tester.tap(
+        find.descendant(of: usedPartsWidget, matching: find.byIcon(Icons.add)));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('Used parts (1)'), findsOneWidget);
+    expect(find.byType(UsedPartWidget), findsOneWidget);
+    expect(find.text('Maximo'), findsOneWidget);
+    expect(find.text('name'), findsOneWidget);
+    expect(find.text('bin'), findsOneWidget);
+
+    const maximoNo = '6.123.123';
+    const maximoPartName = 'SomePartName';
+    when(db.getItemByFieldValue(
+            request: {'maximoNo': maximoNo}, table: 'parts'))
+        .thenAnswer((_) async => Part(
+                maximoNo: maximoNo,
+                name: maximoPartName,
+                catalogNo: '',
+                modelNo: '',
+                modelNoVessel: '',
+                manufacturer: '',
+                bin: '',
+                dwg: '',
+                pos: '',
+                balance: '')
+            .toMap());
+    final maximoField = find.widgetWithText(TextField, 'Maximo');
+    await tester.enterText(maximoField, maximoNo);
+    await tester.pumpAndSettle();
+    await tester.testTextInput.receiveAction(TextInputAction.done);
+    await tester.tap(
+        find.descendant(of: maximoField, matching: find.byIcon(Icons.check)));
+    await tester.pumpAndSettle();
+    expect(find.text(maximoPartName), findsOneWidget);
+
+    await tester.pageBack();
 }

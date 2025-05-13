@@ -18,10 +18,16 @@ import 'package:tagged_todos_organizer/todos/presentation/screens/todos_screen.d
 import 'package:tagged_todos_organizer/utils/app_path_provider.dart';
 import 'package:tagged_todos_organizer/utils/data/i_db_service.dart';
 import 'duplicate_todo_test.mocks.dart';
+import 'utils.dart';
 
 @GenerateNiceMocks([MockSpec<AttachmentsNotifier>(), MockSpec<IDbService>()])
+void main() async {
+  testWidgets('tmp todo test', tmpTodoTest);
+}
+
 Future<void> tmpTodoTest(WidgetTester tester) async {
   final db = MockIDbService();
+  clearDirectory(testDirPath);
 
   final todoEmpty = ToDo.empty().copyWith(title: "Empty");
   final todoWithSomeDate =
@@ -47,7 +53,6 @@ Future<void> tmpTodoTest(WidgetTester tester) async {
           .overrideWith((ref) => '/home/lavruh/Documents/TaggedTodosOrganizer'),
       todosDbProvider.overrideWith((ref) => db),
       tmpTodosDbProvider.overrideWith((ref) => db),
-      attachmentsProvider.overrideWith((ref) => MockAttachmentsNotifier()),
       logProvider.overrideWith((ref) => LogNotifier(ref)),
     ],
     child: const MyApp(),
@@ -86,32 +91,7 @@ Future<void> tmpTodoTest(WidgetTester tester) async {
   await tester.tap(addPermanentTodoButton);
   await tester.pumpAndSettle();
   expect(find.byType(TodoEditScreen), findsOneWidget);
-  await tester.pump(const Duration(seconds: 10));
   expect(ref.read(oneDayViewProvider).length, 3);
   expect(ref.read(tmpTodoProvider).length, 1);
   expect(ref.read(todosProvider).last.title, newTmpTodoTitle);
-
-  // await tester.pump(const Duration(seconds: 10));
-}
-
-addNewTmpTodoAndEnterTitle(WidgetTester tester, String s) async {
-  final addButton = find.byTooltip("Add tmp todo");
-  expect(addButton, findsOneWidget);
-  await tester.tap(addButton);
-  await tester.pumpAndSettle();
-  final input =
-      find.descendant(of: find.byType(TextFormField), matching: find.text(""));
-  expect(input, findsOneWidget);
-  await tester.enterText(input, s);
-  await tester.testTextInput.receiveAction(TextInputAction.done);
-  await tester.pump();
-  await tester.pumpAndSettle();
-}
-
-openOneDayView(WidgetTester tester) async {
-  await tester.tapAt(const Offset(10, 10));
-  await tester.pumpAndSettle();
-  expect(find.text('One Day View'), findsOneWidget);
-  await tester.tap(find.text('One Day View'));
-  await tester.pumpAndSettle();
 }
