@@ -12,13 +12,11 @@ import 'utils.dart';
 
 void main() async {
   setUp(() {
-    print("Clean directory");
     clearDirectory(testDirPath);
   });
 
   tearDown(() async {
-    print("Test fininshed");
-    await Future.delayed(const Duration(seconds: 5));
+    // await Future.delayed(const Duration(seconds: 5));
   });
 
   testWidgets('duplicate todo test', duplicateTodoTest);

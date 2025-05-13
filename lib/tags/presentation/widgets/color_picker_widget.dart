@@ -3,10 +3,10 @@ import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 class ColorPickerWidget extends StatelessWidget {
   const ColorPickerWidget({
-    Key? key,
+    super.key,
     required this.initColor,
     required this.onSet,
-  }) : super(key: key);
+  });
   final int initColor;
   final Function(int) onSet;
 
@@ -16,7 +16,7 @@ class ColorPickerWidget extends StatelessWidget {
       content: MaterialPicker(
         pickerColor: Color(initColor),
         onColorChanged: (val) {
-          onSet(val.value);
+          onSet(val.toARGB32());
           Navigator.of(context).pop();
         },
       ),

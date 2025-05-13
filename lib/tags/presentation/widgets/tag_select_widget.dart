@@ -14,8 +14,8 @@ class TagSelectWidget extends ConsumerWidget {
     this.onDelete,
     this.selectedTags,
     this.height,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
   final Function(Tag)? onPress;
   final Function(Tag)? onDelete;
   final List<UniqueId>? selectedTags;

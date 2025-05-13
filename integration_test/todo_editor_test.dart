@@ -196,9 +196,6 @@ Future<void> todoEditorTest(WidgetTester tester) async {
     expect(subTodoAddButton, findsOneWidget);
     await tester.tap(subTodoAddButton);
     await tester.pumpAndSettle();
-
-    await tester.pump(Duration(seconds: 10));
-
     expect(find.text("Go parent"), findsOneWidget);
     expect(find.text("Title"), findsOneWidget);
     expect(find.text("Description"), findsOneWidget);

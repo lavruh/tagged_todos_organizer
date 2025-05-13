@@ -6,7 +6,7 @@ import 'package:tagged_todos_organizer/todos/domain/tree_controller_provider.dar
 import 'package:tagged_todos_organizer/todos/presentation/widgets/todo_prev_widget.dart';
 
 class TodoTreeWidget extends ConsumerWidget {
-  const TodoTreeWidget({Key? key, this.onTap}) : super(key: key);
+  const TodoTreeWidget({super.key, this.onTap});
 
   final Function(ToDo t)? onTap;
 

@@ -5,12 +5,12 @@ import 'package:tagged_todos_organizer/utils/presentation/widget/text_field_with
 
 class UsedPartWidget extends StatelessWidget {
   const UsedPartWidget({
-    Key? key,
+    super.key,
     required this.item,
     required this.update,
     required this.updateMaximoNo,
     this.delete,
-  }) : super(key: key);
+  });
   final UsedPart item;
   final Function(UsedPart) update;
   final Function(UsedPart) updateMaximoNo;

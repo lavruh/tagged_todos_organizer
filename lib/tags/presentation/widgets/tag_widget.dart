@@ -5,12 +5,12 @@ import 'package:tagged_todos_organizer/tags/domain/tag.dart';
 
 class TagWidget extends ConsumerWidget {
   const TagWidget({
-    Key? key,
+    super.key,
     required this.e,
     this.selected = false,
     this.onPress,
     this.onDelete,
-  }) : super(key: key);
+  });
   final Tag e;
   final bool selected;
   final Function(Tag)? onPress;
@@ -24,10 +24,7 @@ class TagWidget extends ConsumerWidget {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 2),
           child: InputChip(
-            label: Text(
-              e.name,
-              textScaleFactor: 1.1,
-            ),
+            label: Text(e.name),
             selected: selected,
             backgroundColor: Color(e.color),
             selectedColor: Color(e.color),

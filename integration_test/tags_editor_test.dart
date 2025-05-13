@@ -77,7 +77,7 @@ Future<void> tagsEditorTest(WidgetTester tester) async {
   expect(find.byIcon(Icons.add), findsOneWidget);
   final tagWidget = find.widgetWithText(InputChip, existedTag.name);
   expect(tagWidget, findsOneWidget);
-  expect(tester.widget<InputChip>(tagWidget).backgroundColor?.value,
+  expect(tester.widget<InputChip>(tagWidget).backgroundColor?.toARGB32(),
       existedTag.color);
   expect(find.text('Search'), findsOneWidget);
 
@@ -90,7 +90,7 @@ Future<void> tagsEditorTest(WidgetTester tester) async {
   await tester.pumpAndSettle();
   expect(find.text('Tag name'), findsOneWidget);
 
-  final newTag = Tag.empty().copyWith(name: 'newTag', color: Colors.red.value);
+  final newTag = Tag.empty().copyWith(name: 'newTag', color: Colors.red.toARGB32());
   final editorNameField = find.widgetWithText(TextField, 'Tag name');
   await tester.enterText(editorNameField, newTag.name);
   await tester.testTextInput.receiveAction(TextInputAction.done);

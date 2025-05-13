@@ -4,8 +4,8 @@ import 'package:tagged_todos_organizer/todos/domain/todo.dart';
 import 'package:tagged_todos_organizer/todos/domain/todo_editor_provider.dart';
 import 'package:tagged_todos_organizer/todos/presentation/screens/todo_edit_screen.dart';
 
-class SubTodoWudget extends ConsumerWidget {
-  const SubTodoWudget({Key? key, required this.todo}) : super(key: key);
+class SubTodoWidget extends ConsumerWidget {
+  const SubTodoWidget({super.key, required this.todo});
   final ToDo todo;
   @override
   Widget build(BuildContext context, WidgetRef ref) {

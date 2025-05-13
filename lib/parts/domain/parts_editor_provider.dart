@@ -18,7 +18,7 @@ final partsEditorProvider =
         (ref) => PartsEditorNotifier(ref));
 
 class PartsEditorNotifier extends StateNotifier<List<UsedPart>> {
-  StateNotifierProviderRef ref;
+  Ref ref;
 
   PartsEditorNotifier(this.ref)
       : super(ref.watch(todoEditorProvider)?.usedParts ?? []);

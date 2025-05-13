@@ -7,8 +7,6 @@ import 'package:tagged_todos_organizer/app.dart';
 import 'package:tagged_todos_organizer/log/domain/log_provider.dart';
 import 'package:tagged_todos_organizer/log/domain/loggable_action.dart';
 import 'package:tagged_todos_organizer/todos/domain/attachments_provider.dart';
-import 'package:tagged_todos_organizer/todos/domain/todos_db_provider.dart';
-import 'package:tagged_todos_organizer/todos/domain/todos_provider.dart';
 import 'package:tagged_todos_organizer/todos/presentation/screens/todo_edit_screen.dart';
 import 'package:tagged_todos_organizer/todos/presentation/widgets/sub_todos_overview_widget.dart';
 import 'package:tagged_todos_organizer/utils/app_path_provider.dart';
@@ -82,9 +80,6 @@ Future<void> logServiceTest(WidgetTester tester) async {
       matching: find.byIcon(Icons.add)));
   await tester.pump(const Duration(seconds: 1));
   await tester.pumpAndSettle();
-
-  await tester.pump(const Duration(seconds: 10));
-
 
   final contextSub = tester.element(find.byType(TodoEditScreen));
   final refSub = ProviderScope.containerOf(contextSub);
