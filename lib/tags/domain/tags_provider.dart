@@ -17,7 +17,7 @@ final tagsProvider = StateNotifierProvider<TagsNotifier, List<Tag>>((ref) {
 class TagsNotifier extends StateNotifier<List<Tag>> {
   IDbService? db;
 
-  StateNotifierProviderRef<TagsNotifier, List<Tag>> ref;
+  Ref ref;
   TagsNotifier(this.ref) : super([]);
   setDb(IDbService service) {
     db = service;

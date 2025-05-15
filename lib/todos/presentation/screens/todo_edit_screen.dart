@@ -118,7 +118,7 @@ class TodoEditScreen extends ConsumerWidget {
                       child: TextFieldWithConfirm(
                           key: Key(item.title),
                           text: item.title,
-                          lable: 'Title',
+                          label: 'Title',
                           onConfirm: (value) {
                             ref.read(editIdProvider.notifier).state = true;
                             return notifier
@@ -161,7 +161,7 @@ class TodoEditScreen extends ConsumerWidget {
                           notifier
                               .changeState(item.copyWith(description: value));
                         },
-                        lable: 'Description',
+                        label: 'Description',
                       ),
                     ),
                   ],

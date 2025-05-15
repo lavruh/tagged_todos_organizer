@@ -25,6 +25,10 @@ filter by date
 search field
  */
 
+main() async {
+  testWidgets('todo filter test', todoFilterTest);
+}
+
 Future<void> todoFilterTest(WidgetTester tester) async {
   final db = MockIDbService();
   final now = DateTime.now();

@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 
 class TextFieldWithClearButton extends StatefulWidget {
   const TextFieldWithClearButton(
-      {Key? key, this.initText, required this.onChanged})
-      : super(key: key);
+      {super.key, this.initText, required this.onChanged});
   final String? initText;
   final Function(String) onChanged;
 

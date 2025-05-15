@@ -15,7 +15,7 @@ final logProvider = StateNotifierProvider<LogNotifier, List<LogEntry>>((ref) {
 });
 
 class LogNotifier extends StateNotifier<List<LogEntry>> {
-  StateNotifierProviderRef<LogNotifier, List<LogEntry>> ref;
+  Ref ref;
   LogNotifier(this.ref) : super([]);
   IDbService? db;
   final String table = 'log';
@@ -25,6 +25,7 @@ class LogNotifier extends StateNotifier<List<LogEntry>> {
   }
 
   getAllEntries() async {
+    state = [];
     if (db != null) {
       await for (final map in db!.getAll(table: table)) {
         state = [...state, LogEntry.fromMap(map)];

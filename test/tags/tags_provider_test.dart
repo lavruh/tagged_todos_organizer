@@ -16,7 +16,7 @@ void main() {
     final ref = ProviderContainer();
     addTearDown(ref.dispose);
     final listener = Listener();
-    ref.listen<List<Tag>>(tagsProvider, listener, fireImmediately: true);
+    ref.listen<List<Tag>>(tagsProvider, listener.call, fireImmediately: true);
 
     ref.read(tagsProvider.notifier).updateTag(tag);
     ref.read(tagsProvider.notifier).updateTag(tag2);

@@ -1,4 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:tagged_todos_organizer/utils/domain/string_extension.dart';
 
 class TextFieldWithConfirm extends StatefulWidget {
   const TextFieldWithConfirm({
@@ -6,7 +10,7 @@ class TextFieldWithConfirm extends StatefulWidget {
     required this.text,
     required this.onConfirm,
     this.maxLines,
-    this.lable,
+    this.label,
     this.keyboardType,
     this.suffix,
     this.border,
@@ -14,7 +18,7 @@ class TextFieldWithConfirm extends StatefulWidget {
   final String text;
   final Function(String) onConfirm;
   final int? maxLines;
-  final String? lable;
+  final String? label;
   final TextInputType? keyboardType;
   final Widget? suffix;
   final InputBorder? border;
@@ -25,100 +29,88 @@ class TextFieldWithConfirm extends StatefulWidget {
 
 class _TextFieldWithConfirmState extends State<TextFieldWithConfirm> {
   final controller = TextEditingController();
+  bool get hasToSave => widget.text != controller.text;
+  Timer? autoSaveTimer;
 
   @override
   void initState() {
     controller.text = widget.text;
+    controller.addListener(_activateAutoSaveTimer);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
-      controller: controller,
-      maxLines: widget.maxLines,
-      keyboardType: widget.keyboardType,
-      decoration: InputDecoration(
-        labelText: widget.lable,
-        border: widget.border,
-        suffix: controller.text != widget.text
-            ? IconButton(
-                onPressed: () => widget.onConfirm(controller.text),
-                icon: const Icon(Icons.check),
-              )
-            : widget.suffix,
-      ),
-      onChanged: (value) {
-        setState(() {});
+    return Focus(
+      focusNode: FocusNode(),
+      onKeyEvent: (fn, e) {
+        if (e is KeyDownEvent && e.logicalKey.keyLabel == "Enter") {
+          _onEnterPressedHandler();
+          return KeyEventResult.handled;
+        }
+        return KeyEventResult.ignored;
       },
-      contextMenuBuilder: (context, editableTextState) {
-        final customButtons = [
-          ContextMenuButtonItem(
-              onPressed: () => _deleteString(editableTextState),
-              label: "Delete String"),
-          ContextMenuButtonItem(
-              onPressed: () => _toggleDone(editableTextState),
-              label: "Toggle done"),
-        ];
+      child: TextField(
+        controller: controller,
+        maxLines: widget.maxLines,
+        keyboardType: widget.keyboardType,
+        decoration: InputDecoration(
+          labelText: widget.label,
+          border: widget.border,
+          suffix: hasToSave
+              ? IconButton(
+                  onPressed: _save,
+                  icon: const Icon(Icons.check),
+                )
+              : widget.suffix,
+        ),
+        contextMenuBuilder: (context, editableTextState) {
+          final customButtons = [
+            ContextMenuButtonItem(
+                onPressed: () => _deleteString(editableTextState),
+                label: "Delete String"),
+            ContextMenuButtonItem(
+                onPressed: () => _toggleDone(editableTextState),
+                label: "Toggle done"),
+          ];
 
-        final buttons = [
-          ...customButtons,
-          ...editableTextState.contextMenuButtonItems
-        ];
-        return AdaptiveTextSelectionToolbar.buttonItems(
-            buttonItems: buttons,
-            anchors: editableTextState.contextMenuAnchors);
-      },
+          final buttons = [
+            ...customButtons,
+            ...editableTextState.contextMenuButtonItems
+          ];
+          return AdaptiveTextSelectionToolbar.buttonItems(
+              buttonItems: buttons,
+              anchors: editableTextState.contextMenuAnchors);
+        },
+      ),
     );
   }
 
-  void _deleteString(EditableTextState editableTextState) {
-    final fieldText = editableTextState.currentTextEditingValue.text;
-    final selection = editableTextState.currentTextEditingValue.selection;
-    setState(() {
-      controller.text = fieldText.replaceAll(
-        _getRowUnderCursor(fieldText, selection.start),
-        "",
-      );
-    });
+  _save() {
+    if (hasToSave) {
+      widget.onConfirm(controller.text);
+      autoSaveTimer?.cancel();
+      autoSaveTimer = null;
+    }
+  }
+
+  _deleteString(EditableTextState editableTextState) {
+    controller.value = controller.value.deleteRowUnderCursor();
+    setState(() {});
   }
 
   _toggleDone(EditableTextState editableTextState) {
-    final fieldText = editableTextState.currentTextEditingValue.text;
-    final selection = editableTextState.currentTextEditingValue.selection;
-
-    const checked = "☒";
-    const check = "☐";
-
-    final selText = _getRowUnderCursor(fieldText, selection.start);
-    final startSymbol = selText[0];
-    String updatedString = "";
-    if (startSymbol != check || startSymbol != checked) {
-      updatedString = "$check $selText";
-    }
-    if (startSymbol == check) {
-      updatedString = selText.replaceFirst(check, checked);
-    }
-    if (startSymbol == checked) {
-      updatedString = selText.replaceFirst(checked, check);
-    }
-
-    setState(() {
-      controller.text = fieldText.replaceFirst(selText, updatedString);
-    });
+    controller.value = controller.value.checkRowUnderCursor();
+    setState(() {});
   }
 
-  String _getRowUnderCursor(String text, int cursorPosition) {
-    final rows = text.split('\n');
-    int startOfRow = 0;
-    for (final s in rows) {
-      final endOfRow = s.length + startOfRow + 1;
-      if (startOfRow <= cursorPosition && endOfRow > cursorPosition) {
-        startOfRow += s.length + 1;
-        return "$s\n";
-      }
-      startOfRow += s.length + 1;
-    }
-    return "";
+  _onEnterPressedHandler() {
+    controller.value = controller.value.customEnterHandler();
+    setState(() {});
+  }
+
+  _activateAutoSaveTimer() {
+    autoSaveTimer?.cancel();
+    autoSaveTimer = Timer(Duration(seconds: 5), _save);
   }
 }

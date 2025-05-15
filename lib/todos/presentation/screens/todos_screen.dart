@@ -25,9 +25,9 @@ class TodosScreen extends ConsumerWidget {
       }
     });
 
-    //ensure necessary providers are initialized
-    final aliases = ref.watch(tagsAliasesProvider);
-    final log = ref.watch(logProvider);
+    // ensure necessary providers are initialized
+    ref.watch(tagsAliasesProvider);
+    ref.watch(logProvider);
 
     return Scaffold(
       appBar: const AppBarWidget(),

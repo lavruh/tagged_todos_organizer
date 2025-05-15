@@ -17,7 +17,7 @@ class AttachementsPreviewWidget extends ConsumerWidget {
             Text('Attachments (${items.length}) :'),
             Expanded(child: Container()),
             IconButton(
-                onPressed: () => attachments.attachFile(),
+                onPressed: attachments.attachFile,
                 icon: const Icon(Icons.attach_file)),
             if (Platform.isAndroid)
               IconButton(

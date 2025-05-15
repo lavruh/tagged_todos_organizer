@@ -1,5 +1,3 @@
-import 'dart:io';
-import 'package:path/path.dart' as p;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -11,29 +9,18 @@ import 'package:tagged_todos_organizer/todos/presentation/screens/todo_edit_scre
 import 'package:tagged_todos_organizer/utils/app_path_provider.dart';
 import 'package:tagged_todos_organizer/utils/data/i_db_service.dart';
 
+import 'utils.dart';
+
 @GenerateNiceMocks([MockSpec<AttachmentsNotifier>(), MockSpec<IDbService>()])
-void clearDirectory(String dir) {
-  try {
-    const path = "/home/lavruh/Documents/TaggedTodosOrganizer";
-    final d = Directory(p.join(path, dir));
-    for (final entity in d.listSync()) {
-      entity.deleteSync(recursive: true);
-    }
-  } on Exception {
-    return;
-  }
+void main() async {
+  testWidgets('duplicate todo test', duplicateTodoTest);
 }
 
 Future<void> duplicateTodoTest(WidgetTester tester) async {
-  clearDirectory("todos");
-  clearDirectory("archive");
-  clearDirectory("log");
+  clearDirectory("");
 
   await tester.pumpWidget(ProviderScope(
-    overrides: [
-      appPathProvider
-          .overrideWith((ref) => '/home/lavruh/Documents/TaggedTodosOrganizer')
-    ],
+    overrides: [appPathProvider.overrideWith((ref) => testDirPath)],
     child: const MyApp(),
   ));
 
@@ -102,14 +89,4 @@ Future<void> duplicateTodoTest(WidgetTester tester) async {
       expect(find.text(newTitle), findsOneWidget);
     }
   }
-}
-
-Future<void> tapText(WidgetTester tester, String text) async {
-  await tester.tap(find.text(text));
-  await tester.pumpAndSettle();
-}
-
-Future<void> openDrawerMenu(WidgetTester tester) async {
-  await tester.tapAt(const Offset(10, 10));
-  await tester.pumpAndSettle();
 }

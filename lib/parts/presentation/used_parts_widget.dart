@@ -5,7 +5,7 @@ import 'package:tagged_todos_organizer/parts/domain/used_part.dart';
 import 'package:tagged_todos_organizer/parts/presentation/used_part_widget.dart';
 
 class UsedPartsWidget extends ConsumerWidget {
-  const UsedPartsWidget({Key? key, required this.update}) : super(key: key);
+  const UsedPartsWidget({super.key, required this.update});
   final Function(List<UsedPart>) update;
 
   @override

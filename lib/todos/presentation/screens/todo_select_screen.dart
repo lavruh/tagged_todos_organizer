@@ -7,8 +7,8 @@ import 'package:tagged_todos_organizer/utils/presentation/widget/search_panel_wi
 
 class TodoSelectScreen extends ConsumerWidget {
   const TodoSelectScreen({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

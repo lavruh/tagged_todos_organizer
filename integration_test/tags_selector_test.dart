@@ -17,6 +17,7 @@ import 'package:tagged_todos_organizer/utils/app_path_provider.dart';
 import 'package:tagged_todos_organizer/utils/data/i_db_service.dart';
 import 'package:tagged_todos_organizer/utils/unique_id.dart';
 import 'tags_selector_test.mocks.dart';
+import 'utils.dart';
 
 /*
 Load app 
@@ -53,7 +54,13 @@ Tap confirm
 */
 
 @GenerateMocks([IDbService])
+void main() async {
+  testWidgets('tags selector test', tagsSelectorTest);
+}
+
 Future<void> tagsSelectorTest(WidgetTester tester) async {
+  clearDirectory("");
+
   final db = MockIDbService();
   final tags = List<Tag>.generate(
       5,
@@ -79,7 +86,7 @@ Future<void> tagsSelectorTest(WidgetTester tester) async {
 
   await tester.pumpWidget(ProviderScope(
     overrides: [
-      appPathProvider.overrideWith((ref) => '/home/lavruh/Documents/TaggedTodosOrganizer'),
+      appPathProvider.overrideWith((ref) => testDirPath),
       tagsDbProvider.overrideWith((ref) => db),
       todosDbProvider.overrideWith((ref) => db),
     ],

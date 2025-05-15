@@ -8,11 +8,12 @@ import 'package:tagged_todos_organizer/utils/app_path_provider.dart';
 import 'package:path/path.dart' as p;
 import 'package:tagged_todos_organizer/utils/unique_id.dart';
 
-const testDirPath = '/home/lavruh/tmp/test';
 
-main() {
+main() async {
+  final testDir = Directory(p.normalize("/home/lavruh/tmp/test"));
+  final testDirPath = testDir.path;
   tearDown(() {
-    for (final i in Directory(testDirPath).listSync()) {
+    for (final i in testDir.listSync()) {
       i.deleteSync(recursive: true);
     }
   });
@@ -29,7 +30,8 @@ main() {
     final res = sut.manage(
       id: todo.id.toString(),
       attachmentsDirPath: todo.attachDirPath,
-      parentId: todo.parentId.toString(),
+      parentId: todo.parentId?.id,
+      createDir: true,
     );
 
     await pumpEventQueue(times: 20);
@@ -58,7 +60,7 @@ main() {
     final res = sut.manage(
         id: todo.id.toString(),
         attachmentsDirPath: todo.attachDirPath,
-        parentId: todo.parentId.toString());
+        parentId: todo.parentId?.id);
 
     await pumpEventQueue(times: 20);
 

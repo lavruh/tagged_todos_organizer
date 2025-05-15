@@ -5,7 +5,7 @@ import 'package:tagged_todos_organizer/tags/domain/tags_provider.dart';
 import 'package:tagged_todos_organizer/tags/presentation/widgets/color_picker_widget.dart';
 
 class TagEditWidget extends ConsumerWidget {
-  const TagEditWidget({Key? key}) : super(key: key);
+  const TagEditWidget({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

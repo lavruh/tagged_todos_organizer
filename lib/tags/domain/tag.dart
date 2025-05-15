@@ -16,12 +16,12 @@ class Tag {
   Tag.empty()
       : id = UniqueId(),
         name = "",
-        color = Colors.grey.value,
+        color = Colors.grey.toARGB32(),
         group = "";
   Tag.withName(String n)
       : id = UniqueId(),
         name = n,
-        color = Colors.grey.value,
+        color = Colors.grey.toARGB32(),
         group = "";
   Tag copyWith({
     UniqueId? id,

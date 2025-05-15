@@ -5,12 +5,12 @@ import 'package:tagged_todos_organizer/utils/presentation/widget/text_field_with
 
 class UsedPartWidget extends StatelessWidget {
   const UsedPartWidget({
-    Key? key,
+    super.key,
     required this.item,
     required this.update,
     required this.updateMaximoNo,
     this.delete,
-  }) : super(key: key);
+  });
   final UsedPart item;
   final Function(UsedPart) update;
   final Function(UsedPart) updateMaximoNo;
@@ -40,7 +40,7 @@ class UsedPartWidget extends StatelessWidget {
             child: TextFieldWithConfirm(
                 text: item.maximoNumber,
                 key: Key(item.maximoNumber),
-                lable: 'Maximo',
+                label: 'Maximo',
                 maxLines: 1,
                 keyboardType: TextInputType.number,
                 onConfirm: (val) {
@@ -55,7 +55,7 @@ class UsedPartWidget extends StatelessWidget {
               child: TextFieldWithConfirm(
                   text: item.name,
                   key: Key(item.maximoNumber),
-                  lable: 'name',
+                  label: 'name',
                   onConfirm: (val) {
                     update(item.copyWith(name: val));
                   }),
@@ -67,7 +67,7 @@ class UsedPartWidget extends StatelessWidget {
             child: TextFieldWithConfirm(
                 text: item.bin,
                 key: Key(item.maximoNumber),
-                lable: 'bin',
+                label: 'bin',
                 maxLines: 1,
                 onConfirm: (val) {
                   update(item.copyWith(bin: val));
