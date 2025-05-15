@@ -26,7 +26,7 @@ class TagsAliasEditorWidget extends ConsumerWidget {
               child: TextFieldWithConfirm(
                   key: const Key("AliasTitleEditor"),
                   text: item.title,
-                  lable: "Alias",
+                  label: "Alias",
                   onConfirm: (val) => editor.updateTitle(title: val)),
             ),
             Flex(
@@ -55,20 +55,4 @@ class TagsAliasEditorWidget extends ConsumerWidget {
       ),
     );
   }
-
-  // _addTag(Tag tag) {
-  //   final item = ref.read(tagsAliasesEditorProvider);
-  //   final tags = item.tags;
-  //   tags.add(tag.id);
-  //   ref.read(tagsAliasesEditorProvider.notifier).state =
-  //       item.copyWith(tags: tags);
-  // }
-  //
-  // _deleteTag(Tag tag) {
-  //   final item = ref.read(tagsAliasesEditorProvider);
-  //   final tags = item.tags;
-  //   tags.remove(tag.id);
-  //   ref.read(tagsAliasesEditorProvider.notifier).state =
-  //       item.copyWith(tags: tags);
-  // }
 }
