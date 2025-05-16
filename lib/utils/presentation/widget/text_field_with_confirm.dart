@@ -112,5 +112,6 @@ class _TextFieldWithConfirmState extends State<TextFieldWithConfirm> {
   _activateAutoSaveTimer() {
     autoSaveTimer?.cancel();
     autoSaveTimer = Timer(Duration(seconds: 5), _save);
+    setState(() {});
   }
 }
