@@ -8,6 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       APP_NAME: tagged_todos_organizer
+      BUILD_PATH: build/app/outputs/flutter-apk/
 
     steps:
       - uses: actions/checkout@v3
@@ -35,12 +36,12 @@ jobs:
         run: flutter build apk --release --flavor production
 
       - name: Rename file
-        run: mv build/app/outputs/flutter-apk/app-production-release.apk build/app/outputs/flutter-apk/${{ env.APP_NAME }}-${{ steps.read-version.outputs.version-number }}.apk
+        run: mv ${{ env.BUILD_PATH }}app-production-release.apk ${{ env.BUILD_PATH }}${{ env.APP_NAME }}-${{ steps.read-version.outputs.version-number }}.apk
 
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ env.APP_NAME }}-${{ steps.read-version.outputs.version-number }}
-          files: build/app/outputs/apk/release/${{ env.APP_NAME }}-${{ steps.read-version.outputs.version-number }}.apk
+          files: ${{ env.BUILD_PATH }}release/${{ env.APP_NAME }}-${{ steps.read-version.outputs.version-number }}.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
