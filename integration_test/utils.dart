@@ -1,4 +1,3 @@
-
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -8,8 +7,12 @@ import 'package:mockito/mockito.dart';
 import 'package:path/path.dart' as p;
 import 'todo_editor_test.mocks.dart';
 
-
 const testDirPath = "/home/lavruh/tmp/test/";
+
+pump(WidgetTester tester) async {
+  //set delay between actions in tests
+  await tester.pump(const Duration(seconds: 1));
+}
 
 Future<void> tapText(WidgetTester tester, String text) async {
   await tester.tap(find.text(text));
@@ -38,7 +41,7 @@ addNewTmpTodoAndEnterTitle(WidgetTester tester, String s) async {
   await tester.tap(addButton);
   await tester.pumpAndSettle();
   final input =
-  find.descendant(of: find.byType(TextFormField), matching: find.text(""));
+      find.descendant(of: find.byType(TextFormField), matching: find.text(""));
   expect(input, findsOneWidget);
   await tester.enterText(input, s);
   await tester.testTextInput.receiveAction(TextInputAction.done);
@@ -54,20 +57,32 @@ openOneDayView(WidgetTester tester) async {
   await tester.pumpAndSettle();
 }
 
-
 DateTime postponeDate(DateTime d, int days) =>
     DateTime(d.year, d.month, d.day + days);
 
 checkMenuItem(WidgetTester tester, String itemName, DateTime result) async {
   await tester.tap(find.byKey(const Key('todoPreviewDate')));
-  await tester.pump(const Duration(seconds: 1));
+  await pump(tester);
   await tester.tap(find.text(itemName));
-  await tester.pump(const Duration(seconds: 1));
+  await pump(tester);
   expect(find.text(DateFormat('y-MM-dd').format(result)), findsOneWidget);
 }
 
 void checkDbUpdated(MockIDbService db) {
   verify(db.update(
-      id: anyNamed('id'), item: anyNamed('item'), table: anyNamed('table')))
+          id: anyNamed('id'), item: anyNamed('item'), table: anyNamed('table')))
       .called(1);
+}
+
+
+
+
+enterTextAndConfirm(WidgetTester tester, Finder field, String text) async {
+  final titleField = find.widgetWithText(TextField, 'Title');
+  await tester.enterText(titleField, text);
+  await pump(tester);
+  final titleCheckIcon =
+      find.descendant(of: titleField, matching: find.byIcon(Icons.check));
+  await tester.tap(titleCheckIcon);
+  await pump(tester);
 }

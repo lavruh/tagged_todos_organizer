@@ -59,7 +59,7 @@ class TodoPrevWidget extends ConsumerWidget {
                 if (item.date != null)
                   TextButton(
                     key: const Key('todoPreviewDate'),
-                    onPressed: () => _postponeTodoDialog(context),
+                    onPressed: () => _postponeTodoDialog(context, ref),
                     child: Text(DateFormat('y-MM-dd').format(item.date!)),
                   ),
               ],
@@ -101,11 +101,18 @@ class TodoPrevWidget extends ConsumerWidget {
         .postponeTodo(item: item, date: DateTime.now(), days: 1);
   }
 
-  void _postponeTodoDialog(BuildContext context) {
-    showDialog(
+  void _postponeTodoDialog(BuildContext context, WidgetRef ref) async {
+    final d = await showDialog<DateTime>(
       context: context,
       builder: (context) => Dialog(child: PostponeMenuWidget(item: item)),
     );
+    if (d == null) {
+      ref
+          .read(todosProvider.notifier)
+          .updateTodo(item: item.copyWith(clearDate: true));
+    } else {
+      ref.read(todosProvider.notifier).postponeTodo(item: item, date: d);
+    }
   }
 
   void _priorityMenuDialog(BuildContext context) {

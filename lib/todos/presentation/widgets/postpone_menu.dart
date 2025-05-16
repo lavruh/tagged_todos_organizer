@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tagged_todos_organizer/todos/domain/todo.dart';
-import 'package:tagged_todos_organizer/todos/domain/todos_provider.dart';
 
 class PostponeMenuWidget extends ConsumerWidget {
   const PostponeMenuWidget({
@@ -37,6 +36,9 @@ class PostponeMenuWidget extends ConsumerWidget {
               onPressed: () => _postponeDays(ref, context, 42),
               child: const Text('6 weeks')),
           TextButton(
+              onPressed: () => _setDateDialog(ref, context),
+              child: const Text('Specify date')),
+          TextButton(
               onPressed: () => _clearDate(ref, context),
               child: const Text('Clear Date')),
         ],
@@ -55,19 +57,22 @@ class PostponeMenuWidget extends ConsumerWidget {
     DateTime date, {
     int days = 0,
   }) {
-    ref
-        .read(todosProvider.notifier)
-        .postponeTodo(item: item, date: date, days: days);
-    Navigator.of(context).pop();
+    final newDate = date.add(Duration(days: days));
+    Navigator.of(context).pop(newDate);
   }
 
-  _clearDate(
-    WidgetRef ref,
-    BuildContext context,
-  ) {
-    ref
-        .read(todosProvider.notifier)
-        .updateTodo(item: item.copyWith(clearDate: true));
-    Navigator.of(context).pop();
+  _clearDate(WidgetRef ref, BuildContext context) =>
+      Navigator.of(context).pop(null);
+
+  _setDateDialog(WidgetRef ref, BuildContext context) async {
+    final date = await showDialog<DateTime>(
+        context: context,
+        builder: (context) => DatePickerDialog(
+            initialDate: item.date ?? DateTime.now(),
+            firstDate: DateTime(DateTime.now().year - 1),
+            lastDate: DateTime(DateTime.now().year + 3)));
+    if (date != null && context.mounted) {
+      _postpone(ref, context, date);
+    }
   }
 }
