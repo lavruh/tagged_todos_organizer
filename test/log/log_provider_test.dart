@@ -33,7 +33,7 @@ void main() {
       title: 'title',
       date: DateTime.now(),
       tags: [UniqueId(id: 'id'), UniqueId(id: '2')],
-      action: LoggableAction.deleted,
+      action: LoggableAction.done,
     );
 
     final map = entry.toMap();
@@ -48,7 +48,7 @@ void main() {
   });
 
   test('add log entry from todo', () async {
-    const action = LoggableAction.created;
+    const action = LoggableAction.archived;
     final todo = ToDo.empty().copyWith(title: 'test');
     final todoWithTags = ToDo.empty().copyWith(tags: [UniqueId()]);
 

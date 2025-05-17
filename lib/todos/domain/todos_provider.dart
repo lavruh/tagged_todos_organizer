@@ -23,12 +23,10 @@ final todosProvider = StateNotifierProvider<TodosNotifier, List<ToDo>>((ref) {
 
 class TodosNotifier extends StateNotifier<List<ToDo>> {
   Ref ref;
-  TodosNotifier(this.ref) : super([]) {
-    log = ref.read(logProvider.notifier);
-  }
+  TodosNotifier(this.ref) : super([]);
   IDbService? db;
   final String tableName = 'todos';
-  late LogNotifier log;
+  LogNotifier get log => ref.read(logProvider.notifier);
 
   setDb(IDbService instance) {
     db = instance;
@@ -103,15 +101,14 @@ class TodosNotifier extends StateNotifier<List<ToDo>> {
 
   Future<ToDo> _saveNewTodoToState(ToDo item) async {
     addTodo(todo: item);
-    await log.logTodoCreated(todo: item);
     return item;
   }
 
   Future<void> _updateState(int index, ToDo item) async {
-    final oldTodo = state.removeAt(index);
+    state.removeAt(index);
     state.insert(index, item);
     state = [...state];
-    if (oldTodo.done != item.done) {
+    if (item.done == true) {
       await log.logTodoDoneUndone(todo: item, done: item.done);
     }
   }
@@ -120,7 +117,6 @@ class TodosNotifier extends StateNotifier<List<ToDo>> {
     final String table = todo.parentId?.id ?? tableName;
     state = [...state.where((element) => element.id != todo.id)];
     await db?.delete(id: todo.id.id, table: table);
-    await ref.read(logProvider.notifier).logTodoDeleted(todo: todo);
   }
 
   setTodoDoneUndone({required bool value, required ToDo todo}) {
@@ -159,7 +155,7 @@ class TodosNotifier extends StateNotifier<List<ToDo>> {
     try {
       await archive.add(todo);
       await deleteTodo(todo: todo);
-      await ref.read(logProvider.notifier).logTodoArchived(todo: todo);
+      await log.logTodoArchived(todo: todo);
       return true;
     } catch (e) {
       ref.read(snackbarProvider).show(e.toString());

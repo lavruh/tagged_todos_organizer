@@ -53,30 +53,44 @@ Future<void> postponeTodoTest(WidgetTester tester) async {
     child: const MyApp(),
   ));
   await tester.pumpAndSettle();
-  await tester.pump(const Duration(seconds: 1));
+  await pump(tester);
   await tester.tap(find.byIcon(Icons.filter_alt_outlined));
-  await tester.pump(const Duration(seconds: 1));
+  await pump(tester);
   await tester.tap(find.textContaining('Show future'));
-  await tester.pump(const Duration(seconds: 1));
+  await pump(tester);
   await tester.tapAt(const Offset(0, 100));
-  await tester.pump(const Duration(seconds: 1));
+  await pump(tester);
 
   expect(find.text(todoWithDate.title), findsOneWidget);
   expect(find.text(DateFormat('y-MM-dd').format(now)), findsOneWidget);
   await tester.tap(find.byKey(const Key('todoPreviewDate')));
-  await tester.pump(const Duration(seconds: 1));
+  await pump(tester);
   expect(find.text('Postpone till...'), findsOneWidget);
   expect(find.text('Tomorrow'), findsOneWidget);
   expect(find.text('Today'), findsOneWidget);
   expect(find.text('3 days'), findsOneWidget);
   expect(find.text('Next week'), findsOneWidget);
   expect(find.text('6 weeks'), findsOneWidget);
+  expect(find.text('Specify date'), findsOneWidget);
   expect(find.text('Clear Date'), findsOneWidget);
 
-  final tommorow = DateTime(now.year, now.month, now.day + 1);
+  final tomorrow = DateTime(now.year, now.month, now.day + 1);
   await tester.tap(find.text('Tomorrow'));
-  await tester.pump(const Duration(seconds: 1));
-  expect(find.text(DateFormat('y-MM-dd').format(tommorow)), findsOneWidget);
+  await pump(tester);
+  expect(find.text(DateFormat('y-MM-dd').format(tomorrow)), findsOneWidget);
+  checkDbUpdated(db);
+
+  await tester.tap(find.byKey(const Key('todoPreviewDate')));
+  await pump(tester);
+  await tester.tap(find.text("Specify date"));
+  await pump(tester);
+  await tester.tap(find.widgetWithText(Center, '30'));
+  await pump(tester);
+  await tester.tap(find.widgetWithText(TextButton, 'OK'));
+  await pump(tester);
+  expect(
+      find.text(DateFormat('y-MM-dd').format(DateTime.now().copyWith(day: 30))),
+      findsOneWidget);
   checkDbUpdated(db);
 
   await checkMenuItem(tester, 'Today', now);
@@ -95,9 +109,9 @@ Future<void> postponeTodoTest(WidgetTester tester) async {
   checkDbUpdated(db);
 
   await tester.tap(find.byKey(const Key('todoPreviewDate')));
-  await tester.pump(const Duration(seconds: 1));
+  await pump(tester);
   await tester.tap(find.text('Clear Date'));
-  await tester.pump(const Duration(seconds: 1));
+  await pump(tester);
   expect(find.textContaining('${now.year}'), findsNothing);
   checkDbUpdated(db);
 }

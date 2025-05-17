@@ -22,7 +22,7 @@ class LogEntry {
         title = '',
         date = DateTime.now(),
         tags = [],
-        action = LoggableAction.created,
+        action = LoggableAction.done,
         relatedId = null;
 
 
