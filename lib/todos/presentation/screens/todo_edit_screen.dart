@@ -9,6 +9,7 @@ import 'package:tagged_todos_organizer/todos/domain/todo_editor_provider.dart';
 import 'package:tagged_todos_organizer/todos/domain/todos_provider.dart';
 import 'package:tagged_todos_organizer/todos/presentation/screens/todo_select_screen.dart';
 import 'package:tagged_todos_organizer/todos/presentation/widgets/attachemets_preview_widget.dart';
+import 'package:tagged_todos_organizer/todos/presentation/widgets/postpone_menu.dart';
 import 'package:tagged_todos_organizer/todos/presentation/widgets/priority_slider_widget.dart';
 import 'package:tagged_todos_organizer/todos/presentation/widgets/sub_todos_overview_widget.dart';
 import 'package:tagged_todos_organizer/utils/presentation/widget/confirm_dialog.dart';
@@ -37,15 +38,19 @@ class TodoEditScreen extends ConsumerWidget {
       child: Scaffold(
         appBar: AppBar(
           actions: [
-            if (item.parentId != null)
-              TextButton(
-                  onPressed: () {
-                    if (item.parentId != null) {
-                      notifier.setById(item.parentId!);
-                    }
-                  },
-                  child: const Text('Go parent',
-                      style: TextStyle(color: Colors.white))),
+            AnimatedCrossFade(
+                firstChild: Container(),
+                secondChild: TextButton(
+                    onPressed: () {
+                      if (item.parentId != null) {
+                        notifier.setById(item.parentId!);
+                      }
+                    },
+                    child: const Text('Go parent')),
+                crossFadeState: item.parentId != null
+                    ? CrossFadeState.showSecond
+                    : CrossFadeState.showFirst,
+                duration: Duration(milliseconds: 300)),
             IconButton(
                 onPressed: () async {
                   final newPath = await Navigator.of(context).push(
@@ -62,7 +67,27 @@ class TodoEditScreen extends ConsumerWidget {
                     ref.read(snackbarProvider).show(e.toString());
                   }
                 },
+                tooltip: "Change parent",
                 icon: const Icon(Icons.move_up)),
+            AnimatedCrossFade(
+                firstChild: Container(),
+                secondChild: IconButton(
+                    onPressed: () async {
+                      final date = await showDialog<DateTime>(
+                        context: context,
+                        builder: (context) =>
+                            Dialog(child: PostponeMenuWidget(item: item)),
+                      );
+                      if (date == null) return;
+                      notifier.rescheduleTodo(date: date);
+                    },
+                    tooltip: "Reschedule",
+                    icon: const Icon(Icons.schedule_send)),
+                crossFadeState: item.done
+                    ? CrossFadeState.showSecond
+                    : CrossFadeState.showFirst,
+                secondCurve: Curves.bounceIn,
+                duration: Duration(milliseconds: 300)),
             IconButton(
                 onPressed: () async {
                   final navigator = GoRouter.of(context);
@@ -75,6 +100,7 @@ class TodoEditScreen extends ConsumerWidget {
                     navigator.go('/');
                   }
                 },
+                tooltip: "Archive",
                 icon: const Icon(Icons.archive)),
             IconButton(
                 onPressed: () async {
@@ -86,11 +112,13 @@ class TodoEditScreen extends ConsumerWidget {
                     navigator.go('/');
                   }
                 },
+                tooltip: "Delete",
                 icon: const Icon(Icons.delete)),
             IconButton(
               onPressed: () async {
                 await notifier.updateTodo(item);
               },
+              tooltip: "Save",
               icon: const Icon(Icons.save),
             )
           ],

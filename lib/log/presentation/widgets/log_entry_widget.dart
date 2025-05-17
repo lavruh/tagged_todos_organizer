@@ -18,9 +18,10 @@ class LogEntryWidget extends ConsumerWidget {
     return ListTile(
       title: Column(
         mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-              '${entry.title} is ${entry.action.name} @ ${DateFormat('y-MM-dd\t hh:mm:ss').format(entry.date)}'),
+              '${entry.title} is ${entry.action.name} @ ${DateFormat('y-MM-dd\t HH:mm').format(entry.date)}'),
           TagsPreviewWidget(tags: entry.tags),
         ],
       ),

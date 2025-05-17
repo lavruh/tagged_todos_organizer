@@ -33,17 +33,12 @@ class LogNotifier extends StateNotifier<List<LogEntry>> {
     }
   }
 
-  logTodoCreated({required ToDo todo}) {
-    logActionWithTodo(action: LoggableAction.created, todo: todo);
-  }
-
   logTodoArchived({required ToDo todo}) {
     logActionWithTodo(action: LoggableAction.archived, todo: todo);
   }
 
   logTodoDoneUndone({required ToDo todo, required bool done}) {
-    final action = done ? LoggableAction.done : LoggableAction.undone;
-    logActionWithTodo(action: action, todo: todo);
+    logActionWithTodo(action: LoggableAction.done, todo: todo);
   }
 
   logActionWithTodo({
@@ -58,9 +53,5 @@ class LogNotifier extends StateNotifier<List<LogEntry>> {
   addEntry(LogEntry entry) async {
     state = [...state, entry];
     db?.update(id: entry.id.toString(), item: entry.toMap(), table: table);
-  }
-
-  logTodoDeleted({required ToDo todo}) {
-    logActionWithTodo(action: LoggableAction.deleted, todo: todo);
   }
 }

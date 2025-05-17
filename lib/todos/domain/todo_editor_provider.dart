@@ -161,4 +161,12 @@ class TodoEditorNotifier extends StateNotifier<ToDo?> {
     }
     if (context.mounted) context.pop();
   }
+
+  void rescheduleTodo({required DateTime date}) async {
+    final item = state;
+    if (item == null) return;
+    if (_isChanged) await updateTodo(item);
+
+    updateTodo(item.copyWith(date: date, done: false));
+  }
 }

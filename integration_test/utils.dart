@@ -78,11 +78,11 @@ void checkDbUpdated(MockIDbService db) {
 
 
 enterTextAndConfirm(WidgetTester tester, Finder field, String text) async {
-  final titleField = find.widgetWithText(TextField, 'Title');
-  await tester.enterText(titleField, text);
-  await pump(tester);
+  await tester.enterText(field, text);
+  await tester.pumpAndSettle();
+  await tester.pump(const Duration(seconds: 1));
   final titleCheckIcon =
-      find.descendant(of: titleField, matching: find.byIcon(Icons.check));
+      find.descendant(of: field, matching: find.byIcon(Icons.check));
   await tester.tap(titleCheckIcon);
   await pump(tester);
 }

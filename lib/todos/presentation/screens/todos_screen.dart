@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:tagged_todos_organizer/log/domain/log_provider.dart';
 import 'package:tagged_todos_organizer/tags/domain/tags_aliases_provider.dart';
 import 'package:tagged_todos_organizer/tags/domain/tags_from_string_provider.dart';
 import 'package:tagged_todos_organizer/tags/presentation/widgets/tags_row_widget.dart';
@@ -27,7 +26,7 @@ class TodosScreen extends ConsumerWidget {
 
     // ensure necessary providers are initialized
     ref.watch(tagsAliasesProvider);
-    ref.watch(logProvider);
+
 
     return Scaffold(
       appBar: const AppBarWidget(),
