@@ -8,6 +8,7 @@ import 'package:tagged_todos_organizer/tags/presentation/tags_aliases_edit_scree
 import 'package:tagged_todos_organizer/tags/presentation/tags_edit_screen.dart';
 import 'package:tagged_todos_organizer/todos/presentation/screens/todo_edit_screen.dart';
 import 'package:tagged_todos_organizer/todos/presentation/screens/todos_screen.dart';
+import 'package:tagged_todos_organizer/utils/presentation/screens/camere_screen.dart';
 
 final GoRouter _router = GoRouter(routes: <RouteBase>[
   GoRoute(
@@ -29,9 +30,15 @@ final GoRouter _router = GoRouter(routes: <RouteBase>[
                 },
               ),
               GoRoute(
-                path: 'CameraScreen',
+                path: 'CameraDataPickerScreen',
                 builder: (context, state) {
                   return const PhotoDataPicker();
+                },
+              ),
+              GoRoute(
+                path: 'PhotoAddScreen',
+                builder: (context, state) {
+                  return ImageAddScreen();
                 },
               ),
             ]),
