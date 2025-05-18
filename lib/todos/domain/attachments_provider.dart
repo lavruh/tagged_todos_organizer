@@ -1,10 +1,8 @@
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
-import 'package:intl/intl.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:path/path.dart' as p;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:process_run/shell.dart';
 import 'package:tagged_todos_organizer/utils/app_path_provider.dart';
 import 'package:tagged_todos_organizer/utils/snackbar_provider.dart';
@@ -18,6 +16,8 @@ class AttachmentsNotifier extends StateNotifier<List<String>> {
   String? path;
   late Directory root;
   Ref ref;
+
+  bool get isReady => path != null;
 
   String? manage({
     required String id,
@@ -71,21 +71,6 @@ class AttachmentsNotifier extends StateNotifier<List<String>> {
       state = files;
     } else {
       state = [];
-    }
-  }
-
-  void addPhoto() async {
-    if (path != null) {
-      if (Platform.isAndroid) {
-        final ImagePicker picker = ImagePicker();
-        final XFile? photo = await picker.pickImage(source: ImageSource.camera);
-        final name = DateFormat('y-M-d_hh_mm_ss').format(DateTime.now());
-        final filePath = p.join(path!, 'img_$name.jpg');
-        photo?.saveTo(filePath);
-        _updateState(filePath);
-      }
-    } else {
-      showNotification();
     }
   }
 
@@ -180,9 +165,10 @@ class AttachmentsNotifier extends StateNotifier<List<String>> {
     updateAttachments();
   }
 
-  void renameAttachmentFile({required String filePath, required String newName}) {
+  void renameAttachmentFile(
+      {required String filePath, required String newName}) {
     final f = File(filePath);
-    if(f.existsSync()) {
+    if (f.existsSync()) {
       f.renameSync(p.join(p.dirname(filePath), newName));
       updateAttachments();
     }

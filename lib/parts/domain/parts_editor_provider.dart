@@ -82,7 +82,7 @@ class PartsEditorNotifier extends StateNotifier<List<UsedPart>> {
         },
       ));
 
-      navigator.go('/TodoEditorScreen/CameraScreen');
+      navigator.go('/TodoEditorScreen/CameraDataPickerScreen');
     }
   }
 }
