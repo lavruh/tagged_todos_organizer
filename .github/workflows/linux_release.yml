@@ -23,6 +23,14 @@ jobs:
           channel: 'stable'
           flutter-version: '3.29.3'
 
+      - name: Install Flutter Linux dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libgtk-3-0 \
+            libblkid-dev \
+            liblzma-dev
+
       - name: Clean project dependencies
         run: flutter clean
 
