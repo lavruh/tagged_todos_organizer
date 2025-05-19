@@ -29,32 +29,23 @@ class LogEntryWidget extends ConsumerWidget {
           ? Row(
               children: [
                 TextButton(
-                  onPressed: () {
+                  onPressed: () async {
                     if (entry.relatedId != null) {
-                      _unarchive(ref, id: entry.relatedId!);
+                      final fl = await _unarchive(ref, id: entry.relatedId!);
+                      if (fl && context.mounted) {
+                        context.go('/TodoEditorScreen');
+                      }
                     }
                   },
                   child: const Text('Unarchive'),
                 ),
-                TextButton(
-                    onPressed: () {
-                      if (entry.relatedId != null) {
-                        _duplicate(ref, id: entry.relatedId!);
-                        context.go('/TodoEditorScreen');
-                      }
-                    },
-                    child: const Text('Duplicate')),
               ],
             )
           : Container(),
     );
   }
 
-  _unarchive(WidgetRef ref, {required UniqueId id}) {
-    ref.read(todosProvider.notifier).unarchiveTodo(id: id);
-  }
-
-  _duplicate(WidgetRef ref, {required UniqueId id}) {
-    ref.read(todosProvider.notifier).duplicateTodo(id: id);
+  Future<bool> _unarchive(WidgetRef ref, {required UniqueId id}) async {
+    return await ref.read(todosProvider.notifier).unarchiveTodo(id: id);
   }
 }

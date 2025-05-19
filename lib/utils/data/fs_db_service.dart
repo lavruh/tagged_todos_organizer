@@ -123,8 +123,8 @@ class FsDbService implements IDbService {
     final dir = Directory(path);
     if (dir.existsSync()) {
       await for (final item in dir.list(recursive: true)) {
-        if (item is File || p.basename(item.path) == 'data.json') {
-          final data = fromJson(await (item as File).readAsString());
+        if (item is File && p.basename(item.path) == 'data.json') {
+          final data = fromJson(await item.readAsString());
           if (data.keys.contains(request.keys.first) &&
               data.values.contains(request.values.first)) {
             return data;
