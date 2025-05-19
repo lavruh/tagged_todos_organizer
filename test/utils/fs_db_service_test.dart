@@ -186,4 +186,20 @@ void main() {
     expect(resultData['id'], update.toMap()['id']);
     expect(resultData['title'], update.toMap()['title']);
   });
+
+  test('get loadSingleTodo', () async {
+    final itemTmp = ToDo.empty();
+
+    final String relativePath = p.relative(
+        p.join(dbPath, itemTmp.id.toString()),
+        from: getAppFolderPath());
+    final item = itemTmp.copyWith(attachDirPath: relativePath);
+
+    await sut.init(dbPath: dbPath);
+    await sut.add(item: item.toMap(), table: '/');
+
+    final result =
+        await sut.getItemByFieldValue(table: '/', request: {'id': item.id.id});
+    expect(result, item.toMap());
+  });
 }

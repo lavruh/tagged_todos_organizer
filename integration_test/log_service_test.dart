@@ -120,5 +120,4 @@ Future<void> logServiceTest(WidgetTester tester) async {
   expect(find.textContaining("done"), findsNWidgets(2));
   expect(find.textContaining("archived"), findsNWidgets(1));
   expect(find.textContaining("Unarchive"), findsOneWidget);
-  expect(find.textContaining("Duplicate"), findsOneWidget);
 }

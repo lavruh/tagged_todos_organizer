@@ -163,25 +163,19 @@ class TodosNotifier extends StateNotifier<List<ToDo>> {
     return false;
   }
 
-  Future<void> unarchiveTodo({required UniqueId id}) async {
+  Future<bool> unarchiveTodo({required UniqueId id}) async {
     final archive = ref.read(archiveProvider);
     try {
       await archive.unarchive(id);
+      final todo = await loadSingleTodo(id);
+      final t = await updateTodo(item: todo);
+      assert(t.id == id);
+      ref.read(todoEditorProvider.notifier).setTodo(t);
+      ref.read(snackbarProvider).show("Unarchived");
+      return true;
     } catch (e) {
       ref.read(snackbarProvider).show(e.toString());
-    }
-    state = [];
-    getTodos();
-  }
-
-  Future<void> duplicateTodo({required UniqueId id}) async {
-    final archive = ref.read(archiveProvider);
-    try {
-      await archive.unarchive(id);
-      final ToDo todo = await loadSingleTodo(id);
-      ref.read(todoEditorProvider.notifier).setTodo(todo);
-    } catch (e) {
-      ref.read(snackbarProvider).show(e.toString());
+      return false;
     }
   }
 

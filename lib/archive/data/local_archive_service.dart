@@ -14,15 +14,19 @@ class LocalArchiveService implements IArchiveService {
     if (!inp.existsSync()) {
       throw Exception('Wrong source <$path> does not exist');
     }
-
     final zip = ZipFileEncoder();
-    zip.zipDirectory(inp, filename: p.join(archivePath, '$inpName.zip'));
+    await zip.zipDirectory(inp, filename: p.join(archivePath, '$inpName.zip'));
   }
 
   @override
   Future<void> extractFromArchive({required String path}) async {
     final name = p.basenameWithoutExtension(path);
-    final zip = ZipDecoder().decodeBytes(File(path).readAsBytesSync());
+    final file = File(path);
+    if (!file.existsSync()) {
+      throw Exception('Wrong source <$path> does not exist');
+    }
+
+    final zip = ZipDecoder().decodeBytes(file.readAsBytesSync());
     for (final file in zip) {
       final filename = file.name;
       if (file.isFile) {
@@ -32,7 +36,7 @@ class LocalArchiveService implements IArchiveService {
           ..writeAsBytesSync(data);
       } else {
         Directory(p.join(todosRoot.path, name, filename))
-            .create(recursive: true);
+            .createSync(recursive: true);
       }
     }
   }
