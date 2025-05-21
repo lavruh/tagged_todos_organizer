@@ -1,17 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:tagged_todos_organizer/parts/domain/parts_info_repo.dart';
 import 'package:tagged_todos_organizer/parts/domain/used_part.dart';
 import 'package:tagged_todos_organizer/todos/domain/todo_editor_provider.dart';
-
-import 'dart:io';
-import 'package:camera/camera.dart';
-import 'package:get/get.dart';
-import 'package:photo_data_picker/domain/camera_state.dart';
-import 'package:photo_data_picker/domain/camera_state_device.dart';
-import 'package:photo_data_picker/domain/recognizer.dart';
-import 'package:tagged_todos_organizer/utils/app_path_provider.dart';
 
 final partsEditorProvider =
     StateNotifierProvider<PartsEditorNotifier, List<UsedPart>>(
@@ -38,18 +28,16 @@ class PartsEditorNotifier extends StateNotifier<List<UsedPart>> {
 
   addPartFromPhotoNumber(String? reading) async {
     if (reading != null) {
-      final todo = ref.watch(todoEditorProvider);
-
       final p = await ref.read(partsInfoProvider).getPart(reading);
-
-      ref.read(todoEditorProvider.notifier).setTodo(todo!.copyWith(
-            usedParts: [
-              ...todo.usedParts,
-              UsedPart(
-                  maximoNumber: p.maximoNo, name: p.name, bin: p.bin, pieces: 0)
-            ],
-          ));
+      final usedPart = UsedPart.fromPart(part: p, qty: 0);
+      addUsedPart(usedPart);
     }
+  }
+
+  addUsedPart(UsedPart part) {
+    ref.read(todoEditorProvider.notifier).updateTodoState(
+      usedParts: [...state, part],
+    );
   }
 
   void delete({required int index}) {
@@ -64,25 +52,5 @@ class PartsEditorNotifier extends StateNotifier<List<UsedPart>> {
       newPart = part.copyWith(name: p.name, bin: p.bin);
     }
     updatePart(newPart, index);
-  }
-
-  Future<void> getCameraReading(BuildContext context) async {
-    final navigator = GoRouter.of(context);
-    if (Platform.isAndroid) {
-      final cams = await availableCameras();
-      final path = ref.read(appPathProvider);
-      Get.put(Recognizer());
-      Get.put<CameraState>(CameraStateDevice(
-        flashMode: FlashMode.off,
-        cameras: cams,
-        tmpFile: File('$path/maximoNo.jpg'),
-        returnWithValue: (String val) {
-          addPartFromPhotoNumber(val);
-          navigator.pop();
-        },
-      ));
-
-      navigator.go('/TodoEditorScreen/CameraDataPickerScreen');
-    }
   }
 }

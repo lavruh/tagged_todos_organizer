@@ -127,7 +127,7 @@ class TodoEditorNotifier extends StateNotifier<ToDo?> {
       List<UniqueId>? tags,
       DateTime? date,
       List<UsedPart>? usedParts}) {
-    state = state?.copyWith(
+    final t = state?.copyWith(
       id: id,
       title: title,
       description: description,
@@ -140,6 +140,8 @@ class TodoEditorNotifier extends StateNotifier<ToDo?> {
       date: date,
       usedParts: usedParts,
     );
+    if (t == null) throw Exception("Cannot update, previous state is null");
+    changeState(t);
   }
 
   checkIfToSave(BuildContext context) async {
