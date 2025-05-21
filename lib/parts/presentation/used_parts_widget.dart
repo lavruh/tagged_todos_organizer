@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:tagged_todos_organizer/parts/domain/parts_editor_provider.dart';
 import 'package:tagged_todos_organizer/parts/domain/used_part.dart';
 import 'package:tagged_todos_organizer/parts/presentation/used_part_widget.dart';
@@ -17,6 +18,7 @@ class UsedPartsWidget extends ConsumerWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Text('Used parts (${items.length}) :'),
+              Expanded(child: Container()),
               IconButton(
                   onPressed: () => _addPart(ref), icon: const Icon(Icons.add)),
               IconButton(
@@ -47,6 +49,6 @@ class UsedPartsWidget extends ConsumerWidget {
   }
 
   _addPartFromPhotoNumber(WidgetRef ref, BuildContext context) async {
-    ref.read(partsEditorProvider.notifier).getCameraReading(context);
+    context.go('/TodoEditorScreen/AddUsedPartScreen');
   }
 }

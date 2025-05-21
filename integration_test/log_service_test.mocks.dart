@@ -191,15 +191,6 @@ class MockAttachmentsNotifier extends _i1.Mock
       );
 
   @override
-  void addPhoto() => super.noSuchMethod(
-        Invocation.method(
-          #addPhoto,
-          [],
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
   void attachFile() => super.noSuchMethod(
         Invocation.method(
           #attachFile,

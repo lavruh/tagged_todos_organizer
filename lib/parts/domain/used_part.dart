@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:tagged_todos_organizer/parts/domain/part.dart';
+
 class UsedPart {
   final String maximoNumber;
   final String name;
@@ -12,6 +14,12 @@ class UsedPart {
     required this.bin,
     required this.pieces,
   });
+
+  UsedPart.fromPart({required Part part, int qty = 0})
+      : maximoNumber = part.maximoNo,
+        name = part.name,
+        bin = part.bin,
+        pieces = qty;
 
   UsedPart.empty({
     this.maximoNumber = '',
