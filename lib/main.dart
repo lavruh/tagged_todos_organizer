@@ -17,59 +17,7 @@ void main() async {
     appRootPath = prefs.getString('appPath') ?? getAppFolderPath();
     prefs.setString('appPath', appRootPath);
     runApp(
-      const RestartWidget(
-        child: ProviderScope(
-          child: MyApp(),
-        ),
-      ),
-    );
-  }
-}
-
-class RestartWidget extends StatefulWidget {
-  const RestartWidget({super.key, required this.child});
-  final Widget child;
-
-  static void updateRootPathAndRestartApp(
-      BuildContext context, String path) async {
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setString('appPath', path);
-    if (context.mounted) {
-      context.findAncestorStateOfType<RestartWidgetState>()?.restartApp();
-    }
-  }
-
-  @override
-  RestartWidgetState createState() {
-    return RestartWidgetState();
-  }
-}
-
-class RestartWidgetState extends State<RestartWidget> {
-  Key key = UniqueKey();
-  bool restartRequired = false;
-
-  void restartApp() {
-    setState(() {
-      restartRequired = true;
-      key = UniqueKey();
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return KeyedSubtree(
-      key: key,
-      child: restartRequired
-          ? const Directionality(
-              textDirection: TextDirection.ltr,
-              child: Scaffold(
-                body: Center(
-                  child: Text('To force changes restart App...'),
-                ),
-              ),
-            )
-          : widget.child,
+      const ProviderScope(child: MyApp()),
     );
   }
 }

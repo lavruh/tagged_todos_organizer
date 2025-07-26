@@ -2,7 +2,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tagged_todos_organizer/main.dart';
+import 'package:restart_app/restart_app.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tagged_todos_organizer/parts/domain/parts_info_repo.dart';
 import 'package:tagged_todos_organizer/tags/domain/filtered_tags_provider.dart';
 import 'package:tagged_todos_organizer/tags/domain/tag_editor_provider.dart';
@@ -33,12 +34,14 @@ class MenuWidget extends ConsumerWidget {
             title: const Text('Change root folder'),
             subtitle: Text(ref.watch(appPathProvider)),
             onTap: () async {
-              final c = context;
               final dirPath = await FilePicker.platform.getDirectoryPath();
               if (dirPath != null) {
-                if (c.mounted) {
-                  RestartWidget.updateRootPathAndRestartApp(c, dirPath);
-                }
+                final prefs = await SharedPreferences.getInstance();
+                prefs.setString('appPath', dirPath);
+                Restart.restartApp(
+                  notificationBody: "Restart App",
+                  notificationTitle: "DB loaded from $dirPath",
+                );
               }
             },
           ),

@@ -57,6 +57,7 @@ class _TextFieldWithConfirmState extends State<TextFieldWithConfirm> {
         textAlign: widget.textAlign ?? TextAlign.start,
         maxLines: widget.maxLines,
         keyboardType: widget.keyboardType,
+        stylusHandwritingEnabled: true,
         decoration: InputDecoration(
           labelText: widget.label,
           border: widget.border,
