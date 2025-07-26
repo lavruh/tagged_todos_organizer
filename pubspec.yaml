@@ -1,7 +1,7 @@
 name: tagged_todos_organizer
 description: Todos manager organized by tags.
 publish_to: 'none' 
-version: 1.6.23+1
+version: 1.6.24
 #fl 3.22.3
 environment:
   sdk: ">=3.2.2 <4.0.0"
@@ -27,6 +27,8 @@ dependencies:
   photo_data_picker:
     git:
       url: https://github.com/lavruh/photo_data_picker.git
+  restart_app:
+    git: https://github.com/lavruh/restart_app.git
   get: ^4.7.2
   flutter_slidable: ^4.0.0
   go_router: ^16.0.0
