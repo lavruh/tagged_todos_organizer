@@ -173,4 +173,24 @@ class AttachmentsNotifier extends StateNotifier<List<String>> {
       updateAttachments();
     }
   }
+
+  void pasteFromBuffer() async {
+    final todoDirPath = path;
+    final root = ref.read(appPathProvider);
+    final bufferDir = Directory(p.join(root, 'buffer'));
+    bufferDir.createSync(recursive: true);
+    if (bufferDir.existsSync()) {
+      final files = bufferDir.listSync(recursive: true);
+      for (final file in files) {
+        if (file is File) {
+          if (todoDirPath != null) {
+            final name = p.basename(file.path);
+            await file.copy(p.join(todoDirPath, name));
+            file.delete();
+          }
+        }
+      }
+    }
+    updateAttachments();
+  }
 }

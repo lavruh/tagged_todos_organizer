@@ -16,15 +16,20 @@ class AttachementsPreviewWidget extends ConsumerWidget {
     if (attachments.isReady) {
       buttons = [
         IconButton(
+            onPressed: attachments.pasteFromBuffer,
+            tooltip: "Paste from buffer",
+            icon: const Icon(Icons.content_paste_go)),
+        IconButton(
             onPressed: attachments.attachFile,
             icon: const Icon(Icons.attach_file)),
         if (Platform.isAndroid)
           IconButton(
               onPressed: () => context.go('/TodoEditorScreen/PhotoAddScreen'),
               icon: const Icon(Icons.add_a_photo)),
-        IconButton(
-            onPressed: () => attachments.openFolder(),
-            icon: const Icon(Icons.folder_open)),
+        if (!Platform.isAndroid)
+          IconButton(
+              onPressed: () => attachments.openFolder(),
+              icon: const Icon(Icons.folder_open)),
       ];
     }
 
