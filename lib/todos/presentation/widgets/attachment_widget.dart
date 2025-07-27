@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:path/path.dart' as p;
+import 'package:popover/popover.dart';
 import 'package:tagged_todos_organizer/images_view/domain/images_view_provider.dart';
 import 'package:tagged_todos_organizer/todos/domain/attachments_provider.dart';
 
@@ -31,10 +32,19 @@ class AttachmentWidget extends ConsumerWidget {
                 attachments.openFile(file: e);
               }
             },
+            onLongPress: () => showPopover(
+                context: context,
+                bodyBuilder: (context) {
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      RenameAttachmentButton(e: e),
+                      DeleteAttachmentButton(e: e)
+                    ],
+                  );
+                }),
             child: Text(p.basename(e)),
           ),
-          RenameAttachmentButton(e: e),
-          DeleteAttachmentButton(e: e),
         ],
       ),
     );

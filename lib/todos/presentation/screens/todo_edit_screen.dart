@@ -13,6 +13,7 @@ import 'package:tagged_todos_organizer/todos/presentation/widgets/postpone_menu.
 import 'package:tagged_todos_organizer/todos/presentation/widgets/priority_slider_widget.dart';
 import 'package:tagged_todos_organizer/todos/presentation/widgets/sub_todos_overview_widget.dart';
 import 'package:tagged_todos_organizer/utils/presentation/widget/confirm_dialog.dart';
+import 'package:tagged_todos_organizer/utils/presentation/widget/input_dialog.dart';
 import 'package:tagged_todos_organizer/utils/presentation/widget/text_field_with_confirm.dart';
 import 'package:tagged_todos_organizer/utils/snackbar_provider.dart';
 import 'package:tagged_todos_organizer/utils/unique_id.dart';
@@ -38,6 +39,13 @@ class TodoEditScreen extends ConsumerWidget {
       child: Scaffold(
         appBar: AppBar(
           actions: [
+            IconButton(
+                onPressed: () {
+                  final path = item.attachDirPath.replaceFirst("..", "");
+                  inputDialog(context, title: "Path", text: path);
+                },
+                tooltip: "Show path to directory",
+                icon: Icon(Icons.terminal)),
             AnimatedCrossFade(
                 firstChild: Container(),
                 secondChild: TextButton(

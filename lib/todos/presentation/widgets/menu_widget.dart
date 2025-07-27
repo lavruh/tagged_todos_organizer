@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:path/path.dart' as p;
 import 'package:restart_app/restart_app.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tagged_todos_organizer/parts/domain/parts_info_repo.dart';
@@ -38,6 +41,7 @@ class MenuWidget extends ConsumerWidget {
               if (dirPath != null) {
                 final prefs = await SharedPreferences.getInstance();
                 prefs.setString('appPath', dirPath);
+                Directory(p.join(dirPath, 'buffer')).createSync(recursive: true);
                 Restart.restartApp(
                   notificationBody: "Restart App",
                   notificationTitle: "DB loaded from $dirPath",
