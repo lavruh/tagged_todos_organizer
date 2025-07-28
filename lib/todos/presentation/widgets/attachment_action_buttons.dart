@@ -23,6 +23,7 @@ class RenameAttachmentButton extends ConsumerWidget {
             ref
                 .read(attachmentsProvider.notifier)
                 .renameAttachmentFile(filePath: e, newName: newName);
+            if (context.mounted) Navigator.of(context).pop();
           }
         },
         icon: const Icon(Icons.drive_file_rename_outline));
@@ -44,6 +45,7 @@ class DeleteAttachmentButton extends ConsumerWidget {
             ref
                 .read(attachmentsProvider.notifier)
                 .deleteAttachmentFile(path: e);
+            if (context.mounted) Navigator.of(context).pop();
           }
         },
         icon: const Icon(Icons.delete_forever));
