@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tagged_todos_organizer/notifications/presentation/widget/notification_schedule_dialog.dart';
 import 'package:tagged_todos_organizer/tags/presentation/widgets/tags_preview_widget.dart';
 import 'package:tagged_todos_organizer/todos/domain/todo.dart';
 import 'package:tagged_todos_organizer/todos/presentation/widgets/priority_menu_widget.dart';
@@ -25,25 +26,37 @@ class DayViewItemWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final suffixPanel = isTmpTodo
-        ? Row(mainAxisSize: MainAxisSize.min, children: [
-            IconButton(
-                onPressed: () {
-                  onCreatePermanent?.call(
-                      item, () => context.go('/TodoEditorScreen'));
-                },
-                tooltip: "Create permanent",
-                icon: const Icon(Icons.add)),
-            IconButton(
-                onPressed: () => onRemove?.call(item),
-                tooltip: "Delete",
-                icon: const Icon(Icons.delete_forever))
-          ])
-        : IconButton(
-            onPressed: () => onOpenInEditor?.call(
-                item, () => context.go('/TodoEditorScreen')),
-            tooltip: "Open editor",
-            icon: const Icon(Icons.note_alt));
+    final List<Widget> tmpTodoActions = [
+      IconButton(
+          onPressed: () {
+            onCreatePermanent?.call(
+                item, () => context.go('/TodoEditorScreen'));
+          },
+          tooltip: "Create permanent",
+          icon: const Icon(Icons.add)),
+      IconButton(
+          onPressed: () => onRemove?.call(item),
+          tooltip: "Delete",
+          icon: const Icon(Icons.delete_forever))
+    ];
+
+    final List<Widget> permanentTodoActions = [
+      IconButton(
+          onPressed: () =>
+              onOpenInEditor?.call(item, () => context.go('/TodoEditorScreen')),
+          tooltip: "Open editor",
+          icon: const Icon(Icons.note_alt)),
+    ];
+
+    final suffixPanel = Row(mainAxisSize: MainAxisSize.min, children: [
+      if (isTmpTodo) ...tmpTodoActions,
+      if (!isTmpTodo) ...permanentTodoActions,
+        IconButton(
+            onPressed: () =>
+                showNotificationScheduleDialog(context, todo: item),
+            tooltip: "Create reminder",
+            icon: const Icon(Icons.alarm_add)),
+    ]);
 
     return Container(
       color: getColorForPriority(item.priority),

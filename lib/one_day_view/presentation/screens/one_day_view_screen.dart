@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:tagged_todos_organizer/notifications/domain/notifications_provider.dart';
+import 'package:tagged_todos_organizer/notifications/presentation/widget/active_notifications_dialog.dart';
 import 'package:tagged_todos_organizer/one_day_view/domain/one_day_view_provider.dart';
 import 'package:tagged_todos_organizer/one_day_view/domain/tmp_todo_provider.dart';
 import 'package:tagged_todos_organizer/utils/snackbar_provider.dart';
@@ -24,6 +26,14 @@ class OneDayViewScreen extends ConsumerWidget {
         appBar: AppBar(
           title: Text(DateFormat('EE, MMM dd, yyyy').format(DateTime.now())),
           actions: [
+            IconButton(
+              tooltip: "Get active reminders",
+              icon: Icon(Icons.list_alt),
+              onPressed: () {
+                ref.read(notificationsProvider.notifier).getNotifications();
+                showActiveNotificationsDialog(context);
+              },
+            ),
             IconButton(
                 tooltip: "Add tmp todo",
                 onPressed: () =>

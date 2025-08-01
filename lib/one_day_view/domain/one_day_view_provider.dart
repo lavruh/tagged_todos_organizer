@@ -6,6 +6,8 @@ import 'package:tagged_todos_organizer/todos/domain/todo_editor_provider.dart';
 import 'package:tagged_todos_organizer/todos/domain/todos_provider.dart';
 import 'package:tagged_todos_organizer/utils/domain/datetime_extension.dart';
 
+import '../../notifications/domain/notifications_provider.dart';
+
 final oneDayViewProvider =
     StateNotifierProvider<OneDayViewNotifier, List<Widget>>((ref) {
   final notifier = OneDayViewNotifier(ref);
@@ -17,7 +19,7 @@ class OneDayViewNotifier extends StateNotifier<List<Widget>> {
   OneDayViewNotifier(this.ref) : super([]);
   final Ref ref;
 
-  updateView() {
+  void updateView() {
     final tmpTodos = ref.watch(tmpTodoProvider);
     final permanentTodos = ref.watch(todosProvider).where((e) {
       if (e.date == null) return false;
@@ -31,6 +33,7 @@ class OneDayViewNotifier extends StateNotifier<List<Widget>> {
     final tmpProvider = ref.read(tmpTodoProvider.notifier);
     final todoProvider = ref.read(todosProvider.notifier);
     final editor = ref.read(todoEditorProvider.notifier);
+    ref.read(notificationsProvider);
 
     state = [
       ...tmpTodos.map((e) => DayViewItemWidget(
