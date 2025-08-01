@@ -1,7 +1,7 @@
 name: tagged_todos_organizer
 description: Todos manager organized by tags.
 publish_to: 'none' 
-version: 1.6.26
+version: 1.7.1
 #fl 3.22.3
 environment:
   sdk: ">=3.2.2 <4.0.0"
@@ -42,6 +42,9 @@ dependencies:
   filesystem_picker: ^4.1.0
   camerawesome: ^2.5.0
   popover: ^0.3.1
+  flutter_local_notifications: ^19.4.0  #Linux is not supported in current version
+  timezone: ^0.10.1
+  flutter_timezone: ^4.1.1
 
 
 

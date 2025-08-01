@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tagged_todos_organizer/images_view/presentation/screens/image_view_screen.dart';
 import 'package:tagged_todos_organizer/log/presentation/log_overview_screen.dart';
@@ -9,6 +10,8 @@ import 'package:tagged_todos_organizer/tags/presentation/tags_edit_screen.dart';
 import 'package:tagged_todos_organizer/todos/presentation/screens/todo_edit_screen.dart';
 import 'package:tagged_todos_organizer/todos/presentation/screens/todos_screen.dart';
 import 'package:tagged_todos_organizer/utils/presentation/screens/camere_screen.dart';
+
+final routerProvider = Provider<GoRouter>((ref) => _router);
 
 final GoRouter _router = GoRouter(routes: <RouteBase>[
   GoRoute(
