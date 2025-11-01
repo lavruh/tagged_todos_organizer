@@ -7,12 +7,11 @@ import 'package:go_router/go_router.dart';
 import 'package:path/path.dart' as p;
 import 'package:restart_app/restart_app.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tagged_todos_organizer/parts/domain/parts_info_repo.dart';
+import 'package:tagged_todos_organizer/parts/presentation/parts_db_update_dialog.dart';
 import 'package:tagged_todos_organizer/tags/domain/filtered_tags_provider.dart';
 import 'package:tagged_todos_organizer/tags/domain/tag_editor_provider.dart';
 import 'package:tagged_todos_organizer/utils/app_path_provider.dart';
 import 'package:tagged_todos_organizer/utils/app_version_provider.dart';
-import 'package:tagged_todos_organizer/utils/snackbar_provider.dart';
 
 class MenuWidget extends ConsumerWidget {
   const MenuWidget({super.key});
@@ -41,7 +40,8 @@ class MenuWidget extends ConsumerWidget {
               if (dirPath != null) {
                 final prefs = await SharedPreferences.getInstance();
                 prefs.setString('appPath', dirPath);
-                Directory(p.join(dirPath, 'buffer')).createSync(recursive: true);
+                Directory(p.join(dirPath, 'buffer'))
+                    .createSync(recursive: true);
                 Restart.restartApp(
                   notificationBody: "Restart App",
                   notificationTitle: "DB loaded from $dirPath",
@@ -69,16 +69,7 @@ class MenuWidget extends ConsumerWidget {
             leading: const Icon(Icons.upload_file),
             title: const Text('Update parts db'),
             onTap: () async {
-              final navigator = Navigator.of(context);
-              try {
-                await ref.read(partsInfoProvider).initUpdatePartsFromFile();
-                ref.read(snackbarProvider.notifier).show('Sucessfully updated');
-              } on Exception catch (e) {
-                ref
-                    .read(snackbarProvider.notifier)
-                    .show('Fail to update parts db : $e');
-              }
-              navigator.pop();
+              showPartsDbUpdateDialog(context);
             },
           )
         ],

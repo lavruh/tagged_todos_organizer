@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tagged_todos_organizer/parts/domain/part.dart';
 import 'package:tagged_todos_organizer/parts/domain/parts_info_repo.dart';
 import 'package:tagged_todos_organizer/parts/domain/used_part.dart';
 import 'package:tagged_todos_organizer/todos/domain/todo_editor_provider.dart';
@@ -13,20 +14,22 @@ class PartsEditorNotifier extends StateNotifier<List<UsedPart>> {
   PartsEditorNotifier(this.ref)
       : super(ref.watch(todoEditorProvider)?.usedParts ?? []);
 
-  updatePart(UsedPart part, int index) {
-    state.removeAt(index);
-    state.insert(index, part);
+  void updatePart(UsedPart part, int index) {
+    var tmp = state;
+    tmp.removeAt(index);
+    tmp.insert(index, part);
+    state = [...tmp];
     ref.read(todoEditorProvider.notifier).updateTodoState(usedParts: state);
   }
 
-  addPart() {
-    final todo = ref.watch(todoEditorProvider);
-    ref.read(todoEditorProvider.notifier).setTodo(todo!.copyWith(
-          usedParts: [...todo.usedParts, UsedPart.empty()],
-        ));
+  void addPart() {
+    final newPart = UsedPart.empty();
+    if (state.any((p) => p.hashCode == newPart.hashCode)) return;
+    state = [...state, UsedPart.empty()];
+    ref.read(todoEditorProvider.notifier).updateTodoState(usedParts: state);
   }
 
-  addPartFromPhotoNumber(String? reading) async {
+  Future<void> addPartFromPhotoNumber(String? reading) async {
     if (reading != null) {
       final p = await ref.read(partsInfoProvider).getPart(reading);
       final usedPart = UsedPart.fromPart(part: p, qty: 0);
@@ -34,7 +37,7 @@ class PartsEditorNotifier extends StateNotifier<List<UsedPart>> {
     }
   }
 
-  addUsedPart(UsedPart part) {
+  void addUsedPart(UsedPart part) {
     ref.read(todoEditorProvider.notifier).updateTodoState(
       usedParts: [...state, part],
     );
@@ -45,12 +48,23 @@ class PartsEditorNotifier extends StateNotifier<List<UsedPart>> {
     ref.read(todoEditorProvider.notifier).updateTodoState(usedParts: state);
   }
 
-  updatePartWithMaximoNo({required UsedPart part, required int index}) async {
+  void updatePartWithMaximoNo(
+      {required UsedPart part, required int index}) async {
     final p = await ref.read(partsInfoProvider).getPart(part.maximoNumber);
-    UsedPart newPart = part;
-    if (p.name != "") {
-      newPart = part.copyWith(name: p.name, bin: p.bin);
-    }
-    updatePart(newPart, index);
+    _updateUsedPartFromDb(part, p, index);
+  }
+
+  void updatePartWithCatalogNo(
+      {required UsedPart part, required int index}) async {
+    final p =
+        await ref.read(partsInfoProvider).getPartByCatalogNo(part.catalogNo);
+    _updateUsedPartFromDb(part, p, index);
+  }
+
+  void _updateUsedPartFromDb(UsedPart part, Part partFromDb, int index) {
+    final item = partFromDb.name.isEmpty
+        ? part
+        : UsedPart.fromPart(part: partFromDb, qty: part.pieces);
+    updatePart(item, index);
   }
 }

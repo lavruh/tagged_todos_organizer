@@ -11,25 +11,51 @@ import 'package:tagged_todos_organizer/utils/data/i_db_service.dart';
 
 final partsInfoProvider = Provider<PartsInfoRepo>((ref) {
   final IDbService? db = ref.watch(tagsDbProvider).value;
-  return PartsInfoRepo(db: db);
+  return PartsInfoRepo(db: db, ref: ref);
 });
+
+final partsInfoRepoUpdateProgressProvider = StateProvider<double>((ref) => 0);
 
 class PartsInfoRepo {
   final IDbService? db;
+  final Ref ref;
+  final Map<String, int> _fields = {
+    "MAXIMO": 0,
+    "NAME": 1,
+    "CATALOG_NO": 3,
+    "MANUFACTURER": 2,
+    "BIN": 6,
+    "DWG": 16,
+    "POS": 17,
+    "BALANCE": 7,
+  };
+  final _table = 'parts';
 
   PartsInfoRepo({
     required this.db,
+    required this.ref,
   });
 
   Future<Part> getPart(String maximoNo) async {
-    final map = await db?.getItemByFieldValue(
-      request: {'maximoNo': maximoNo},
-      table: 'parts',
-    );
-    if(map!= null && map.isNotEmpty){
+    final p = await getPartFormDb(req: maximoNo, field: 'maximoNo');
+    return p ?? Part.fromMap({'maximoNo': maximoNo});
+  }
+
+  Future<Part> getPartByCatalogNo(String catalogNo) async {
+    final p = await getPartFormDb(req: catalogNo, field: 'catalogNo');
+    return p ?? Part.fromMap({'catalogNo': catalogNo});
+  }
+
+  Future<Part?> getPartFormDb({
+    required String req,
+    required String field,
+  }) async {
+    final map =
+        await db?.getItemByFieldValue(request: {field: req}, table: _table);
+    if (map != null && map.isNotEmpty) {
       return Part.fromMap(map);
     }
-    return Part.fromMap({'maximoNo': maximoNo});
+    return null;
   }
 
   initUpdatePartsFromFile() async {
@@ -55,42 +81,38 @@ class PartsInfoRepo {
   }
 
   Future<void> updatePartsFromCsvString(String file) async {
+    ref.read(partsInfoRepoUpdateProgressProvider.notifier).state = 0;
     final data = const CsvToListConverter().convert(
       file,
-      fieldDelimiter: ',',
+      fieldDelimiter: ';',
       textDelimiter: '"',
       shouldParseNumbers: false,
     );
-    for (int i = 0; i < data.length; i++) {
+    final totalRows = data.length;
+    if (totalRows < 2) throw PartsInfoRepoException("Wrong data format");
+    for (int i = 0; i < totalRows; i++) {
       if (i == 0) {
-        if (data[0][0] != 'Item' ||
-            data[0][1] != 'Description' ||
-            data[0][2] != 'Catalog #' ||
-            data[0][3] != 'modelnr. Item' ||
-            data[0][4] != 'modelnr. vessel' ||
-            data[0][5] != 'Manufacturer' ||
-            data[0][6] != 'Default Bin' ||
-            data[0][7] != 'Assembly drwg' ||
-            data[0][8] != 'Pos. nr. Assembly drwg' ||
-            data[0][9] != 'Current Balance' ||
-            data[0][10] != 'Asset') {
-          throw PartsInfoRepoException('Wrong file supplied');
+        for (int j = 0; j < data[0].length; j++) {
+          final key = data[0][j];
+          if (_fields.containsKey(key)) {
+            _fields[key] = j;
+          }
         }
       }
       if (i > 0) {
+        final map = data[i];
         final part = Part(
-            maximoNo: data[i][0],
-            name: data[i][1],
-            catalogNo: data[i][2],
-            modelNo: data[i][3],
-            modelNoVessel: data[i][4],
-            manufacturer: data[i][5],
-            bin: data[i][6],
-            dwg: data[i][7],
-            pos: data[i][8],
-            balance: data[i][9]);
-        await db?.update(
-            id: part.maximoNo, item: part.toMap(), table: 'parts');
+            maximoNo: map[_fields["MAXIMO"]!],
+            name: map[_fields["NAME"]!],
+            catalogNo: map[_fields["CATALOG_NO"]!],
+            manufacturer: map[_fields["MANUFACTURER"]!],
+            bin: map[_fields["BIN"]!],
+            dwg: map[_fields["DWG"]!],
+            pos: map[_fields["POS"]!],
+            balance: map[_fields["BALANCE"]!]);
+        ref.read(partsInfoRepoUpdateProgressProvider.notifier).state =
+            i * 100 / totalRows;
+        await db?.update(id: part.maximoNo, item: part.toMap(), table: 'parts');
       }
     }
   }

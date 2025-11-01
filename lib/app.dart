@@ -5,6 +5,7 @@ import 'package:tagged_todos_organizer/images_view/presentation/screens/image_vi
 import 'package:tagged_todos_organizer/log/presentation/log_overview_screen.dart';
 import 'package:tagged_todos_organizer/one_day_view/presentation/screens/one_day_view_screen.dart';
 import 'package:tagged_todos_organizer/parts/presentation/add_used_part_screen.dart';
+import 'package:tagged_todos_organizer/parts/presentation/used_parts_edit_screen.dart';
 import 'package:tagged_todos_organizer/tags/presentation/tags_aliases_edit_screen.dart';
 import 'package:tagged_todos_organizer/tags/presentation/tags_edit_screen.dart';
 import 'package:tagged_todos_organizer/todos/presentation/screens/todo_edit_screen.dart';
@@ -36,6 +37,12 @@ final GoRouter _router = GoRouter(routes: <RouteBase>[
                 path: 'AddUsedPartScreen',
                 builder: (context, state) {
                   return const AddUsedPartScreen();
+                },
+              ),
+              GoRoute(
+                path: 'UsedPartsEditScreen',
+                builder: (context, state) {
+                  return const UsedPartsEditScreen();
                 },
               ),
               GoRoute(
