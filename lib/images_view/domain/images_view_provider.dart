@@ -7,18 +7,20 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:notes_on_image/domain/states/designation_on_image_state.dart';
 
-final imagesViewProvider = StateNotifierProvider<ImagesViewNotifier, String?>(
-    (ref) => ImagesViewNotifier());
+final imagesViewProvider =
+    NotifierProvider<ImagesViewNotifier, String?>(() => ImagesViewNotifier());
 
-class ImagesViewNotifier extends StateNotifier<String?> {
-  ImagesViewNotifier() : super(null);
+class ImagesViewNotifier extends Notifier<String?> {
+  @override
+  String? build() => null;
+
   final editor = Get.put(DesignationOnImageState());
   List<String> filesToPreview = [];
   int currentImageIndex = 0;
   StreamSubscription<FileSystemEvent>? _eventSubscription;
   BuildContext? context;
 
-  openImage(String path) async {
+  Future<void> openImage(String path) async {
     final file = File(path);
     editor.open(file);
     final dir = Directory(p.dirname(path));
@@ -30,14 +32,14 @@ class ImagesViewNotifier extends StateNotifier<String?> {
       final ext = p.extension(f.path);
       if (ext == '.jpg' || ext == '.jpeg' || ext == '.notes') {
         filesToPreview.add(f.path);
-        if(f.path == path) currentImageIndex = i;
+        if (f.path == path) currentImageIndex = i;
         i++;
       }
     }
     state = path;
   }
 
-  openNextImage({required bool increaseIndex}) async {
+  Future<void> openNextImage({required bool increaseIndex}) async {
     bool canGoNext = await saveImageRequest();
     if (!canGoNext) {
       return;
@@ -71,7 +73,7 @@ class ImagesViewNotifier extends StateNotifier<String?> {
     return result;
   }
 
-  _updateDueToFSEvent(FileSystemEvent event) {
+  void _updateDueToFSEvent(FileSystemEvent event) {
     if (event is FileSystemMoveEvent) {
       final path = event.destination;
       if (path != null) openImage(path);
@@ -79,7 +81,7 @@ class ImagesViewNotifier extends StateNotifier<String?> {
     if (event is FileSystemDeleteEvent) close();
   }
 
-  close() {
+  void close() {
     _eventSubscription?.cancel();
     context?.pop();
     context = null;

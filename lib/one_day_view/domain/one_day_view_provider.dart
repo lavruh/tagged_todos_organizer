@@ -1,31 +1,32 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:tagged_todos_organizer/one_day_view/domain/tmp_todo_provider.dart';
 import 'package:tagged_todos_organizer/one_day_view/presentation/widgets/day_view_item_widget.dart';
+import 'package:tagged_todos_organizer/todos/domain/todo.dart';
 import 'package:tagged_todos_organizer/todos/domain/todo_editor_provider.dart';
 import 'package:tagged_todos_organizer/todos/domain/todos_provider.dart';
 import 'package:tagged_todos_organizer/utils/domain/datetime_extension.dart';
 
 import '../../notifications/domain/notifications_provider.dart';
+part 'one_day_view_provider.g.dart';
 
-final oneDayViewProvider =
-    StateNotifierProvider<OneDayViewNotifier, List<Widget>>((ref) {
-  final notifier = OneDayViewNotifier(ref);
-  notifier.updateView();
-  return notifier;
-});
-
-class OneDayViewNotifier extends StateNotifier<List<Widget>> {
-  OneDayViewNotifier(this.ref) : super([]);
-  final Ref ref;
-
-  void updateView() {
-    final tmpTodos = ref.watch(tmpTodoProvider);
+@riverpod
+class OneDayView extends _$OneDayView {
+  @override
+  List<Widget> build() {
     final permanentTodos = ref.watch(todosProvider).where((e) {
       if (e.date == null) return false;
       return e.date?.isSameDate(DateTime.now()) ?? false;
     }).toList();
 
+    return updateView(
+      tmpTodos: ref.watch(tmpTodoProvider),
+      permanentTodos: permanentTodos,
+    );
+  }
+
+  List<Widget> updateView(
+      {required List<ToDo> tmpTodos, required List<ToDo> permanentTodos}) {
     permanentTodos.sort((a, b) {
       return a.priority.compareTo(b.priority);
     });
@@ -35,7 +36,7 @@ class OneDayViewNotifier extends StateNotifier<List<Widget>> {
     final editor = ref.read(todoEditorProvider.notifier);
     ref.read(notificationsProvider);
 
-    state = [
+    final tmp = [
       ...tmpTodos.map((e) => DayViewItemWidget(
             key: Key(e.id.id),
             item: e,
@@ -61,5 +62,6 @@ class OneDayViewNotifier extends StateNotifier<List<Widget>> {
             isTmpTodo: false,
           ))
     ];
+    return tmp;
   }
 }

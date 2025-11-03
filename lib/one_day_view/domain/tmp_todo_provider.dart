@@ -3,33 +3,34 @@ import 'package:tagged_todos_organizer/one_day_view/domain/tmp_todos_db_provider
 import 'package:tagged_todos_organizer/todos/domain/todo.dart';
 import 'package:tagged_todos_organizer/utils/data/i_db_service.dart';
 
-final tmpTodoProvider =
-    StateNotifierProvider<TmpTodoNotifier, List<ToDo>>((ref) {
-  final notifier = TmpTodoNotifier(ref);
-  ref.watch(tmpTodosDbProvider).whenData(
-    (value) {
-      notifier.setDb(value);
-      notifier.getTodos();
-    },
-  );
-  return notifier;
+final tmpTodoProvider = NotifierProvider<TmpTodoNotifier, List<ToDo>>(() {
+  return TmpTodoNotifier();
 });
 
-class TmpTodoNotifier extends StateNotifier<List<ToDo>> {
-  TmpTodoNotifier(this.ref) : super([]);
-  final Ref ref;
+class TmpTodoNotifier extends Notifier<List<ToDo>> {
+  @override
+  List<ToDo> build() {
+    ref.watch(tmpTodosDbProvider).whenData(
+      (value) {
+        setDb(value);
+        getTodos();
+      },
+    );
+    return [];
+  }
+
   IDbService? db;
   final _table = "tmp_todos";
 
-  setDb(IDbService instance) {
+  void setDb(IDbService instance) {
     db = instance;
   }
 
-  addTmpTodo() {
+  void addTmpTodo() {
     state = [ToDo.empty().copyWith(date: DateTime.now()), ...state];
   }
 
-  updateTmpTodo(ToDo todo) {
+  void updateTmpTodo(ToDo todo) {
     final index = state.indexWhere((element) => element.id == todo.id);
     if (index == -1) return;
     state.removeAt(index);
@@ -38,7 +39,7 @@ class TmpTodoNotifier extends StateNotifier<List<ToDo>> {
     db?.update(id: todo.id.id, item: todo.toMap(), table: _table);
   }
 
-  removeTmpTodo(ToDo todo) {
+  void removeTmpTodo(ToDo todo) {
     state = [...state.where((element) => element.id != todo.id)];
     db?.delete(id: todo.id.id, table: _table);
   }

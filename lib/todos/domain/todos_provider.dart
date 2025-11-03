@@ -12,21 +12,20 @@ import 'package:tagged_todos_organizer/utils/snackbar_provider.dart';
 import 'package:tagged_todos_organizer/utils/unique_id.dart';
 import 'package:path/path.dart' as p;
 
-final todosProvider = StateNotifierProvider<TodosNotifier, List<ToDo>>((ref) {
-  final notifier = TodosNotifier(ref);
-  ref.watch(todosDbProvider).whenData(
-        (value) => notifier.setDb(value),
-      );
-  notifier.getTodos();
-  return notifier;
-});
+final todosProvider =
+    NotifierProvider<TodosNotifier, List<ToDo>>(() => TodosNotifier());
 
-class TodosNotifier extends StateNotifier<List<ToDo>> {
-  Ref ref;
-  TodosNotifier(this.ref) : super([]);
+class TodosNotifier extends Notifier<List<ToDo>> {
   IDbService? db;
   final String tableName = 'todos';
   LogNotifier get log => ref.read(logProvider.notifier);
+
+  @override
+  List<ToDo> build() {
+    ref.watch(todosDbProvider).whenData((value) => setDb(value));
+    getTodos();
+    return [];
+  }
 
   setDb(IDbService instance) {
     db = instance;
@@ -109,7 +108,7 @@ class TodosNotifier extends StateNotifier<List<ToDo>> {
     state.insert(index, item);
     state = [...state];
     if (item.done == true) {
-      await log.logTodoDoneUndone(todo: item, done: item.done);
+      log.logTodoDoneUndone(todo: item, done: item.done);
     }
   }
 
@@ -155,7 +154,7 @@ class TodosNotifier extends StateNotifier<List<ToDo>> {
     try {
       await archive.add(todo);
       await deleteTodo(todo: todo);
-      await log.logTodoArchived(todo: todo);
+      log.logTodoArchived(todo: todo);
       return true;
     } catch (e) {
       ref.read(snackbarProvider).show(e.toString());

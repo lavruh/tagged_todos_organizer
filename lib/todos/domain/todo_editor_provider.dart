@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tagged_todos_organizer/parts/domain/used_part.dart';
 import 'package:tagged_todos_organizer/todos/domain/attachments_provider.dart';
@@ -9,17 +10,18 @@ import 'package:tagged_todos_organizer/utils/presentation/widget/confirm_dialog.
 import 'package:tagged_todos_organizer/utils/snackbar_provider.dart';
 import 'package:tagged_todos_organizer/utils/unique_id.dart';
 
-final todoEditorProvider = StateNotifierProvider<TodoEditorNotifier, ToDo?>(
-    (ref) => TodoEditorNotifier(ref));
+final todoEditorProvider = NotifierProvider<TodoEditorNotifier, ToDo?>(
+    () => TodoEditorNotifier());
 
 final editIdProvider = StateProvider<bool>((ref) => false);
 
-class TodoEditorNotifier extends StateNotifier<ToDo?> {
-  TodoEditorNotifier(this.ref) : super(null);
-  Ref ref;
+class TodoEditorNotifier extends Notifier<ToDo?> {
   bool _isChanged = false;
   bool _duplicateMode = false;
   ToDo? _originalTodo;
+
+  @override
+  ToDo? build() => null;
 
   duplicateTodo(ToDo t) {
     _duplicateMode = true;

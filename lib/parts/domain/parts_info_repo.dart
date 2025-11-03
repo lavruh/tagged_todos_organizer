@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:csv/csv.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:path/path.dart' as p;
 
 import 'package:tagged_todos_organizer/parts/domain/part.dart';
@@ -58,7 +59,7 @@ class PartsInfoRepo {
     return null;
   }
 
-  initUpdatePartsFromFile() async {
+  Future<void> initUpdatePartsFromFile() async {
     final picker = await FilePicker.platform.pickFiles();
     if (picker != null && picker.paths.first != null) {
       final filePath = picker.paths.first!;
@@ -70,7 +71,7 @@ class PartsInfoRepo {
     }
   }
 
-  updatePartsFromFile({required String filePath}) async {
+  Future<void> updatePartsFromFile({required String filePath}) async {
     final path = p.normalize(filePath);
     if (p.extension(path) == '.csv') {
       final file = await File(path).readAsString();

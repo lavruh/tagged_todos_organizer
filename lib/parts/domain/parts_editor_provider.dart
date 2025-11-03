@@ -5,14 +5,12 @@ import 'package:tagged_todos_organizer/parts/domain/used_part.dart';
 import 'package:tagged_todos_organizer/todos/domain/todo_editor_provider.dart';
 
 final partsEditorProvider =
-    StateNotifierProvider<PartsEditorNotifier, List<UsedPart>>(
-        (ref) => PartsEditorNotifier(ref));
+    NotifierProvider<PartsEditorNotifier, List<UsedPart>>(
+        () => PartsEditorNotifier());
 
-class PartsEditorNotifier extends StateNotifier<List<UsedPart>> {
-  Ref ref;
-
-  PartsEditorNotifier(this.ref)
-      : super(ref.watch(todoEditorProvider)?.usedParts ?? []);
+class PartsEditorNotifier extends Notifier<List<UsedPart>> {
+  @override
+  build() => ref.watch(todoEditorProvider)?.usedParts ?? [];
 
   void updatePart(UsedPart part, int index) {
     var tmp = state;
@@ -48,13 +46,13 @@ class PartsEditorNotifier extends StateNotifier<List<UsedPart>> {
     ref.read(todoEditorProvider.notifier).updateTodoState(usedParts: state);
   }
 
-  void updatePartWithMaximoNo(
+  Future<void> updatePartWithMaximoNo(
       {required UsedPart part, required int index}) async {
     final p = await ref.read(partsInfoProvider).getPart(part.maximoNumber);
     _updateUsedPartFromDb(part, p, index);
   }
 
-  void updatePartWithCatalogNo(
+  Future<void> updatePartWithCatalogNo(
       {required UsedPart part, required int index}) async {
     final p =
         await ref.read(partsInfoProvider).getPartByCatalogNo(part.catalogNo);

@@ -43,7 +43,11 @@ void main() {
     ref.read(todoEditorProvider.notifier).setTodo(ToDo.empty());
     ref.read(partsEditorProvider.notifier).addPart();
     final part = UsedPart(
-        maximoNumber: "maximoNumber", name: "name", bin: "bin", pieces: 1);
+        maximoNumber: "maximoNumber",
+        name: "name",
+        bin: "bin",
+        pieces: 1,
+        catalogNo: '1');
     ref.read(partsEditorProvider.notifier).updatePart(part, 0);
 
     final res = ref.read(partsEditorProvider);
@@ -76,9 +80,7 @@ void main() {
     when(repo.getPart(maximoNo)).thenAnswer((_) async => Part(
         maximoNo: maximoNo,
         name: partName,
-        catalogNo: 'catalogNo',
-        modelNo: 'modelNo',
-        modelNoVessel: 'modelNoVessel',
+        catalogNo: '',
         manufacturer: 'manufacturer',
         bin: '',
         dwg: 'dwg',

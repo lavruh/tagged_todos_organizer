@@ -5,25 +5,22 @@ import 'package:tagged_todos_organizer/todos/domain/todos_provider.dart';
 import 'package:tagged_todos_organizer/utils/data/i_db_service.dart';
 import 'package:tagged_todos_organizer/utils/unique_id.dart';
 
-final tagsProvider = StateNotifierProvider<TagsNotifier, List<Tag>>((ref) {
-  var notifier = TagsNotifier(ref);
-  ref.watch(tagsDbProvider).whenData((db) {
-    notifier.setDb(db);
-  });
-  notifier.getTags();
-  return notifier;
-});
+final tagsProvider =
+    NotifierProvider<TagsNotifier, List<Tag>>(() => TagsNotifier());
 
-class TagsNotifier extends StateNotifier<List<Tag>> {
+class TagsNotifier extends Notifier<List<Tag>> {
   IDbService? db;
 
-  Ref ref;
-  TagsNotifier(this.ref) : super([]);
-  setDb(IDbService service) {
-    db = service;
+  @override
+  build() {
+    ref.watch(tagsDbProvider).whenData((db) => setDb(db));
+    getTags();
+    return [];
   }
 
-  getTags() async {
+  void setDb(IDbService service) => db = service;
+
+  Future<void> getTags() async {
     final tagsStream = db?.getAll(table: 'tags');
     if (tagsStream != null) {
       await for (final Map<String, dynamic> map in tagsStream) {
@@ -32,7 +29,7 @@ class TagsNotifier extends StateNotifier<List<Tag>> {
     }
   }
 
-  addTag({Tag? tag}) {
+  void addTag({Tag? tag}) {
     if (tag != null) {
       state = [...state, tag];
       return;
@@ -42,13 +39,13 @@ class TagsNotifier extends StateNotifier<List<Tag>> {
     }
   }
 
-  deleteTag(UniqueId id) {
+  void deleteTag(UniqueId id) {
     db?.delete(id: id.toString(), table: 'tags');
     state = [...state.where((tag) => tag.id != id)];
     ref.read(todosProvider.notifier).checkAndCleanTodos();
   }
 
-  updateTag(Tag newTag) {
+  void updateTag(Tag newTag) {
     db?.update(id: newTag.id.toString(), item: newTag.toMap(), table: 'tags');
     int index = state.indexWhere((e) => e.id == newTag.id);
     if (index > -1) {

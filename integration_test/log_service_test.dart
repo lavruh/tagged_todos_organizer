@@ -44,7 +44,7 @@ Future<void> logServiceTest(WidgetTester tester) async {
   await tester.pumpWidget(ProviderScope(
     overrides: [
       appPathProvider.overrideWith((ref) => testDirPath),
-      logProvider.overrideWith((ref) => LogNotifier(ref)),
+      logProvider.overrideWith(() => LogNotifier()),
     ],
     child: const MyApp(),
   ));
