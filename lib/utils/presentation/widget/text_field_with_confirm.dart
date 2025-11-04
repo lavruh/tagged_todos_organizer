@@ -15,6 +15,9 @@ class TextFieldWithConfirm extends StatefulWidget {
     this.suffix,
     this.border,
     this.textAlign,
+    this.textStyle,
+    this.confirmButtonLocation = Axis.horizontal,
+    this.autoSaveDuration = const Duration(seconds: 7),
   });
   final String text;
   final Function(String) onConfirm;
@@ -24,6 +27,9 @@ class TextFieldWithConfirm extends StatefulWidget {
   final Widget? suffix;
   final InputBorder? border;
   final TextAlign? textAlign;
+  final TextStyle? textStyle;
+  final Axis confirmButtonLocation;
+  final Duration autoSaveDuration;
 
   @override
   State<TextFieldWithConfirm> createState() => _TextFieldWithConfirmState();
@@ -52,45 +58,55 @@ class _TextFieldWithConfirmState extends State<TextFieldWithConfirm> {
         }
         return KeyEventResult.ignored;
       },
-      child: TextField(
-        controller: controller,
-        textAlign: widget.textAlign ?? TextAlign.start,
-        maxLines: widget.maxLines,
-        keyboardType: widget.keyboardType,
-        stylusHandwritingEnabled: true,
-        decoration: InputDecoration(
-          labelText: widget.label,
-          border: widget.border,
-          suffix: hasToSave
-              ? IconButton(
-                  onPressed: _save,
-                  icon: const Icon(Icons.check),
-                )
-              : widget.suffix,
-        ),
-        contextMenuBuilder: (context, editableTextState) {
-          final customButtons = [
-            ContextMenuButtonItem(
-                onPressed: () => _deleteString(editableTextState),
-                label: "Delete String"),
-            ContextMenuButtonItem(
-                onPressed: () => _toggleDone(editableTextState),
-                label: "Toggle done"),
-          ];
+      child: Flex(
+        mainAxisSize: MainAxisSize.min,
+        direction: widget.confirmButtonLocation,
+        children: [
+          Flexible(
+            child: TextField(
+              controller: controller,
+              textAlign: widget.textAlign ?? TextAlign.start,
+              maxLines: widget.maxLines,
+              keyboardType: widget.keyboardType,
+              stylusHandwritingEnabled: true,
+              style: widget.textStyle,
+              decoration: InputDecoration(
+                labelText: widget.label,
+                border: widget.border,
+                isDense: true,
+                suffix: widget.suffix,
+              ),
+              contextMenuBuilder: (context, editableTextState) {
+                final customButtons = [
+                  ContextMenuButtonItem(
+                      onPressed: () => _deleteString(editableTextState),
+                      label: "Delete String"),
+                  ContextMenuButtonItem(
+                      onPressed: () => _toggleDone(editableTextState),
+                      label: "Toggle done"),
+                ];
 
-          final buttons = [
-            ...customButtons,
-            ...editableTextState.contextMenuButtonItems
-          ];
-          return AdaptiveTextSelectionToolbar.buttonItems(
-              buttonItems: buttons,
-              anchors: editableTextState.contextMenuAnchors);
-        },
+                final buttons = [
+                  ...customButtons,
+                  ...editableTextState.contextMenuButtonItems
+                ];
+                return AdaptiveTextSelectionToolbar.buttonItems(
+                    buttonItems: buttons,
+                    anchors: editableTextState.contextMenuAnchors);
+              },
+            ),
+          ),
+          if (hasToSave)
+            IconButton(
+              onPressed: _save,
+              icon: const Icon(Icons.check),
+            )
+        ],
       ),
     );
   }
 
-  _save() {
+  void _save() {
     if (hasToSave) {
       widget.onConfirm(controller.text);
       autoSaveTimer?.cancel();
@@ -98,24 +114,24 @@ class _TextFieldWithConfirmState extends State<TextFieldWithConfirm> {
     }
   }
 
-  _deleteString(EditableTextState editableTextState) {
+  void _deleteString(EditableTextState editableTextState) {
     controller.value = controller.value.deleteRowUnderCursor();
     setState(() {});
   }
 
-  _toggleDone(EditableTextState editableTextState) {
+  void _toggleDone(EditableTextState editableTextState) {
     controller.value = controller.value.checkRowUnderCursor();
     setState(() {});
   }
 
-  _onEnterPressedHandler() {
+  void _onEnterPressedHandler() {
     controller.value = controller.value.customEnterHandler();
     setState(() {});
   }
 
-  _activateAutoSaveTimer() {
+  void _activateAutoSaveTimer() {
     autoSaveTimer?.cancel();
-    autoSaveTimer = Timer(Duration(seconds: 5), _save);
+    autoSaveTimer = Timer(widget.autoSaveDuration, _save);
     setState(() {});
   }
 }

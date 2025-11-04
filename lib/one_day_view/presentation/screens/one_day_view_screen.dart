@@ -20,7 +20,20 @@ class OneDayViewScreen extends ConsumerWidget {
       }
     });
 
-    final items = ref.watch(oneDayViewProvider);
+    final importantUrgent = ref.watch(oneDayViewImportantUrgentProvider);
+    final importantNotUrgent = ref.watch(oneDayViewImportantNotUrgentProvider);
+    final notImportantUrgent = ref.watch(oneDayViewNotImportantUrgentProvider);
+    final notImportantNotUrgent =
+        ref.watch(oneDayViewNotImportantNotUrgentProvider);
+
+    final height = (MediaQuery.of(context).size.height -
+            kToolbarHeight -
+            MediaQuery.of(context).viewPadding.top) *
+        0.5;
+    final width = MediaQuery.of(context).size.width * 0.5;
+
+    final headerStyle = TextStyle(
+        fontSize: 12, fontWeight: FontWeight.bold, fontStyle: FontStyle.italic);
 
     return Scaffold(
         appBar: AppBar(
@@ -41,9 +54,57 @@ class OneDayViewScreen extends ConsumerWidget {
                 icon: const Icon(Icons.add))
           ],
         ),
-        body: ListView(
-          key: Key(items.length.toString()),
-          children: items,
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Container(
+                    width: width,
+                    height: height,
+                    color: Colors.red[50],
+                    child: ListView(
+                      children: [
+                        Text("Urgent & Important", style: headerStyle),
+                        ...importantUrgent,
+                      ],
+                    ),
+                  ),
+                  Container(
+                    width: width,
+                    height: height,
+                    color: Colors.orange[50],
+                    child: ListView(children: [
+                      Text("Important & Not Urgent", style: headerStyle),
+                      ...importantNotUrgent,
+                    ]),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  Container(
+                    width: width,
+                    height: height,
+                    color: Colors.green[50],
+                    child: ListView(children: [
+                      Text("Urgent & Not Important", style: headerStyle),
+                      ...notImportantUrgent,
+                    ]),
+                  ),
+                  Container(
+                    width: width,
+                    height: height,
+                    color: Colors.grey[50],
+                    child: ListView(children: [
+                      Text("Not Urgent & Not Important", style: headerStyle),
+                      ...notImportantNotUrgent,
+                    ]),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ));
   }
 }

@@ -15,6 +15,7 @@ class ToDo {
   final DateTime? date;
   final List<UsedPart> usedParts;
   final int priority;
+  final int urgency;
 
   ToDo({
     required this.id,
@@ -28,7 +29,8 @@ class ToDo {
     required this.tags,
     this.date,
     required this.usedParts,
-    this.priority = 0,
+    this.priority = 6,
+    this.urgency = 6,
   });
 
   ToDo.empty()
@@ -43,7 +45,8 @@ class ToDo {
         tags = [],
         date = null,
         usedParts = [],
-        priority = 0;
+        priority = 6,
+        urgency = 6;
 
   ToDo copyWith({
     UniqueId? id,
@@ -58,22 +61,25 @@ class ToDo {
     DateTime? date,
     List<UsedPart>? usedParts,
     int? priority,
+    int? urgency,
     bool clearDate = false,
     bool clearParent = false,
   }) {
     return ToDo(
-        id: id ?? this.id,
-        title: title ?? this.title,
-        description: description ?? this.description,
-        done: done ?? this.done,
-        parentId: clearParent ? null : parentId ?? this.parentId,
-        children: children ?? this.children,
-        attachDirPath: attachDirPath ?? this.attachDirPath,
-        attacments: attacments ?? this.attacments,
-        tags: tags ?? this.tags,
-        date: clearDate ? null : date ?? this.date,
-        usedParts: usedParts ?? this.usedParts,
-        priority: priority ?? this.priority);
+      id: id ?? this.id,
+      title: title ?? this.title,
+      description: description ?? this.description,
+      done: done ?? this.done,
+      parentId: clearParent ? null : parentId ?? this.parentId,
+      children: children ?? this.children,
+      attachDirPath: attachDirPath ?? this.attachDirPath,
+      attacments: attacments ?? this.attacments,
+      tags: tags ?? this.tags,
+      date: clearDate ? null : date ?? this.date,
+      usedParts: usedParts ?? this.usedParts,
+      priority: priority ?? this.priority,
+      urgency: urgency ?? this.urgency,
+    );
   }
 
   Map<String, dynamic> toMap() {
@@ -90,6 +96,7 @@ class ToDo {
       'date': date?.millisecondsSinceEpoch,
       'usedParts': usedParts.map((e) => e.toMap()).toList(),
       'priority': priority,
+      'urgency': urgency,
     };
   }
 
@@ -112,7 +119,8 @@ class ToDo {
       usedParts: map['usedParts'] != null
           ? List.from(map['usedParts'].map((e) => UsedPart.fromMap(e)))
           : [],
-      priority: map['priority'] ?? 0,
+      priority: map['priority'] ?? 6,
+      urgency: map['urgency'] ?? 6,
     );
   }
 

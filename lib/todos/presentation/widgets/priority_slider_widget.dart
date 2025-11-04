@@ -6,8 +6,10 @@ class PrioritySliderWidget extends StatefulWidget {
     super.key,
     required this.initValue,
     required this.setValue,
+    this.title = "",
   });
   final int initValue;
+  final String title;
   final Function(int) setValue;
   @override
   State<PrioritySliderWidget> createState() => _PrioritySliderWidgetState();
@@ -29,28 +31,19 @@ class _PrioritySliderWidgetState extends State<PrioritySliderWidget> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('$value'),
+            Text('${widget.title}:$value'),
             Slider(
-              label: 'Priority',
+              label: widget.title,
               value: value.toDouble(),
-              onChanged: (v) => _changeValue(v.toInt()),
+              onChanged: (v) {
+                _changeValue(v.toInt());
+                _confirm();
+              },
               min: 0,
               max: 10,
               divisions: 10,
               secondaryTrackValue: 1,
             ),
-            SizedBox.square(
-              dimension: 40,
-              child: AnimatedCrossFade(
-                firstChild: Container(),
-                secondChild: IconButton(
-                    onPressed: _confirm, icon: const Icon(Icons.check)),
-                crossFadeState: widget.initValue == value
-                    ? CrossFadeState.showFirst
-                    : CrossFadeState.showSecond,
-                duration: const Duration(milliseconds: 500),
-              ),
-            )
           ]);
     }
 

@@ -11,57 +11,68 @@ import '../../notifications/domain/notifications_provider.dart';
 part 'one_day_view_provider.g.dart';
 
 @riverpod
-class OneDayView extends _$OneDayView {
-  @override
-  List<Widget> build() {
-    final permanentTodos = ref.watch(todosProvider).where((e) {
-      if (e.date == null) return false;
-      return e.date?.isSameDate(DateTime.now()) ?? false;
-    }).toList();
+List<Widget> oneDayViewImportantUrgent(Ref ref) {
+  return updateView(ref: ref, filter: (e) => e.priority < 5 && e.urgency < 5);
+}
 
-    return updateView(
-      tmpTodos: ref.watch(tmpTodoProvider),
-      permanentTodos: permanentTodos,
-    );
-  }
+@riverpod
+List<Widget> oneDayViewImportantNotUrgent(Ref ref) {
+  return updateView(ref: ref, filter: (e) => e.priority < 5 && e.urgency >= 5);
+}
 
-  List<Widget> updateView(
-      {required List<ToDo> tmpTodos, required List<ToDo> permanentTodos}) {
-    permanentTodos.sort((a, b) {
-      return a.priority.compareTo(b.priority);
-    });
+@riverpod
+List<Widget> oneDayViewNotImportantUrgent(Ref ref) {
+  return updateView(ref: ref, filter: (e) => e.priority >= 5 && e.urgency < 5);
+}
 
-    final tmpProvider = ref.read(tmpTodoProvider.notifier);
-    final todoProvider = ref.read(todosProvider.notifier);
-    final editor = ref.read(todoEditorProvider.notifier);
-    ref.read(notificationsProvider);
+@riverpod
+List<Widget> oneDayViewNotImportantNotUrgent(Ref ref) {
+  return updateView(ref: ref, filter: (e) => e.priority >= 5 && e.urgency >= 5);
+}
 
-    final tmp = [
-      ...tmpTodos.map((e) => DayViewItemWidget(
-            key: Key(e.id.id),
-            item: e,
-            onUpdate: (newValue) => tmpProvider.updateTmpTodo(newValue),
-            onRemove: tmpProvider.removeTmpTodo,
-            onCreatePermanent: (newValue, openEditor) async {
-              final item =
-                  await todoProvider.updateTodo(item: newValue, editId: true);
-              tmpProvider.removeTmpTodo(newValue);
-              editor.setTodo(item);
-              openEditor();
-            },
-            isTmpTodo: true,
-          )),
-      ...permanentTodos.map((e) => DayViewItemWidget(
-            key: Key(e.id.id),
-            item: e,
-            onUpdate: (newValue) => todoProvider.updateTodo(item: newValue),
-            onOpenInEditor: (newVal, openEditor) {
-              editor.setTodo(newVal);
-              openEditor();
-            },
-            isTmpTodo: false,
-          ))
-    ];
-    return tmp;
-  }
+List<Widget> updateView(
+    {required Ref ref, required bool Function(ToDo) filter}) {
+  final tmpTodos = ref.watch(tmpTodoProvider).where((e) => filter(e));
+  final permanentTodos = ref.watch(todosProvider).where((e) {
+    if (e.date == null) return false;
+    final isSameDate = e.date?.isSameDate(DateTime.now()) ?? false;
+    return isSameDate && filter(e);
+  }).toList();
+
+  permanentTodos.sort((a, b) {
+    return a.priority.compareTo(b.priority);
+  });
+
+  final tmpProvider = ref.read(tmpTodoProvider.notifier);
+  final todoProvider = ref.read(todosProvider.notifier);
+  final editor = ref.read(todoEditorProvider.notifier);
+  ref.read(notificationsProvider);
+
+  final tmp = [
+    ...tmpTodos.map((e) => DayViewItemWidget(
+          key: Key(e.id.id),
+          item: e,
+          onUpdate: (newValue) => tmpProvider.updateTmpTodo(newValue),
+          onRemove: tmpProvider.removeTmpTodo,
+          onCreatePermanent: (newValue, openEditor) async {
+            final item =
+                await todoProvider.updateTodo(item: newValue, editId: true);
+            tmpProvider.removeTmpTodo(newValue);
+            editor.setTodo(item);
+            openEditor();
+          },
+          isTmpTodo: true,
+        )),
+    ...permanentTodos.map((e) => DayViewItemWidget(
+          key: Key(e.id.id),
+          item: e,
+          onUpdate: (newValue) => todoProvider.updateTodo(item: newValue),
+          onOpenInEditor: (newVal, openEditor) {
+            editor.setTodo(newVal);
+            openEditor();
+          },
+          isTmpTodo: false,
+        ))
+  ];
+  return tmp;
 }
