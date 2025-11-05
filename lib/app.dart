@@ -16,66 +16,48 @@ final routerProvider = Provider<GoRouter>((ref) => _router);
 
 final GoRouter _router = GoRouter(routes: <RouteBase>[
   GoRoute(
-      path: '/',
-      builder: (context, state) {
-        return const TodosScreen();
-      },
-      routes: <RouteBase>[
-        GoRoute(
-            path: 'TodoEditorScreen',
-            builder: (context, state) {
-              return const TodoEditScreen();
-            },
-            routes: <RouteBase>[
-              GoRoute(
-                path: 'ImagesViewScreen',
-                builder: (context, state) {
-                  return const ImagesViewScreen();
-                },
-              ),
-              GoRoute(
-                path: 'AddUsedPartScreen',
-                builder: (context, state) {
-                  return const AddUsedPartScreen();
-                },
-              ),
-              GoRoute(
-                path: 'UsedPartsEditScreen',
-                builder: (context, state) {
-                  return const UsedPartsEditScreen();
-                },
-              ),
-              GoRoute(
-                path: 'PhotoAddScreen',
-                builder: (context, state) {
-                  return ImageAddScreen();
-                },
-              ),
-            ]),
-        GoRoute(
-            path: 'TagsEditScreen',
-            builder: (context, state) {
-              return const TagsEditScreen();
-            },
-            routes: <RouteBase>[
-              GoRoute(
-                path: 'TagsAliasesEditScreen',
-                builder: (context, state) {
-                  return const TagsAliasesEditScreen();
-                },
-              ),
-            ]),
-        GoRoute(
-            path: 'LogOverviewScreen',
-            builder: (context, state) {
-              return const LogOverviewScreen();
-            }),
-        GoRoute(
-            path: 'OneDayViewScreen',
-            builder: (context, state) {
-              return const OneDayViewScreen();
-            }),
-      ]),
+    path: '/',
+    builder: (context, state) => const OneDayViewScreen(),
+    routes: [
+      GoRoute(
+          path: 'TagsEditScreen',
+          builder: (context, state) => const TagsEditScreen(),
+          routes: <RouteBase>[
+            GoRoute(
+              path: 'TagsAliasesEditScreen',
+              builder: (context, state) => const TagsAliasesEditScreen(),
+            ),
+          ]),
+      GoRoute(
+          path: 'LogOverviewScreen',
+          builder: (context, state) => const LogOverviewScreen()),
+      GoRoute(
+        path: 'TodosScreen',
+        builder: (context, state) => const TodosScreen(),
+      ),
+      GoRoute(
+          path: 'TodoEditorScreen',
+          builder: (context, state) => const TodoEditScreen(),
+          routes: <RouteBase>[
+            GoRoute(
+              path: 'ImagesViewScreen',
+              builder: (context, state) => const ImagesViewScreen(),
+            ),
+            GoRoute(
+              path: 'AddUsedPartScreen',
+              builder: (context, state) => const AddUsedPartScreen(),
+            ),
+            GoRoute(
+              path: 'UsedPartsEditScreen',
+              builder: (context, state) => const UsedPartsEditScreen(),
+            ),
+            GoRoute(
+              path: 'PhotoAddScreen',
+              builder: (context, state) => ImageAddScreen(),
+            ),
+          ]),
+    ],
+  ),
 ]);
 
 class MyApp extends StatelessWidget {

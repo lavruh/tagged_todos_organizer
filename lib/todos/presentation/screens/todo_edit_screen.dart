@@ -204,6 +204,7 @@ class TodoEditScreen extends ConsumerWidget {
                 ),
                 Center(
                   child: PriorityMenuWidget(
+                      key: ValueKey(item.hashCode),
                       item: item,
                       onConfirm: (item) {
                         notifier.changeState(item);
