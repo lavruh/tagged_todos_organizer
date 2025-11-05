@@ -4,8 +4,6 @@ class Part {
   final String maximoNo;
   final String name;
   final String catalogNo;
-  final String modelNo;
-  final String modelNoVessel;
   final String manufacturer;
   final String bin;
   final String dwg;
@@ -16,8 +14,6 @@ class Part {
     required this.maximoNo,
     required this.name,
     required this.catalogNo,
-    required this.modelNo,
-    required this.modelNoVessel,
     required this.manufacturer,
     required this.bin,
     required this.dwg,
@@ -29,8 +25,6 @@ class Part {
     String? maximoNo,
     String? name,
     String? catalogNo,
-    String? modelNo,
-    String? modelNoVessel,
     String? manufacturer,
     String? bin,
     String? dwg,
@@ -41,8 +35,6 @@ class Part {
       maximoNo: maximoNo ?? this.maximoNo,
       name: name ?? this.name,
       catalogNo: catalogNo ?? this.catalogNo,
-      modelNo: modelNo ?? this.modelNo,
-      modelNoVessel: modelNoVessel ?? this.modelNoVessel,
       manufacturer: manufacturer ?? this.manufacturer,
       bin: bin ?? this.bin,
       dwg: dwg ?? this.dwg,
@@ -56,8 +48,6 @@ class Part {
       'maximoNo': maximoNo,
       'name': name,
       'catalogNo': catalogNo,
-      'modelNo': modelNo,
-      'modelNoVessel': modelNoVessel,
       'manufacturer': manufacturer,
       'bin': bin,
       'dwg': dwg,
@@ -71,8 +61,6 @@ class Part {
       maximoNo: map['maximoNo'] ?? '',
       name: map['name'] ?? '',
       catalogNo: map['catalogNo'] ?? '',
-      modelNo: map['modelNo'] ?? '',
-      modelNoVessel: map['modelNoVessel'] ?? '',
       manufacturer: map['manufacturer'] ?? '',
       bin: map['bin'] ?? '',
       dwg: map['dwg'] ?? '',
@@ -93,8 +81,6 @@ class Part {
         other.maximoNo == maximoNo &&
         other.name == name &&
         other.catalogNo == catalogNo &&
-        other.modelNo == modelNo &&
-        other.modelNoVessel == modelNoVessel &&
         other.manufacturer == manufacturer &&
         other.bin == bin &&
         other.dwg == dwg &&
@@ -107,8 +93,6 @@ class Part {
     return maximoNo.hashCode ^
         name.hashCode ^
         catalogNo.hashCode ^
-        modelNo.hashCode ^
-        modelNoVessel.hashCode ^
         manufacturer.hashCode ^
         bin.hashCode ^
         dwg.hashCode ^
@@ -118,6 +102,6 @@ class Part {
 
   @override
   String toString() {
-    return 'Part(maximoNo: $maximoNo, name: $name, catalogNo: $catalogNo, modelNo: $modelNo, modelNoVessel: $modelNoVessel, manufacturer: $manufacturer, bin: $bin, dwg: $dwg, pos: $pos, balance: $balance)';
+    return 'Part(maximoNo: $maximoNo, name: $name, catalogNo: $catalogNo,  manufacturer: $manufacturer, bin: $bin, dwg: $dwg, pos: $pos, balance: $balance)';
   }
 }

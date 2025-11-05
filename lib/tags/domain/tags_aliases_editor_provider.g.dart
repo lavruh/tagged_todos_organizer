@@ -6,21 +6,52 @@ part of 'tags_aliases_editor_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
+
+@ProviderFor(TagsAliasesEditor)
+const tagsAliasesEditorProvider = TagsAliasesEditorProvider._();
+
+final class TagsAliasesEditorProvider
+    extends $NotifierProvider<TagsAliasesEditor, TagsAlias> {
+  const TagsAliasesEditorProvider._()
+      : super(
+          from: null,
+          argument: null,
+          retry: null,
+          name: r'tagsAliasesEditorProvider',
+          isAutoDispose: true,
+          dependencies: null,
+          $allTransitiveDependencies: null,
+        );
+
+  @override
+  String debugGetCreateSourceHash() => _$tagsAliasesEditorHash();
+
+  @$internal
+  @override
+  TagsAliasesEditor create() => TagsAliasesEditor();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(TagsAlias value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<TagsAlias>(value),
+    );
+  }
+}
+
 String _$tagsAliasesEditorHash() => r'c583487a7acd0b3b4675079673741e2fd4f56ce0';
 
-/// See also [TagsAliasesEditor].
-@ProviderFor(TagsAliasesEditor)
-final tagsAliasesEditorProvider =
-    AutoDisposeNotifierProvider<TagsAliasesEditor, TagsAlias>.internal(
-  TagsAliasesEditor.new,
-  name: r'tagsAliasesEditorProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$tagsAliasesEditorHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-typedef _$TagsAliasesEditor = AutoDisposeNotifier<TagsAlias>;
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
+abstract class _$TagsAliasesEditor extends $Notifier<TagsAlias> {
+  TagsAlias build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<TagsAlias, TagsAlias>;
+    final element = ref.element as $ClassProviderElement<
+        AnyNotifier<TagsAlias, TagsAlias>, TagsAlias, Object?, Object?>;
+    element.handleValue(ref, created);
+  }
+}

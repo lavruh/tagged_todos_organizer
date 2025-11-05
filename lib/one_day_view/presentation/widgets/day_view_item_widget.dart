@@ -1,7 +1,10 @@
+import 'package:auto_size_text_field/auto_size_text_field.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tagged_todos_organizer/notifications/presentation/widget/notification_schedule_dialog.dart';
-import 'package:tagged_todos_organizer/tags/presentation/widgets/tags_preview_widget.dart';
+import 'package:tagged_todos_organizer/todos/domain/sub_todos_provider.dart';
 import 'package:tagged_todos_organizer/todos/domain/todo.dart';
 import 'package:tagged_todos_organizer/todos/presentation/widgets/priority_menu_widget.dart';
 import 'package:tagged_todos_organizer/utils/domain/todo_color_provider.dart';
@@ -26,83 +29,89 @@ class DayViewItemWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<Widget> tmpTodoActions = [
-      IconButton(
-          onPressed: () {
-            onCreatePermanent?.call(
-                item, () => context.go('/TodoEditorScreen'));
-          },
-          tooltip: "Create permanent",
-          icon: const Icon(Icons.add)),
-      IconButton(
-          onPressed: () => onRemove?.call(item),
-          tooltip: "Delete",
-          icon: const Icon(Icons.delete_forever))
+    final suffixPanel = [
+      if (isTmpTodo) ...getTmpTodoActions(context),
+      if (!isTmpTodo) ...getPermanentTodoActions(context),
+      SlidableAction(
+        onPressed: (context) => _priorityMenuDialog(context),
+        icon: Icons.priority_high,
+      ),
+      SlidableAction(
+          onPressed: (context) =>
+              showNotificationScheduleDialog(context, todo: item),
+          icon: Icons.alarm_add),
     ];
 
-    final List<Widget> permanentTodoActions = [
-      IconButton(
-          onPressed: () =>
-              onOpenInEditor?.call(item, () => context.go('/TodoEditorScreen')),
-          tooltip: "Open editor",
-          icon: const Icon(Icons.note_alt)),
-    ];
-
-    final suffixPanel = Row(mainAxisSize: MainAxisSize.min, children: [
-      if (isTmpTodo) ...tmpTodoActions,
-      if (!isTmpTodo) ...permanentTodoActions,
-        IconButton(
-            onPressed: () =>
-                showNotificationScheduleDialog(context, todo: item),
-            tooltip: "Create reminder",
-            icon: const Icon(Icons.alarm_add)),
-    ]);
-
-    return Container(
-      color: getColorForPriority(item.priority),
-      child: ListTile(
-        title: TextFormField(
-          initialValue: item.title,
-          decoration: InputDecoration(suffix: suffixPanel),
-          onFieldSubmitted: (v) => onUpdate(item.copyWith(title: v)),
-        ),
-        subtitle: Wrap(children: [
-          Row(
+    return Slidable(
+      endActionPane: ActionPane(
+        extentRatio: 0.75,
+        motion: const BehindMotion(),
+        children: suffixPanel,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(2.0),
+        child: Container(
+          color:
+              item.done ? Colors.grey[150] : getColorForPriority(item.priority),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(
-                width: 50,
-                child: isTmpTodo
-                    ? null
-                    : TextButton(
-                        onPressed: () => _priorityMenuDialog(context),
-                        child: Text(item.priority.toString()),
-                      ),
+              AutoSizeTextField(
+                controller: TextEditingController(text: item.title),
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 11,
+                    decoration: item.done ? TextDecoration.lineThrough : null),
+                minFontSize: 8,
+                decoration: InputDecoration(
+                  isDense: true,
+                  contentPadding:
+                      EdgeInsets.symmetric(vertical: 2, horizontal: 2),
+                ),
+                onSubmitted: (v) => onUpdate(item.copyWith(title: v)),
               ),
-              Flexible(
+              Padding(
+                padding: const EdgeInsets.only(left: 0),
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  padding: const EdgeInsets.symmetric(horizontal: 1),
                   decoration:
                       const BoxDecoration(border: Border(left: BorderSide())),
-                  child: TextFieldWithConfirm(
-                    text: item.description,
-                    border: InputBorder.none,
-                    onConfirm: (v) => onUpdate(item.copyWith(description: v)),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      TextFieldWithConfirm(
+                        key: ValueKey(item.description.hashCode),
+                        text: item.description,
+                        textStyle: const TextStyle(fontSize: 9),
+                        border: InputBorder.none,
+                        confirmButtonLocation: Axis.vertical,
+                        onConfirm: (v) =>
+                            onUpdate(item.copyWith(description: v)),
+                      ),
+                      Consumer(builder: (context, ref, child) {
+                        if (item.children.isEmpty) return Container();
+                        final children =
+                            ref.read(subTodosProvider(item.id)).map((e) {
+                          return DayViewItemWidget(
+                              item: e,
+                              onUpdate: onUpdate,
+                              onOpenInEditor: onOpenInEditor,
+                              onRemove: onRemove,
+                              isTmpTodo: isTmpTodo);
+                        });
+                        return Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: children.toList());
+                      })
+                    ],
                   ),
                 ),
-              )
+              ),
             ],
           ),
-          if (item.tags.isNotEmpty)
-            Row(
-              children: [
-                Container(width: 50),
-                Container(
-                    decoration:
-                        const BoxDecoration(border: Border(left: BorderSide())),
-                    child: TagsPreviewWidget(tags: item.tags)),
-              ],
-            ),
-        ]),
+        ),
       ),
     );
   }
@@ -110,7 +119,39 @@ class DayViewItemWidget extends StatelessWidget {
   void _priorityMenuDialog(BuildContext context) {
     showDialog(
       context: context,
-      builder: (context) => Dialog(child: PriorityMenuWidget(item: item)),
+      builder: (context) {
+        return Dialog(
+            child: PriorityMenuWidget(
+          item: item,
+          onConfirm: (todo) {
+            onUpdate(todo);
+          },
+        ));
+      },
     );
+  }
+
+  List<Widget> getTmpTodoActions(BuildContext context) {
+    return [
+      SlidableAction(
+          onPressed: (context) {
+            onCreatePermanent?.call(
+                item, () => context.go('/TodoEditorScreen'));
+          },
+          icon: Icons.add),
+      SlidableAction(
+          onPressed: (context) => onRemove?.call(item),
+          icon: Icons.delete_forever)
+    ];
+  }
+
+  List<Widget> getPermanentTodoActions(BuildContext context) {
+    return [
+      SlidableAction(
+        onPressed: (context) =>
+            onOpenInEditor?.call(item, () => context.go('/TodoEditorScreen')),
+        icon: Icons.note_alt,
+      ),
+    ];
   }
 }

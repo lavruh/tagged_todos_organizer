@@ -12,10 +12,6 @@ class AppBarWidget extends ConsumerWidget implements PreferredSizeWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return AppBar(
       actions: [
-        TextButton(
-          child: const Text("Plans for today"),
-          onPressed: () => context.go('/OneDayViewScreen'),
-        ),
         IconButton(
           onPressed: () => _createNewTodo(ref, context),
           icon: const Icon(Icons.add),

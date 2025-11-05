@@ -1,4 +1,4 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:tagged_todos_organizer/app.dart';
 import 'package:tagged_todos_organizer/notifications/data/i_notifications.dart';
 import 'package:tagged_todos_organizer/notifications/data/local_notifications_service.dart';

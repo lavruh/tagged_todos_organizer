@@ -53,7 +53,7 @@ Future<void> tmpTodoTest(WidgetTester tester) async {
           .overrideWith((ref) => '/home/lavruh/Documents/TaggedTodosOrganizer'),
       todosDbProvider.overrideWith((ref) => db),
       tmpTodosDbProvider.overrideWith((ref) => db),
-      logProvider.overrideWith((ref) => LogNotifier(ref)),
+      logProvider.overrideWith(() => LogNotifier()),
     ],
     child: const MyApp(),
   ));

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 
 final snackbarProvider =
     ChangeNotifierProvider<SnackbarNotifier>((ref) => SnackbarNotifier());
@@ -7,7 +7,7 @@ final snackbarProvider =
 class SnackbarNotifier extends ChangeNotifier {
   String? msg;
 
-  show(String m) {
+  void show(String m) {
     msg = m;
     notifyListeners();
   }

@@ -50,10 +50,10 @@ Future<void> tagsAliasTest(WidgetTester tester) async {
           .overrideWith((ref) => '/home/lavruh/Documents/TaggedTodosOrganizer'),
       todosDbProvider.overrideWith((ref) => db),
       tmpTodosDbProvider.overrideWith((ref) => db),
-      attachmentsProvider.overrideWith((ref) => MockAttachmentsNotifier()),
+      attachmentsProvider.overrideWith(() => MockAttachmentsNotifier()),
       tagsDbProvider.overrideWith((ref) => db),
       tagsAliasesDbProvider.overrideWith((ref) => db),
-      logProvider.overrideWith((ref) => LogNotifier(ref)),
+      logProvider.overrideWith(() => LogNotifier()),
     ],
     child: const MyApp(),
   ));

@@ -2,15 +2,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tagged_todos_organizer/utils/unique_id.dart';
 
 final filterByTagsProvider =
-StateNotifierProvider<FilterByTagsNotifier, List<UniqueId>>(
-        (ref) => FilterByTagsNotifier());
+    NotifierProvider<FilterByTagsNotifier, List<UniqueId>>(
+        () => FilterByTagsNotifier());
 
-class FilterByTagsNotifier extends StateNotifier<List<UniqueId>> {
-  FilterByTagsNotifier() : super([]);
-  addFilter(UniqueId id) => state = [...state, id];
-  removeFilter(UniqueId id) =>
+class FilterByTagsNotifier extends Notifier<List<UniqueId>> {
+  @override
+  List<UniqueId> build() => [];
+
+  void addFilter(UniqueId id) => state = [...state, id];
+  void removeFilter(UniqueId id) =>
       state = [...state.where((element) => element != id)];
-  toggleFilter(UniqueId id) {
+  void toggleFilter(UniqueId id) {
     if (state.contains(id)) {
       removeFilter(id);
     } else {
@@ -22,6 +24,6 @@ class FilterByTagsNotifier extends StateNotifier<List<UniqueId>> {
     return state.contains(id);
   }
 
-  clearFilter() => state = [];
+  void clearFilter() => state = [];
   List<UniqueId> getFilters() => state;
 }

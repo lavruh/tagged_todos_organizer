@@ -10,7 +10,7 @@ import 'package:tagged_todos_organizer/todos/domain/todos_provider.dart';
 import 'package:tagged_todos_organizer/todos/presentation/screens/todo_select_screen.dart';
 import 'package:tagged_todos_organizer/todos/presentation/widgets/attachemets_preview_widget.dart';
 import 'package:tagged_todos_organizer/todos/presentation/widgets/postpone_menu.dart';
-import 'package:tagged_todos_organizer/todos/presentation/widgets/priority_slider_widget.dart';
+import 'package:tagged_todos_organizer/todos/presentation/widgets/priority_menu_widget.dart';
 import 'package:tagged_todos_organizer/todos/presentation/widgets/sub_todos_overview_widget.dart';
 import 'package:tagged_todos_organizer/utils/presentation/widget/confirm_dialog.dart';
 import 'package:tagged_todos_organizer/utils/presentation/widget/input_dialog.dart';
@@ -202,11 +202,13 @@ class TodoEditScreen extends ConsumerWidget {
                     ),
                   ],
                 ),
-                PrioritySliderWidget(
-                  initValue: item.priority,
-                  setValue: (val) {
-                    notifier.changeState(item.copyWith(priority: val.round()));
-                  },
+                Center(
+                  child: PriorityMenuWidget(
+                      key: ValueKey(item.hashCode),
+                      item: item,
+                      onConfirm: (item) {
+                        notifier.changeState(item);
+                      }),
                 ),
                 TagsWidget(
                   key: Key(item.tags.hashCode.toString()),

@@ -30,7 +30,6 @@ class TodosScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: const AppBarWidget(),
-      drawer: const MenuWidget(),
       endDrawer: const FilterMenuWidget(),
       body: Column(
         children: [

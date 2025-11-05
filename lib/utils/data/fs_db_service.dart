@@ -35,24 +35,16 @@ class FsDbService implements IDbService {
     final dir = Directory(await findPath(path: table));
     await for (final item in dir.list(recursive: false)) {
       if (item is Directory) {
-        Map<String, dynamic>? data;
-        List<String> attachements = [];
-        for (final file in item.listSync()) {
-          if (file is File) {
-            if (p.basename(file.path) == 'data.json') {
-              data = fromJson(await file.readAsString());
-            } else {
-              attachements.add(file.path);
-            }
-          }
+        final jsonFile = File(p.join(item.path, "data.json"));
+        if (jsonFile.existsSync() == false) {
+          continue;
         }
-        if (data != null) {
-          final String relativePath =
-              p.relative(item.path, from: getAppFolderPath());
-          data['attachDirPath'] = relativePath;
-          data['attacments'] = attachements;
-          yield data;
-        }
+        final data = fromJson(await jsonFile.readAsString());
+
+        final String relativePath =
+            p.relative(item.path, from: getAppFolderPath());
+        data['attachDirPath'] = relativePath;
+        yield data;
       }
     }
   }
@@ -65,6 +57,7 @@ class FsDbService implements IDbService {
       throw FsDbException('Can not open db path [$dbPath], $e');
     }
   }
+
   ///will update file in existing folder or create new folder and item
   ///if id different from id in map will rename folder using id from map
   @override

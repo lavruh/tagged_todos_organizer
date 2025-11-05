@@ -4,12 +4,14 @@ import 'package:tagged_todos_organizer/parts/domain/part.dart';
 
 class UsedPart {
   final String maximoNumber;
+  final String catalogNo;
   final String name;
   final String bin;
   final int pieces;
 
   UsedPart({
     required this.maximoNumber,
+    required this.catalogNo,
     required this.name,
     required this.bin,
     required this.pieces,
@@ -17,12 +19,14 @@ class UsedPart {
 
   UsedPart.fromPart({required Part part, int qty = 0})
       : maximoNumber = part.maximoNo,
+        catalogNo = part.catalogNo,
         name = part.name,
         bin = part.bin,
         pieces = qty;
 
   UsedPart.empty({
     this.maximoNumber = '',
+    this.catalogNo = '',
     this.name = '',
     this.bin = '',
     this.pieces = 0,
@@ -31,6 +35,7 @@ class UsedPart {
   Map<String, dynamic> toMap() {
     return {
       'maximoNumber': maximoNumber,
+      'catalogNo': catalogNo,
       'name': name,
       'bin': bin,
       'pieces': pieces,
@@ -40,6 +45,7 @@ class UsedPart {
   factory UsedPart.fromMap(Map<String, dynamic> map) {
     return UsedPart(
       maximoNumber: map['maximoNumber'] ?? '',
+      catalogNo: map['catalogNo'] ?? '',
       name: map['name'] ?? '',
       bin: map['bin'] ?? '',
       pieces: map['pieces'] ?? 0,
@@ -53,12 +59,14 @@ class UsedPart {
 
   UsedPart copyWith({
     String? maximoNumber,
+    String? catalogNo,
     String? name,
     String? bin,
     int? pieces,
   }) {
     return UsedPart(
       maximoNumber: maximoNumber ?? this.maximoNumber,
+      catalogNo: catalogNo ?? this.catalogNo,
       name: name ?? this.name,
       bin: bin ?? this.bin,
       pieces: pieces ?? this.pieces,
@@ -76,6 +84,7 @@ class UsedPart {
 
     return other is UsedPart &&
         other.maximoNumber == maximoNumber &&
+        other.catalogNo == catalogNo &&
         other.name == name &&
         other.bin == bin &&
         other.pieces == pieces;
@@ -84,6 +93,7 @@ class UsedPart {
   @override
   int get hashCode {
     return maximoNumber.hashCode ^
+        catalogNo.hashCode ^
         name.hashCode ^
         bin.hashCode ^
         pieces.hashCode;

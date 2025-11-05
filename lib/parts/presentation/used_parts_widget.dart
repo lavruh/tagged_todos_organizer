@@ -22,24 +22,29 @@ class UsedPartsWidget extends ConsumerWidget {
               IconButton(
                   onPressed: () => _addPart(ref), icon: const Icon(Icons.add)),
               IconButton(
+                  onPressed: () =>
+                      context.go('/TodoEditorScreen/UsedPartsEditScreen'),
+                  icon: const Icon(Icons.table_chart_outlined)),
+              IconButton(
                   onPressed: () => _addPartFromPhotoNumber(ref, context),
                   icon: const Icon(Icons.add_a_photo))
             ],
           ),
           children: [
-            ...items.map((e) => UsedPartWidget(
-                  item: e,
-                  update: (newVal) => ref
-                      .read(partsEditorProvider.notifier)
-                      .updatePart(newVal, items.indexOf(e)),
-                  updateMaximoNo: (part) => ref
-                      .read(partsEditorProvider.notifier)
-                      .updatePartWithMaximoNo(
-                          part: part, index: items.indexOf(e)),
-                  delete: () => ref
-                      .read(partsEditorProvider.notifier)
-                      .delete(index: items.indexOf(e)),
-                ))
+            ...items.map((e) {
+              final idx = items.indexOf(e);
+              if (idx == -1) return Container();
+              final state = ref.read(partsEditorProvider.notifier);
+              return UsedPartWidget(
+                item: e,
+                update: (v) => state.updatePart(v, idx),
+                updateMaximoNo: (part) =>
+                    state.updatePartWithMaximoNo(part: part, index: idx),
+                updateCatalogNo: (p) =>
+                    state.updatePartWithCatalogNo(part: p, index: idx),
+                delete: () => state.delete(index: idx),
+              );
+            })
           ]),
     );
   }
@@ -48,7 +53,7 @@ class UsedPartsWidget extends ConsumerWidget {
     ref.read(partsEditorProvider.notifier).addPart();
   }
 
-  _addPartFromPhotoNumber(WidgetRef ref, BuildContext context) async {
+  Future<void> _addPartFromPhotoNumber(WidgetRef ref, BuildContext context) async {
     context.go('/TodoEditorScreen/AddUsedPartScreen');
   }
 }

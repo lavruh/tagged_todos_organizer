@@ -8,14 +8,15 @@ import 'package:tagged_todos_organizer/utils/app_path_provider.dart';
 import 'package:tagged_todos_organizer/utils/snackbar_provider.dart';
 
 final attachmentsProvider =
-    StateNotifierProvider<AttachmentsNotifier, List<String>>(
-        (ref) => AttachmentsNotifier(ref));
+    NotifierProvider<AttachmentsNotifier, List<String>>(
+        () => AttachmentsNotifier());
 
-class AttachmentsNotifier extends StateNotifier<List<String>> {
-  AttachmentsNotifier(this.ref) : super([]);
+class AttachmentsNotifier extends Notifier<List<String>> {
   String? path;
   late Directory root;
-  Ref ref;
+
+  @override
+  List<String> build() => [];
 
   bool get isReady => path != null;
 
@@ -49,9 +50,9 @@ class AttachmentsNotifier extends StateNotifier<List<String>> {
     return null;
   }
 
-  resetState() => path = null;
+  void resetState() => path = null;
 
-  setPath({required String attachmentsFolder}) {
+  void setPath({required String attachmentsFolder}) {
     if (attachmentsFolder.isEmpty ||
         !Directory(attachmentsFolder).existsSync()) {
       throw Exception('Directory [$attachmentsFolder] does not exist');
@@ -59,7 +60,7 @@ class AttachmentsNotifier extends StateNotifier<List<String>> {
     path = attachmentsFolder;
   }
 
-  updateAttachments() {
+  void updateAttachments() {
     if (path != null) {
       final dir = Directory(path!);
       List<String> files = [];
