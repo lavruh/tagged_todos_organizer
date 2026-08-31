@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tagged_todos_organizer/tags/domain/tags_aliases_provider.dart';
 import 'package:tagged_todos_organizer/tags/domain/tags_from_string_provider.dart';
@@ -6,7 +6,6 @@ import 'package:tagged_todos_organizer/tags/presentation/widgets/tags_row_widget
 import 'package:tagged_todos_organizer/todos/domain/filtered_todos_provider.dart';
 import 'package:tagged_todos_organizer/todos/presentation/widgets/appbar_widget.dart';
 import 'package:tagged_todos_organizer/todos/presentation/widgets/filter_menu_widget.dart';
-import 'package:tagged_todos_organizer/todos/presentation/widgets/menu_widget.dart';
 import 'package:tagged_todos_organizer/todos/presentation/widgets/todo_tree_widget.dart';
 import 'package:tagged_todos_organizer/utils/presentation/widget/search_panel_widget.dart';
 import 'package:tagged_todos_organizer/utils/snackbar_provider.dart';

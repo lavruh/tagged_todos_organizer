@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:path/path.dart' as p;
@@ -29,7 +29,7 @@ class MenuWidget extends ConsumerWidget {
             title: const Text('Change root folder'),
             subtitle: Text(ref.watch(appPathProvider)),
             onTap: () async {
-              final dirPath = await FilePicker.platform.getDirectoryPath();
+              final dirPath = await FilePicker.getDirectoryPath();
               if (dirPath != null) {
                 final prefs = await SharedPreferences.getInstance();
                 prefs.setString('appPath', dirPath);

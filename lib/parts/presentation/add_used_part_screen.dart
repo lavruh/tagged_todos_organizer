@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:photo_data_picker/domain/data_picker_state.dart';
@@ -32,7 +32,7 @@ class _CameraDataPickerScreenState extends ConsumerState<AddUsedPartScreen> {
     state.addListener(update);
   }
 
-  updateMaximoNumber(String v) async {
+  Future<void> updateMaximoNumber(String v) async {
     maximoInputController.text = v;
     part = await ref.read(partsInfoProvider).getPart(v);
     update();
@@ -45,7 +45,7 @@ class _CameraDataPickerScreenState extends ConsumerState<AddUsedPartScreen> {
     super.dispose();
   }
 
-  update() => setState(() {});
+  void update() => setState(() {});
 
   @override
   Widget build(BuildContext context) {

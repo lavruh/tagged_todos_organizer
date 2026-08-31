@@ -1,6 +1,6 @@
 import 'package:auto_size_text_field/auto_size_text_field.dart';
 import 'package:data_table_2/data_table_2.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tagged_todos_organizer/parts/domain/parts_editor_provider.dart';
 import 'package:tagged_todos_organizer/parts/domain/used_part.dart';

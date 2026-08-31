@@ -10,11 +10,11 @@ part of 'tags_aliases_provider.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(TagsAliases)
-const tagsAliasesProvider = TagsAliasesProvider._();
+final tagsAliasesProvider = TagsAliasesProvider._();
 
 final class TagsAliasesProvider
     extends $NotifierProvider<TagsAliases, Map<String, TagsAlias>> {
-  const TagsAliasesProvider._()
+  TagsAliasesProvider._()
       : super(
           from: null,
           argument: null,
@@ -47,8 +47,7 @@ abstract class _$TagsAliases extends $Notifier<Map<String, TagsAlias>> {
   Map<String, TagsAlias> build();
   @$mustCallSuper
   @override
-  void runBuild() {
-    final created = build();
+  WhenComplete runBuild() {
     final ref =
         this.ref as $Ref<Map<String, TagsAlias>, Map<String, TagsAlias>>;
     final element = ref.element as $ClassProviderElement<
@@ -56,6 +55,6 @@ abstract class _$TagsAliases extends $Notifier<Map<String, TagsAlias>> {
         Map<String, TagsAlias>,
         Object?,
         Object?>;
-    element.handleValue(ref, created);
+    return element.handleCreate(ref, build);
   }
 }

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tagged_todos_organizer/tags/domain/tag_editor_provider.dart';
 import 'package:tagged_todos_organizer/tags/domain/tags_provider.dart';
@@ -47,7 +47,7 @@ class TagEditWidget extends ConsumerWidget {
         duration: const Duration(milliseconds: 250));
   }
 
-  _showColorPicker(BuildContext context, WidgetRef ref) {
+  void _showColorPicker(BuildContext context, WidgetRef ref) {
     final editor = ref.watch(tagEditorProvider);
     showDialog(
         context: context,
@@ -61,7 +61,7 @@ class TagEditWidget extends ConsumerWidget {
             ));
   }
 
-  _confirmUpdate(WidgetRef ref, GlobalKey<FormState> formKey) {
+  void _confirmUpdate(WidgetRef ref, GlobalKey<FormState> formKey) {
     final editor = ref.watch(tagEditorProvider);
     final tags = ref.read(tagsProvider.notifier);
     if (formKey.currentState!.validate()) {
@@ -70,7 +70,7 @@ class TagEditWidget extends ConsumerWidget {
     }
   }
 
-  _updateText(String val, WidgetRef ref) {
+  void _updateText(String val, WidgetRef ref) {
     final editor = ref.watch(tagEditorProvider);
     {
       final newItem = editor!.item.copyWith(name: val);

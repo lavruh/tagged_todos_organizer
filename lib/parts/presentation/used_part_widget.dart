@@ -1,5 +1,5 @@
 import 'package:auto_size_text_field/auto_size_text_field.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:tagged_todos_organizer/parts/domain/used_part.dart';
 

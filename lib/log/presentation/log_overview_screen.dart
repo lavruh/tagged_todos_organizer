@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tagged_todos_organizer/log/domain/filtered_log_provider.dart';
 import 'package:tagged_todos_organizer/log/presentation/widgets/log_entry_widget.dart';

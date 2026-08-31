@@ -48,7 +48,7 @@ class LocalNotificationsService implements INotifications {
     );
 
     await flutterLocalNotificationsPlugin.initialize(
-      initializationSettings,
+      settings: initializationSettings,
       onDidReceiveNotificationResponse: selectNotificationStream.add,
       onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
     );
@@ -81,11 +81,11 @@ class LocalNotificationsService implements INotifications {
       "time": notification.time.millisecondsSinceEpoch.toString()
     };
     await flutterLocalNotificationsPlugin.zonedSchedule(
-        id,
-        notification.title,
-        notification.message,
-        _mapDateTime(notification.time),
-        notificationDetails,
+        id: id,
+        title: notification.title,
+        body: notification.message,
+        scheduledDate: _mapDateTime(notification.time),
+        notificationDetails: notificationDetails,
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
         matchDateTimeComponents: DateTimeComponents.time,
         payload: jsonEncode(payload));
@@ -106,7 +106,10 @@ class LocalNotificationsService implements INotifications {
     if (Platform.isWindows) {
       return;
     }
-    final String timeZoneName = await FlutterTimezone.getLocalTimezone();
+
+    final String timeZoneName =
+        (await FlutterTimezone.getLocalTimezone()).identifier;
+
     tz.setLocalLocation(tz.getLocation(timeZoneName));
   }
 
@@ -144,7 +147,7 @@ class LocalNotificationsService implements INotifications {
 
   @override
   Future<void> cancelNotification({required int id}) async {
-    await flutterLocalNotificationsPlugin.cancel(id);
+    await flutterLocalNotificationsPlugin.cancel(id: id);
   }
 
   @override

@@ -77,9 +77,10 @@ class AttachmentsNotifier extends Notifier<List<String>> {
 
   void attachFile() async {
     if (path != null) {
-      final picker = await FilePicker.platform.pickFiles();
-      if (picker != null && picker.paths.first != null) {
-        final filePath = picker.paths.first!;
+      final picker = await FilePicker.pickFiles();
+      final filePath = picker.first.path;
+
+      if (filePath != null) {
         final name = p.basename(filePath);
         final newPath = p.join(path!, name);
         await File(filePath).copy(newPath);
