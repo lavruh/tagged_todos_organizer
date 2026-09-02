@@ -32,6 +32,19 @@ class UsedPart {
     this.pieces = 0,
   });
 
+  Part toPart() {
+    return Part(
+      maximoNo: maximoNumber,
+      name: name,
+      catalogNo: catalogNo,
+      manufacturer: '',
+      bin: bin,
+      dwg: '',
+      pos: '',
+      balance: '',
+    );
+  }
+
   Map<String, dynamic> toMap() {
     return {
       'maximoNumber': maximoNumber,

@@ -36,9 +36,21 @@ class PartsEditorNotifier extends Notifier<List<UsedPart>> {
   }
 
   void addUsedPart(UsedPart part) {
-    ref.read(todoEditorProvider.notifier).updateTodoState(
-      usedParts: [...state, part],
-    );
+    final index = state.indexWhere((p) => p.maximoNumber == part.maximoNumber);
+    if (index != -1) {
+      updatePart(part, index);
+    } else {
+      ref.read(todoEditorProvider.notifier).updateTodoState(
+            usedParts: [...state, part],
+          );
+    }
+  }
+
+  UsedPart? getPartByMaximo(String maximo) {
+    for (final p in state) {
+      if (p.maximoNumber == maximo) return p;
+    }
+    return null;
   }
 
   void delete({required int index}) {
