@@ -26,8 +26,8 @@ class PartsInfoRepo {
     "CATALOG_NO": 3,
     "MANUFACTURER": 2,
     "BIN": 6,
-    "DWG": 16,
-    "POS": 17,
+    "DWG": 20,
+    "POS": 21,
     "BALANCE": 7,
   };
   final _table = 'parts';

@@ -388,10 +388,10 @@ packages:
     dependency: "direct main"
     description:
       name: file_picker
-      sha256: b7acb5d123cb398f6b4a8a38e43777545254f8fc1fabef3ee11cbbb56aece9c8
+      sha256: "3c5191df3efd7445ab7c6bc4653fe10a2bc907e2f826244eea7f5622724161f5"
       url: "https://pub.dev"
     source: hosted
-    version: "12.1.2"
+    version: "12.1.3"
   file_picker_darwin:
     dependency: transitive
     description:
@@ -711,10 +711,10 @@ packages:
     dependency: transitive
     description:
       name: jni_flutter
-      sha256: "7b717011ea40d04fd47c2731d3d1d36eb99eba3435c2753d62489e8c3c9991d5"
+      sha256: b2310cdd4c18c65c081ab141a41efa94aa26c65431803703ece51996f174f351
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.2"
+    version: "1.0.3"
   jni_util:
     dependency: transitive
     description:
@@ -1009,10 +1009,10 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: "323ffdeb3fa55be52f4db73ff9f78480e5bd0b1a"
+      resolved-ref: "2a732df3f52fddd9a5360e5f1afceec214f0f83f"
       url: "https://github.com/lavruh/photo_data_picker.git"
     source: git
-    version: "1.3.5+1"
+    version: "1.3.8+1"
   platform:
     dependency: transitive
     description:
