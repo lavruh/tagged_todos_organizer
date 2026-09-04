@@ -16,6 +16,12 @@ class LogEntryWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return ListTile(
+      onTap: () {
+        if (entry.action == LoggableAction.archived && entry.relatedId != null) {
+          context.go('/LogOverviewScreen/LogPreviewScreen',
+              extra: entry.relatedId);
+        }
+      },
       title: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.stretch,
