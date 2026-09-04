@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:csv/csv.dart';
 import 'package:tagged_todos_organizer/parts/domain/part.dart';
 import 'package:tagged_todos_organizer/parts/domain/parts_info_repo.dart';
 import 'package:tagged_todos_organizer/parts/domain/used_part.dart';
@@ -76,5 +77,15 @@ class PartsEditorNotifier extends Notifier<List<UsedPart>> {
         ? part
         : UsedPart.fromPart(part: partFromDb, qty: part.pieces);
     updatePart(item, index);
+  }
+
+  String exportUsedPartsListToCsv() {
+    final List<List<dynamic>> data = [
+      ['Maximo', 'PartNo', 'Name', 'Bin', 'Qty']
+    ];
+    for (final p in state) {
+      data.add([p.maximoNumber, p.catalogNo, p.name, p.bin, p.pieces]);
+    }
+    return const CsvEncoder(fieldDelimiter: ';').convert(data);
   }
 }
