@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:tagged_todos_organizer/tags/domain/tag.dart';
 import 'package:tagged_todos_organizer/tags/presentation/widgets/tag_select_widget.dart';
 import 'package:tagged_todos_organizer/tags/presentation/widgets/tags_preview_widget.dart';
 import 'package:tagged_todos_organizer/utils/unique_id.dart';
@@ -73,7 +74,7 @@ class _TagsWidgetState extends State<TagsWidget> {
     );
   }
 
-  _toggleTagSelection(tag) {
+  void _toggleTagSelection(Tag tag) {
     if (!tags.contains(tag.id)) {
       tags.add(tag.id);
     } else {
@@ -86,7 +87,7 @@ class _TagsWidgetState extends State<TagsWidget> {
     widget.updateTags(tags);
   }
 
-  void _removeTappedTag(tag) => setState(() {
+  void _removeTappedTag(Tag tag) => setState(() {
         tags.remove(tag.id);
         widget.updateTags(tags);
       });

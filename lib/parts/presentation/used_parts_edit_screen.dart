@@ -1,6 +1,9 @@
+import 'dart:convert';
+import 'dart:typed_data';
 import 'package:auto_size_text_field/auto_size_text_field.dart';
 import 'package:data_table_2/data_table_2.dart';
-import 'package:flutter/material.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tagged_todos_organizer/parts/domain/parts_editor_provider.dart';
 import 'package:tagged_todos_organizer/parts/domain/used_part.dart';
@@ -22,6 +25,9 @@ class _UsedPartsEditScreenState extends ConsumerState<UsedPartsEditScreen> {
     return Scaffold(
       appBar: AppBar(
         actions: [
+          IconButton(
+              onPressed: () => _exportToFile(context),
+              icon: const Icon(Icons.download)),
           IconButton(
               onPressed: () => ref.read(partsEditorProvider.notifier).addPart(),
               icon: const Icon(Icons.add)),
@@ -113,5 +119,24 @@ class _UsedPartsEditScreenState extends ConsumerState<UsedPartsEditScreen> {
         label: Expanded(child: Text('Qty', style: headerStyle)),
       ),
     ];
+  }
+
+  Future<void> _exportToFile(BuildContext context) async {
+    final csvData =
+        ref.read(partsEditorProvider.notifier).exportUsedPartsListToCsv();
+
+    final result = await FilePicker.saveFile(
+      dialogTitle: 'Please select an output file:',
+      fileName: 'used_parts.csv',
+      bytes: Uint8List.fromList(utf8.encode(csvData)),
+      mimeType: 'text/csv',
+    );
+
+    if (result != null) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('File exported successfully')));
+      }
+    }
   }
 }

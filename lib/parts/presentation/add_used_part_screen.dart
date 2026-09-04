@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:photo_data_picker/domain/data_picker_state.dart';
@@ -25,17 +25,28 @@ class _CameraDataPickerScreenState extends ConsumerState<AddUsedPartScreen> {
   @override
   void initState() {
     super.initState();
-    state = DataPickerState(
-      onReadingChanged: updateMaximoNumber,
-    );
+    state = DataPickerState(onReadingChanged: updateMaximoNumber);
     maximoInputController.text = state.reading;
     state.addListener(update);
+    state.startContinuesRecognizing();
   }
 
-  updateMaximoNumber(String v) async {
+  Future<void> updateMaximoNumber(String v) async {
     maximoInputController.text = v;
-    part = await ref.read(partsInfoProvider).getPart(v);
+    final existing = ref.read(partsEditorProvider.notifier).getPartByMaximo(v);
+    if (existing != null) {
+      qtyInputController.text = existing.pieces.toString();
+      part = existing.toPart();
+    } else {
+      part = await ref.read(partsInfoProvider).getPart(v);
+      qtyInputController.text = '0';
+    }
     update();
+  }
+
+  void _updateQty(int delta) {
+    int current = int.tryParse(qtyInputController.text) ?? 0;
+    qtyInputController.text = (current + delta).clamp(0, 999999).toString();
   }
 
   @override
@@ -45,7 +56,7 @@ class _CameraDataPickerScreenState extends ConsumerState<AddUsedPartScreen> {
     super.dispose();
   }
 
-  update() => setState(() {});
+  void update() => setState(() {});
 
   @override
   Widget build(BuildContext context) {
@@ -79,10 +90,28 @@ class _CameraDataPickerScreenState extends ConsumerState<AddUsedPartScreen> {
                           label: 'Maximo Number'),
                     ),
                     Flexible(
-                      child: _Input(
-                          textController: qtyInputController,
-                          onConfirmPressed: returnPart,
-                          label: "Quantity used:"),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: _Input(
+                                textController: qtyInputController,
+                                onConfirmPressed: returnPart,
+                                label: "Quantity used:"),
+                          ),
+                          Column(
+                            children: [
+                              IconButton(
+                                  padding: EdgeInsets.zero,
+                                  onPressed: () => _updateQty(1),
+                                  icon: const Icon(Icons.arrow_drop_up)),
+                              IconButton(
+                                  padding: EdgeInsets.zero,
+                                  onPressed: () => _updateQty(-1),
+                                  icon: const Icon(Icons.arrow_drop_down)),
+                            ],
+                          )
+                        ],
+                      ),
                     ),
                   ],
                 ),

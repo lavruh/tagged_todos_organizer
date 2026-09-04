@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -16,6 +16,12 @@ class LogEntryWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return ListTile(
+      onTap: () {
+        if (entry.action == LoggableAction.archived && entry.relatedId != null) {
+          context.go('/LogOverviewScreen/LogPreviewScreen',
+              extra: entry.relatedId);
+        }
+      },
       title: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.stretch,

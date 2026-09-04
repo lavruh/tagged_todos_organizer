@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:tagged_todos_organizer/tags/domain/tags_alias.dart';
 import 'package:tagged_todos_organizer/tags/presentation/widgets/tags_preview_widget.dart';
 

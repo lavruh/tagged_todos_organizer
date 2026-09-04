@@ -26,8 +26,8 @@ class PartsInfoRepo {
     "CATALOG_NO": 3,
     "MANUFACTURER": 2,
     "BIN": 6,
-    "DWG": 16,
-    "POS": 17,
+    "DWG": 20,
+    "POS": 21,
     "BALANCE": 7,
   };
   final _table = 'parts';
@@ -60,11 +60,11 @@ class PartsInfoRepo {
   }
 
   Future<void> initUpdatePartsFromFile() async {
-    final picker = await FilePicker.platform.pickFiles();
-    if (picker != null && picker.paths.first != null) {
-      final filePath = picker.paths.first!;
+    final picker = await FilePicker.pickFiles();
+    final selectedFilePath = picker.first.path;
+    if (selectedFilePath != null) {
       try {
-        await updatePartsFromFile(filePath: filePath);
+        await updatePartsFromFile(filePath: selectedFilePath);
       } on PartsInfoRepoException {
         rethrow;
       }
@@ -83,12 +83,10 @@ class PartsInfoRepo {
 
   Future<void> updatePartsFromCsvString(String file) async {
     ref.read(partsInfoRepoUpdateProgressProvider.notifier).state = 0;
-    final data = const CsvToListConverter().convert(
-      file,
+    final data = const CsvDecoder(
       fieldDelimiter: ';',
-      textDelimiter: '"',
-      shouldParseNumbers: false,
-    );
+      quoteCharacter: '"',
+    ).convert(file);
     final totalRows = data.length;
     if (totalRows < 2) throw PartsInfoRepoException("Wrong data format");
     for (int i = 0; i < totalRows; i++) {

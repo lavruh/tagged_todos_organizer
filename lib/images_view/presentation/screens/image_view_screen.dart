@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
@@ -68,10 +68,10 @@ class ImagesViewScreen extends ConsumerWidget {
     );
   }
 
-  _openPrevImage(ImagesViewNotifier state) =>
+  Future<void> _openPrevImage(ImagesViewNotifier state) =>
       state.openNextImage(increaseIndex: false);
 
-  _openNextImage(ImagesViewNotifier state) =>
+  Future<void> _openNextImage(ImagesViewNotifier state) =>
       state.openNextImage(increaseIndex: true);
 
   Widget _swipeHandler(
@@ -92,7 +92,7 @@ class ImagesViewScreen extends ConsumerWidget {
     }, child: child);
   }
 
-  _back(BuildContext context, ImagesViewNotifier state) async {
+  Future<void> _back(BuildContext context, ImagesViewNotifier state) async {
     final fl = await state.saveImageRequest();
     if (fl && context.mounted) state.close();
   }

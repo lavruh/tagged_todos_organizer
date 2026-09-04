@@ -10,12 +10,12 @@ part of 'one_day_view_provider.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(oneDayViewImportantUrgent)
-const oneDayViewImportantUrgentProvider = OneDayViewImportantUrgentProvider._();
+final oneDayViewImportantUrgentProvider = OneDayViewImportantUrgentProvider._();
 
 final class OneDayViewImportantUrgentProvider
     extends $FunctionalProvider<List<Widget>, List<Widget>, List<Widget>>
     with $Provider<List<Widget>> {
-  const OneDayViewImportantUrgentProvider._()
+  OneDayViewImportantUrgentProvider._()
       : super(
           from: null,
           argument: null,
@@ -52,13 +52,13 @@ String _$oneDayViewImportantUrgentHash() =>
     r'6bd41618323475511e1e29c6fec91dd7d1f0af40';
 
 @ProviderFor(oneDayViewImportantNotUrgent)
-const oneDayViewImportantNotUrgentProvider =
+final oneDayViewImportantNotUrgentProvider =
     OneDayViewImportantNotUrgentProvider._();
 
 final class OneDayViewImportantNotUrgentProvider
     extends $FunctionalProvider<List<Widget>, List<Widget>, List<Widget>>
     with $Provider<List<Widget>> {
-  const OneDayViewImportantNotUrgentProvider._()
+  OneDayViewImportantNotUrgentProvider._()
       : super(
           from: null,
           argument: null,
@@ -95,13 +95,13 @@ String _$oneDayViewImportantNotUrgentHash() =>
     r'b04b289cea1e53af16603c6f9c2eb933e7367800';
 
 @ProviderFor(oneDayViewNotImportantUrgent)
-const oneDayViewNotImportantUrgentProvider =
+final oneDayViewNotImportantUrgentProvider =
     OneDayViewNotImportantUrgentProvider._();
 
 final class OneDayViewNotImportantUrgentProvider
     extends $FunctionalProvider<List<Widget>, List<Widget>, List<Widget>>
     with $Provider<List<Widget>> {
-  const OneDayViewNotImportantUrgentProvider._()
+  OneDayViewNotImportantUrgentProvider._()
       : super(
           from: null,
           argument: null,
@@ -138,13 +138,13 @@ String _$oneDayViewNotImportantUrgentHash() =>
     r'd112f175209aa2ecba2bb379f1433fcaebc860a1';
 
 @ProviderFor(oneDayViewNotImportantNotUrgent)
-const oneDayViewNotImportantNotUrgentProvider =
+final oneDayViewNotImportantNotUrgentProvider =
     OneDayViewNotImportantNotUrgentProvider._();
 
 final class OneDayViewNotImportantNotUrgentProvider
     extends $FunctionalProvider<List<Widget>, List<Widget>, List<Widget>>
     with $Provider<List<Widget>> {
-  const OneDayViewNotImportantNotUrgentProvider._()
+  OneDayViewNotImportantNotUrgentProvider._()
       : super(
           from: null,
           argument: null,
