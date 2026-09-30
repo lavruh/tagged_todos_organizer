@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart' as flutter_material;
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -75,6 +76,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
+      localizationsDelegates: const [
+        DefaultMaterialLocalizations.delegate,
+        DefaultWidgetsLocalizations.delegate,
+        flutter_material.DefaultMaterialLocalizations.delegate,
+        flutter_material.DefaultWidgetsLocalizations.delegate,
+      ],
       theme: ThemeData(primarySwatch: Colors.blue),
       routerConfig: _router,
     );

@@ -40,10 +40,6 @@ class ImagesViewNotifier extends Notifier<String?> {
   }
 
   Future<void> openNextImage({required bool increaseIndex}) async {
-    bool canGoNext = await saveImageRequest();
-    if (!canGoNext) {
-      return;
-    }
     if (increaseIndex) {
       if (currentImageIndex + 1 < filesToPreview.length) {
         currentImageIndex++;
@@ -60,17 +56,6 @@ class ImagesViewNotifier extends Notifier<String?> {
     final nextFile = File(filesToPreview[currentImageIndex]);
     editor.open(nextFile);
     state = nextFile.path;
-  }
-
-  Future<bool> saveImageRequest() async {
-    bool result = false;
-    await editor.hasToSaveDialog(onConfirmCallback: () async {
-      await editor.saveZip();
-      result = true;
-    }, onNoCallback: () {
-      result = true;
-    });
-    return result;
   }
 
   void _updateDueToFSEvent(FileSystemEvent event) {
