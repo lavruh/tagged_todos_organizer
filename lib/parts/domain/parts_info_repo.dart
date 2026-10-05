@@ -16,6 +16,7 @@ final partsInfoProvider = Provider<PartsInfoRepo>((ref) {
 });
 
 final partsInfoRepoUpdateProgressProvider = StateProvider<double>((ref) => 0);
+final partsUpdateLogProvider = StateProvider<List<String>>((ref) => []);
 
 class PartsInfoRepo {
   final IDbService? db;
@@ -36,6 +37,16 @@ class PartsInfoRepo {
     required this.db,
     required this.ref,
   });
+
+  void _log(String message) {
+    ref
+        .read(partsUpdateLogProvider.notifier)
+        .update((state) => [...state, message]);
+  }
+
+  void _clearLog() {
+    ref.read(partsUpdateLogProvider.notifier).state = [];
+  }
 
   Future<Part> getPart(String maximoNo) async {
     final p = await getPartFormDb(req: maximoNo, field: 'maximoNo');
@@ -60,35 +71,61 @@ class PartsInfoRepo {
   }
 
   Future<void> initUpdatePartsFromFile() async {
+    _clearLog();
+    _log('Select file...');
     final picker = await FilePicker.pickFiles();
+    if (picker.isEmpty) {
+      _log('No file selected');
+      return;
+    }
     final selectedFilePath = picker.first.path;
     if (selectedFilePath != null) {
+      _log('Selected file: $selectedFilePath');
       try {
         await updatePartsFromFile(filePath: selectedFilePath);
-      } on PartsInfoRepoException {
+      } on PartsInfoRepoException catch (e) {
+        _log('Error: ${e.message}');
+        rethrow;
+      } catch (e) {
+        _log('Error: $e');
         rethrow;
       }
+    } else {
+      _log('File path is null');
     }
   }
 
   Future<void> updatePartsFromFile({required String filePath}) async {
     final path = p.normalize(filePath);
     if (p.extension(path) == '.csv') {
+      _log('Reading file: $path');
       final file = await File(path).readAsString();
       await updatePartsFromCsvString(file);
     } else {
-      throw PartsInfoRepoException('File with wrong extention provided');
+      final msg = 'File with wrong extension provided (${p.extension(path)})';
+      _log('Error: $msg');
+      throw PartsInfoRepoException(msg);
     }
   }
 
   Future<void> updatePartsFromCsvString(String file) async {
     ref.read(partsInfoRepoUpdateProgressProvider.notifier).state = 0;
+    _log('Decoding CSV content...');
     final data = const CsvDecoder(
       fieldDelimiter: ';',
       quoteCharacter: '"',
     ).convert(file);
     final totalRows = data.length;
-    if (totalRows < 2) throw PartsInfoRepoException("Wrong data format");
+    _log('Found $totalRows rows in CSV');
+    if (totalRows < 2) {
+      const msg = "Wrong data format: minimum 2 rows required";
+      _log('Error: $msg');
+      throw PartsInfoRepoException(msg);
+    }
+
+    int updatedCount = 0;
+    int errorCount = 0;
+
     for (int i = 0; i < totalRows; i++) {
       if (i == 0) {
         for (int j = 0; j < data[0].length; j++) {
@@ -97,23 +134,33 @@ class PartsInfoRepo {
             _fields[key] = j;
           }
         }
+        _log('Header row processed');
       }
       if (i > 0) {
-        final map = data[i];
-        final part = Part(
-            maximoNo: map[_fields["MAXIMO"]!],
-            name: map[_fields["NAME"]!],
-            catalogNo: map[_fields["CATALOG_NO"]!],
-            manufacturer: map[_fields["MANUFACTURER"]!],
-            bin: map[_fields["BIN"]!],
-            dwg: map[_fields["DWG"]!],
-            pos: map[_fields["POS"]!],
-            balance: map[_fields["BALANCE"]!]);
-        ref.read(partsInfoRepoUpdateProgressProvider.notifier).state =
-            i * 100 / totalRows;
-        await db?.update(id: part.maximoNo, item: part.toMap(), table: 'parts');
+        try {
+          final map = data[i];
+          final part = Part(
+              maximoNo: map[_fields["MAXIMO"]!],
+              name: map[_fields["NAME"]!],
+              catalogNo: map[_fields["CATALOG_NO"]!],
+              manufacturer: map[_fields["MANUFACTURER"]!],
+              bin: map[_fields["BIN"]!],
+              dwg: map[_fields["DWG"]!],
+              pos: map[_fields["POS"]!],
+              balance: map[_fields["BALANCE"]!]);
+          ref.read(partsInfoRepoUpdateProgressProvider.notifier).state =
+              i / totalRows;
+          await db?.update(id: part.maximoNo, item: part.toMap(), table: 'parts');
+          updatedCount++;
+          _log('Updated part #${part.maximoNo}: ${part.name}');
+        } catch (e) {
+          errorCount++;
+          _log('Error on row $i: $e');
+        }
       }
     }
+    ref.read(partsInfoRepoUpdateProgressProvider.notifier).state = 1.0;
+    _log('Finished updating DB: $updatedCount parts updated, $errorCount errors.');
   }
 }
 

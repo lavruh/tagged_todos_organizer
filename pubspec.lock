@@ -566,14 +566,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  get:
-    dependency: "direct main"
-    description:
-      name: get
-      sha256: "5ed34a7925b85336e15d472cc4cfe7d9ebf4ab8e8b9f688585bf6b50f4c3d79a"
-      url: "https://pub.dev"
-    source: hosted
-    version: "4.7.3"
   glob:
     dependency: transitive
     description:
@@ -816,10 +808,10 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: "5c96f6d4ee668e218346120502cfe20e72510563"
+      resolved-ref: "6b400f1a7e9281aa8ae7ffe1c95dd57686bff612"
       url: "https://github.com/lavruh/NotesOnImage.git"
     source: git
-    version: "1.4.1+1"
+    version: "1.4.3+1"
   objective_c:
     dependency: transitive
     description:

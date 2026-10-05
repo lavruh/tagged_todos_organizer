@@ -4,7 +4,6 @@ import 'package:material_ui/material_ui.dart';
 import 'package:go_router/go_router.dart';
 import 'package:path/path.dart' as p;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:get/get.dart';
 import 'package:notes_on_image/domain/states/designation_on_image_state.dart';
 
 final imagesViewProvider =
@@ -14,7 +13,7 @@ class ImagesViewNotifier extends Notifier<String?> {
   @override
   String? build() => null;
 
-  final editor = Get.put(DesignationOnImageState());
+  final editor = DesignationOnImageState();
   List<String> filesToPreview = [];
   int currentImageIndex = 0;
   StreamSubscription<FileSystemEvent>? _eventSubscription;

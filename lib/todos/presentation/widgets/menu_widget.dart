@@ -61,7 +61,8 @@ class MenuWidget extends ConsumerWidget {
           ListTile(
             leading: const Icon(Icons.upload_file),
             title: const Text('Update parts db'),
-            onTap: () async {
+            onTap: () {
+              Navigator.of(context).pop();
               showPartsDbUpdateDialog(context);
             },
           )

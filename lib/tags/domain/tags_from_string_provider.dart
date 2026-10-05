@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/legacy.dart';
-import 'package:get/get.dart';
 import 'package:tagged_todos_organizer/tags/domain/filters_by_tags_provider.dart';
 import 'package:tagged_todos_organizer/tags/domain/tag.dart';
 import 'package:tagged_todos_organizer/tags/domain/tags_aliases_provider.dart';
@@ -35,7 +34,8 @@ final tagsFromStringWithAliasesProvider =
     if (aliases.checkIfAliasExists(w)) {
       res.addAll(aliases.getRelatedTags(w));
     } else {
-      final tags = availableTags.firstWhereOrNull((tag) => tag.name == w);
+      final tags =
+          availableTags.where((tag) => tag.name == w).firstOrNull;
       if (tags == null) continue;
       res.add(tags);
     }

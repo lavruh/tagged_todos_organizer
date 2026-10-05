@@ -1,7 +1,6 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:get/get.dart';
 import 'package:path/path.dart' as p;
 import 'package:notes_on_image/domain/states/designation_on_image_state.dart';
 import 'package:notes_on_image/ui/screens/draw_on_image_screen.dart';
@@ -26,12 +25,7 @@ class ImagesViewScreen extends ConsumerWidget {
         if(fl) return;
         _back(context, state);
     },
-      child: GetMaterialApp(
-          localizationsDelegates: const [
-            DefaultMaterialLocalizations.delegate,
-            DefaultWidgetsLocalizations.delegate,
-          ],
-          home: KeyboardListener(
+      child: KeyboardListener(
         focusNode: FocusNode(),
         autofocus: true,
         onKeyEvent: (keyboard) async {
@@ -72,7 +66,7 @@ class ImagesViewScreen extends ConsumerWidget {
                 ),
               )),
         ),
-      )),
+      ),
     );
   }
 
