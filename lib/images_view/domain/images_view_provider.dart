@@ -4,7 +4,6 @@ import 'package:material_ui/material_ui.dart';
 import 'package:go_router/go_router.dart';
 import 'package:path/path.dart' as p;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:get/get.dart';
 import 'package:notes_on_image/domain/states/designation_on_image_state.dart';
 
 final imagesViewProvider =
@@ -14,7 +13,7 @@ class ImagesViewNotifier extends Notifier<String?> {
   @override
   String? build() => null;
 
-  final editor = Get.put(DesignationOnImageState());
+  final editor = DesignationOnImageState();
   List<String> filesToPreview = [];
   int currentImageIndex = 0;
   StreamSubscription<FileSystemEvent>? _eventSubscription;
@@ -40,10 +39,6 @@ class ImagesViewNotifier extends Notifier<String?> {
   }
 
   Future<void> openNextImage({required bool increaseIndex}) async {
-    bool canGoNext = await saveImageRequest();
-    if (!canGoNext) {
-      return;
-    }
     if (increaseIndex) {
       if (currentImageIndex + 1 < filesToPreview.length) {
         currentImageIndex++;
@@ -62,17 +57,6 @@ class ImagesViewNotifier extends Notifier<String?> {
     state = nextFile.path;
   }
 
-  Future<bool> saveImageRequest() async {
-    bool result = false;
-    await editor.hasToSaveDialog(onConfirmCallback: () async {
-      await editor.saveZip();
-      result = true;
-    }, onNoCallback: () {
-      result = true;
-    });
-    return result;
-  }
-
   void _updateDueToFSEvent(FileSystemEvent event) {
     if (event is FileSystemMoveEvent) {
       final path = event.destination;
@@ -81,9 +65,16 @@ class ImagesViewNotifier extends Notifier<String?> {
     if (event is FileSystemDeleteEvent) close();
   }
 
-  void close() {
+  void close([BuildContext? ctx]) {
     _eventSubscription?.cancel();
-    context?.pop();
+    final c = ctx ?? context;
+    if (c != null && c.mounted) {
+      if (c.canPop()) {
+        c.pop();
+      } else {
+        c.go('/TodoEditorScreen');
+      }
+    }
     context = null;
   }
 }

@@ -34,6 +34,7 @@ class AttachmentWidget extends ConsumerWidget {
             },
             onLongPress: () => showPopover(
                 context: context,
+                barrierLabel: 'Dismiss',
                 bodyBuilder: (context) {
                   return Column(
                     mainAxisSize: MainAxisSize.min,

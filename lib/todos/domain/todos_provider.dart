@@ -149,14 +149,23 @@ class TodosNotifier extends Notifier<List<ToDo>> {
     return t.copyWith(attachDirPath: attachmentsPath);
   }
 
-  Future<bool> archiveTodo({required ToDo todo}) async {
+  Future<bool> archiveTodo({
+    required ToDo todo,
+    void Function(String message, double progress)? onProgress,
+  }) async {
+    onProgress?.call("Starting archive for '${todo.title}'...", 0.1);
     final archive = ref.read(archiveProvider);
     try {
+      onProgress?.call("Compressing files and attachments...", 0.3);
       await archive.add(todo);
+      onProgress?.call("Removing ToDo from active database...", 0.6);
       await deleteTodo(todo: todo);
+      onProgress?.call("Logging archived action...", 0.8);
       log.logTodoArchived(todo: todo);
+      onProgress?.call("Successfully archived!", 1.0);
       return true;
     } catch (e) {
+      onProgress?.call("Error archiving ToDo: $e", 1.0);
       ref.read(snackbarProvider).show(e.toString());
     }
     return false;

@@ -1,8 +1,8 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:get/get.dart';
 import 'package:path/path.dart' as p;
+import 'package:notes_on_image/domain/states/designation_on_image_state.dart';
 import 'package:notes_on_image/ui/screens/draw_on_image_screen.dart';
 import 'package:tagged_todos_organizer/images_view/domain/images_view_provider.dart';
 import 'package:tagged_todos_organizer/images_view/presentation/screens/custom_gesture_recognizer.dart';
@@ -21,12 +21,12 @@ class ImagesViewScreen extends ConsumerWidget {
     }
 
     return PopScope(
-      canPop: false, onPopInvokedWithResult: (fl,__){
-        if(fl) return;
+      canPop: false,
+      onPopInvokedWithResult: (fl, __) {
+        if (fl) return;
         _back(context, state);
-    },
-      child: GetMaterialApp(
-          home: KeyboardListener(
+      },
+      child: KeyboardListener(
         focusNode: FocusNode(),
         autofocus: true,
         onKeyEvent: (keyboard) async {
@@ -35,44 +35,71 @@ class ImagesViewScreen extends ConsumerWidget {
               _back(context, state);
             }
             if (keyboard.physicalKey == PhysicalKeyboardKey.arrowRight) {
-              _openNextImage(state);
+              _openNextImage(context, state);
             }
             if (keyboard.physicalKey == PhysicalKeyboardKey.arrowLeft) {
-              _openPrevImage(state);
+              _openPrevImage(context, state);
             }
           }
         },
-        child: PopScope(
-          canPop: false,
-          child: Scaffold(
-              appBar: AppBar(
-                leading: IconButton(
-                  onPressed: () async => _back(context, state),
-                  icon: Icon(Icons.arrow_back),
-                ),
-                title: Text(p.basename(currentImage)),
-                actions: [
-                  RenameAttachmentButton(e: currentImage),
-                  DeleteAttachmentButton(e: currentImage),
-                ],
-              ),
-              extendBodyBehindAppBar: true,
-              body: _swipeHandler(
-                screenWidth: MediaQuery.of(context).size.width,
-                onSwipeLeft: () => _openNextImage(state),
-                onSwipeRight: () => _openPrevImage(state),
-                child: const NotesOnImageScreen(),
-              )),
+        child: Scaffold(
+          appBar: AppBar(
+            leading: IconButton(
+              onPressed: () async => _back(context, state),
+              icon: const Icon(Icons.arrow_back),
+            ),
+            title: Text(p.basename(currentImage)),
+            actions: [
+              RenameAttachmentButton(e: currentImage),
+              DeleteAttachmentButton(e: currentImage),
+            ],
+          ),
+          extendBodyBehindAppBar: true,
+          body: _swipeHandler(
+            screenWidth: MediaQuery.of(context).size.width,
+            onSwipeLeft: () => _openNextImage(context, state),
+            onSwipeRight: () => _openPrevImage(context, state),
+            child: DesignationOnImageScope(
+              notifier: state.editor,
+              child: const NotesOnImageScreen(),
+            ),
+          ),
         ),
-      )),
+      ),
     );
   }
 
-  Future<void> _openPrevImage(ImagesViewNotifier state) =>
-      state.openNextImage(increaseIndex: false);
+  Future<bool> saveImageRequest(
+      BuildContext context, ImagesViewNotifier state) async {
+    bool result = false;
+    await state.editor.hasToSaveDialog(
+      context,
+      onConfirmCallback: () async {
+        await state.editor.saveZip();
+        result = true;
+      },
+      onNoCallback: () {
+        result = true;
+      },
+    );
+    return result;
+  }
 
-  Future<void> _openNextImage(ImagesViewNotifier state) =>
+  Future<void> _openPrevImage(
+      BuildContext context, ImagesViewNotifier state) async {
+    final canGoNext = await saveImageRequest(context, state);
+    if (canGoNext) {
+      state.openNextImage(increaseIndex: false);
+    }
+  }
+
+  Future<void> _openNextImage(
+      BuildContext context, ImagesViewNotifier state) async {
+    final canGoNext = await saveImageRequest(context, state);
+    if (canGoNext) {
       state.openNextImage(increaseIndex: true);
+    }
+  }
 
   Widget _swipeHandler(
       {required Widget child,
@@ -93,7 +120,7 @@ class ImagesViewScreen extends ConsumerWidget {
   }
 
   Future<void> _back(BuildContext context, ImagesViewNotifier state) async {
-    final fl = await state.saveImageRequest();
-    if (fl && context.mounted) state.close();
+    final fl = await saveImageRequest(context, state);
+    if (fl && context.mounted) state.close(context);
   }
 }
