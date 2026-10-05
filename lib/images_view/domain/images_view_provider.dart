@@ -65,9 +65,16 @@ class ImagesViewNotifier extends Notifier<String?> {
     if (event is FileSystemDeleteEvent) close();
   }
 
-  void close() {
+  void close([BuildContext? ctx]) {
     _eventSubscription?.cancel();
-    context?.pop();
+    final c = ctx ?? context;
+    if (c != null && c.mounted) {
+      if (c.canPop()) {
+        c.pop();
+      } else {
+        c.go('/TodoEditorScreen');
+      }
+    }
     context = null;
   }
 }

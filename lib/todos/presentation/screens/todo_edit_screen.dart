@@ -2,6 +2,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tagged_todos_organizer/archive/presentation/archiving_progress_dialog.dart';
 import 'package:tagged_todos_organizer/parts/presentation/used_parts_widget.dart';
 import 'package:tagged_todos_organizer/tags/domain/tags_from_string_provider.dart';
 import 'package:tagged_todos_organizer/tags/presentation/widgets/tags_widget.dart';
@@ -98,14 +99,10 @@ class TodoEditScreen extends ConsumerWidget {
                 duration: Duration(milliseconds: 300)),
             IconButton(
                 onPressed: () async {
-                  final navigator = GoRouter.of(context);
                   final act =
                       await confirmDialog(context, title: "Archive todo?");
-                  if (act == true &&
-                      await ref
-                          .read(todosProvider.notifier)
-                          .archiveTodo(todo: item)) {
-                    navigator.go('/');
+                  if (act == true && context.mounted) {
+                    await showArchivingProgressDialog(context, todo: item);
                   }
                 },
                 tooltip: "Archive",

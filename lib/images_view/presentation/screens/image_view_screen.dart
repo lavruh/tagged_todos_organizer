@@ -21,10 +21,11 @@ class ImagesViewScreen extends ConsumerWidget {
     }
 
     return PopScope(
-      canPop: false, onPopInvokedWithResult: (fl,__){
-        if(fl) return;
+      canPop: false,
+      onPopInvokedWithResult: (fl, __) {
+        if (fl) return;
         _back(context, state);
-    },
+      },
       child: KeyboardListener(
         focusNode: FocusNode(),
         autofocus: true,
@@ -41,30 +42,28 @@ class ImagesViewScreen extends ConsumerWidget {
             }
           }
         },
-        child: PopScope(
-          canPop: false,
-          child: Scaffold(
-              appBar: AppBar(
-                leading: IconButton(
-                  onPressed: () async => _back(context, state),
-                  icon: Icon(Icons.arrow_back),
-                ),
-                title: Text(p.basename(currentImage)),
-                actions: [
-                  RenameAttachmentButton(e: currentImage),
-                  DeleteAttachmentButton(e: currentImage),
-                ],
-              ),
-              extendBodyBehindAppBar: true,
-              body: _swipeHandler(
-                screenWidth: MediaQuery.of(context).size.width,
-                onSwipeLeft: () => _openNextImage(context, state),
-                onSwipeRight: () => _openPrevImage(context, state),
-                child: DesignationOnImageScope(
-                  notifier: state.editor,
-                  child: const NotesOnImageScreen(),
-                ),
-              )),
+        child: Scaffold(
+          appBar: AppBar(
+            leading: IconButton(
+              onPressed: () async => _back(context, state),
+              icon: const Icon(Icons.arrow_back),
+            ),
+            title: Text(p.basename(currentImage)),
+            actions: [
+              RenameAttachmentButton(e: currentImage),
+              DeleteAttachmentButton(e: currentImage),
+            ],
+          ),
+          extendBodyBehindAppBar: true,
+          body: _swipeHandler(
+            screenWidth: MediaQuery.of(context).size.width,
+            onSwipeLeft: () => _openNextImage(context, state),
+            onSwipeRight: () => _openPrevImage(context, state),
+            child: DesignationOnImageScope(
+              notifier: state.editor,
+              child: const NotesOnImageScreen(),
+            ),
+          ),
         ),
       ),
     );
@@ -122,6 +121,6 @@ class ImagesViewScreen extends ConsumerWidget {
 
   Future<void> _back(BuildContext context, ImagesViewNotifier state) async {
     final fl = await saveImageRequest(context, state);
-    if (fl && context.mounted) state.close();
+    if (fl && context.mounted) state.close(context);
   }
 }
